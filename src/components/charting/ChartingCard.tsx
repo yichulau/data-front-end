@@ -22,7 +22,8 @@ const ChartingCard = () => {
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Number Of Contract Traded</h5>
             </a>
             <div className='w-full'>
-                <BarChart data={fetchNotionalData} />
+                {/* <BarChart data={fetchNotionalData} /> */}
+                <BarChart data={fetchMultipleData}/>
             </div>
             
         </div>

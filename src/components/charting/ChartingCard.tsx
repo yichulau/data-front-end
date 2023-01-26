@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { contractTraded } from '../../utils/contract-traded-urls';
+import { notionalVolume } from '../../utils/notional-volume-urls';
 import BarChart from './BarChart';
+import useFetchData from '../../hooks/useFetchData';
+import useFetchNotional from '../../hooks/useFetchNotional';
 
 const ChartingCard = () => {
     
     const [contractTradedData, setContractTradedData] = useState([]);
     const urls = contractTraded.urls;
-    
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-              const responses = await Promise.all(urls.map(url => fetch(url)));
-              const data : any = await Promise.all(responses.map(response => response.json()));
-              console.log(data)
-              setContractTradedData(data);
-            } catch (error) {
-              console.error(error);
-            }
-          }
-          fetchData();
-     
-    }, [])
+    const urlsNotional = notionalVolume.urls
+    const fetchMultipleData = useFetchData(urls);
+    const fetchNotionalData = useFetchNotional(urlsNotional);
+
 
 
     return (
@@ -29,9 +21,8 @@ const ChartingCard = () => {
             <a href="#">
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Number Of Contract Traded</h5>
             </a>
-            {/* <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
-            <div className='w-full h-[250px]'>
-                <BarChart data={contractTradedData}/>
+            <div className='w-full'>
+                <BarChart data={fetchNotionalData} />
             </div>
             
         </div>

@@ -12,4 +12,3 @@ export const contractTraded = {
         'http://18.141.25.43:3001/api/v1.0/btc/okex/contracts-traded',
     ]
 }
-

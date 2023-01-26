@@ -1,125 +1,84 @@
-import React, { useEffect,useState } from 'react'
-import { ResponsiveBar } from '@nivo/bar'
-import { ResponsivePie } from "@nivo/pie";
+import React, { useEffect,useState, useRef } from 'react'
+import * as echarts from 'echarts';
+import { echartsResize } from '../../utils/resize';
+import Dropdown from '../misc/Dropdown';
+
+
 
 const BarChart = ({ data }: any) => {
 
+    const chartRef :any = useRef(null);
+    // const newData = data.reduce((acc : any, curr : any) => {
+    //     acc[curr.exchange] = acc[curr.exchange] || { exchange: curr.exchange, count24h: 0 }
+    //     acc[curr.exchange].count24h += curr.count24h
+    //     return acc
+    // }, {})
+
+    let exchanges: any[] = []
+    let values: any[] = []
+    data.forEach((item: any) => {
+        if(!exchanges.includes(item.exchangeID)){
+            exchanges.push(item.exchangeID)
+        }
+        if(!values[item.exchangeID]){
+            values[item.exchangeID] = []
+        }
+        values[item.exchangeID].push({
+            value: item.value,
+            name: new Date(item.ts * 1000).toDateString()
+        });
+    });
+    
+
+    useEffect(() => {
+        const chartInstance = echarts.init(chartRef.current);
+
+        const xAxisData = Object.keys(data).map((item: any) => item.exchangeID)
+        const yAxisData = Object.values(data).map((item : any) => item.value)
+
+        const option = {
+            legend: {
+                data: exchanges
+            },
+            xAxis: {
+                type: 'time',
+                axisLabel: {
+                    formatter: function (value: unknown) {
+                        return echarts.format.formatTime('MM-dd', value);
+                    }
+                }
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: exchanges.map((exchange) => {
+                return {
+                    name: exchange,
+                    type: 'bar',
+                    stack: 'total',
+                    data: values[exchange],
+                }
+            })
+        };
+        chartInstance.setOption(option);
+        echartsResize(chartInstance);
+      }, []);
+      console.log(data)
   return (
     <>
-            <ResponsiveBar
-                data={data}
-                keys={[
-                    'count24H'
-                ]}
-                indexBy="count24H"
-                margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-                padding={0.3}
-                valueScale={{ type: 'linear' }}
-                indexScale={{ type: 'band', round: true }}
-                colors={{ scheme: 'nivo' }}
-                defs={[
-                    {
-                        id: 'dots',
-                        type: 'patternDots',
-                        background: 'inherit',
-                        color: '#38bcb2',
-                        size: 4,
-                        padding: 1,
-                        stagger: true
-                    },
-                    {
-                        id: 'lines',
-                        type: 'patternLines',
-                        background: 'inherit',
-                        color: '#eed312',
-                        rotation: -45,
-                        lineWidth: 6,
-                        spacing: 10
-                    }
-                ]}
-                fill={[
-                    {
-                        match: {
-                            id: 'fries'
-                        },
-                        id: 'dots'
-                    },
-                    {
-                        match: {
-                            id: 'sandwich'
-                        },
-                        id: 'lines'
-                    }
-                ]}
-                borderColor={{
-                    from: 'color',
-                    modifiers: [
-                        [
-                            'darker',
-                            1.6
-                        ]
-                    ]
-                }}
-                axisTop={null}
-                axisRight={null}
-                axisBottom={{
-                    tickSize: 5,
-                    tickPadding: 5,
-                    tickRotation: 0,
-                    legend: 'country',
-                    legendPosition: 'middle',
-                    legendOffset: 32
-                }}
-                axisLeft={{
-                    tickSize: 5,
-                    tickPadding: 5,
-                    tickRotation: 0,
-                    legend: 'food',
-                    legendPosition: 'middle',
-                    legendOffset: -40
-                }}
-                labelSkipWidth={12}
-                labelSkipHeight={12}
-                labelTextColor={{
-                    from: 'color',
-                    modifiers: [
-                        [
-                            'darker',
-                            1.6
-                        ]
-                    ]
-                }}
-                legends={[
-                    {
-                        dataFrom: 'keys',
-                        anchor: 'bottom-right',
-                        direction: 'column',
-                        justify: false,
-                        translateX: 120,
-                        translateY: 0,
-                        itemsSpacing: 2,
-                        itemWidth: 100,
-                        itemHeight: 20,
-                        itemDirection: 'left-to-right',
-                        itemOpacity: 0.85,
-                        symbolSize: 20,
-                        effects: [
-                            {
-                                on: 'hover',
-                                style: {
-                                    itemOpacity: 1
-                                }
-                            }
-                        ]
-                    }
-                ]}
-                role="application"
-                ariaLabel="Demo"
-            />
-
-
- 
-
+        <div style={{ textAlign: "center" }}>
+  
+            <div className='flex flex-row justify-between'>
+                <div>
+                    <Dropdown />
+                </div>
+                <div>
+                    dsadsa
+                </div>  
+            </div>
+            <h2>Echarts</h2>
+            <div ref={chartRef} style={{ height: "400px" }}></div>
+        </div>
     </>
   )
 }

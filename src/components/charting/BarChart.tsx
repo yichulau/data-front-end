@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Select, Form } from "antd";  
 import * as echarts from 'echarts'; 
+import { echartsResize } from '../../utils/resize';
 
 const BarChart = ({ data }: any) => {
 
   let dataValues = data; 
-  const chartRef = useRef(null);
+  const chartRef = useRef<HTMLDivElement>(null);
   const { Option } = Select;
   const [filter, setFilter] = useState(0); // 0 for filter by coin, 1 for filter by exchange
   const layout = {
@@ -107,11 +108,12 @@ const BarChart = ({ data }: any) => {
   const handleFilterChange = (value: number) => {
     setFilter(value); 
   }; 
-
   useEffect(() => {
-    let chartInstance = echarts.init(chartRef.current);
+    const chartInstance = echarts.init(chartRef.current);
     let options = getOptions(filter); 
     chartInstance.setOption(options); 
+
+    echartsResize(chartInstance);
   }, [data, filter]);
 
   return (

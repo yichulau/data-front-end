@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-
+import { exchangeModel } from '../models/exchangeModel';
+import { coinCurrencyModel } from '../models/coinCurrency';
 const useFetchNotional = (urls: string[]) => {
 
     const [data, setData] = useState([]);

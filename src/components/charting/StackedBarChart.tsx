@@ -84,10 +84,7 @@ const StackedBarChart = ( {data } : any) => {
             },
             legend: {
                 data: Object.keys(seriesData),
-                top: 0,
-                left: 50,
-                orient: 'horizontal'
-
+                orient: "horizontal",
             },
             xAxis: {
                 data: xData
@@ -114,6 +111,8 @@ const StackedBarChart = ( {data } : any) => {
                 }
             ],
         });
+
+
     }, [data]);
 
     

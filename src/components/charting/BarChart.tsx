@@ -12,7 +12,7 @@ const BarChart = ({ data }: any) => {
   const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
-    style: { width: "400px" },
+    style: { width: "200px" },
   }; 
 
   // Filter data by exchange
@@ -111,6 +111,7 @@ const BarChart = ({ data }: any) => {
   useEffect(() => {
     const chartInstance = echarts.init(chartRef.current);
     let options = getOptions(filter); 
+    // @ts-ignore
     chartInstance.setOption(options); 
 
     echartsResize(chartInstance);
@@ -118,6 +119,7 @@ const BarChart = ({ data }: any) => {
 
   return (
     <>
+      <h2 className='text-center'>Number of Contracts Traded</h2>
       <div style={{ textAlign: "center" }}>
         <br />
         <Form {...layout}>
@@ -130,7 +132,7 @@ const BarChart = ({ data }: any) => {
             </Select>
           </Form.Item>
         </Form>
-        <div ref={chartRef} style={{ height: "400px", width:"100%" }}></div>
+        <div ref={chartRef} style={{ height: "400px", width:'100%' }}></div>
       </div>
     </>
   )

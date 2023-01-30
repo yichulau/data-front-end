@@ -18,7 +18,7 @@ const Home: NextPage = () => {
         <div className="grid gap-8 lg:grid-cols-2 w-full">
           <ChartingCard option="BarChart"/>
           <ChartingCard option="StackedBarChart"/>
-             
+          <ChartingCard option="StackedLineChart"/>
         </div>  
  
       </main>

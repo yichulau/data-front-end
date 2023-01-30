@@ -15,7 +15,7 @@ interface Data {
 
 
 const StackedBarChart = ( {data } : any) => {
-    console.log(data)
+
     const chartRef = useRef<HTMLDivElement>(null);
 
     const handleSelectOption = (event : any) =>{
@@ -112,7 +112,7 @@ const StackedBarChart = ( {data } : any) => {
             ],
         });
 
-
+        echartsResize(chart);
     }, [data]);
 
     
@@ -128,7 +128,7 @@ const StackedBarChart = ( {data } : any) => {
                 <SelectOption handleSelectOption={handleSelectOption} />
             </div>
         </div>
-        <div ref={chartRef}  style={{ width: '100%', height: '400px'}}></div>
+        <div ref={chartRef}  style={{ height: '400px', width:'100%'}}></div>
     </div>
    </>
   )

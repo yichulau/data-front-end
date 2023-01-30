@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Dropdown from '../../components/misc/Dropdown'
-import StrikeChart from '../../components/charting/openInterest/StrikeChart';
 import useFetchSingleData from '../../hooks/useFetchSingleData';
+import StrikeVolChart from '../../components/charting/openInterest/StrikeVolChart';
 
-
-const strike = () => {
-    const [exchangeOption, setExchangeOption] = useState('ALL')
+const strikeVol = () => {
+  const [exchangeOption, setExchangeOption] = useState('ALL')
     const [ccyOption, setCcyOption] = useState('BTC')
     const [keysOptions, setKeysOptions] = useState('ALL')
     const url = `https://fapi.coinglass.com/api/option/chart?type=Strike&ex=${exchangeOption}&symbol=${ccyOption}&subtype=${keysOptions}`;
@@ -43,14 +42,14 @@ const strike = () => {
     ]
   return (
     <>
-    <div className="container py-1 mx-auto">
-        <div className="flex flex-wrap">
-            <div className="px-6 py-2 md:w-full flex flex-col items-start">
-                <div className='bg-white w-full shadow-sm rounded-lg p-4 dark:bg-black'>
-                    <h2 className="ml-1 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Options Open Interest By Strike</h2>
-                    <div className='flex flex-row justify-between'>
-                       
-                        <div className='flex'>
+      <div className="container py-1 mx-auto">
+          <div className="flex flex-wrap">
+              <div className="px-6 py-2 md:w-full flex flex-col items-start">
+                  <div className='bg-white w-full shadow-sm rounded-lg p-4 dark:bg-black'>
+                      <h2 className="ml-1 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Options Open Interest Volume By Strike</h2>
+                      <div className='flex flex-row justify-between'>
+                        
+                      <div className='flex'>
                             <div className='px-2 flex flex-col'>
                                 <Dropdown 
                                     title={`Exchange`}
@@ -73,39 +72,34 @@ const strike = () => {
                                 />
                             </div>
                         </div>
-                    </div>
-                    <div className='md:w-full mt-2'>
-                        {data !== null ? (
-                            <StrikeChart 
-                                data={data}
-                                error={error}
-                                loading={loading}
-                            />
+                      </div>
+                      <div className='md:w-full mt-2'>
+                          {data !== null ? (
+                              <StrikeVolChart 
+                                  data={data}
+                                  error={error}
+                                  loading={loading}
+                              />
 
-                        ) : (
-                            <div className="flex items-center justify-center min-h-[300px] p-5 bg-gray-100 w-full rounded-log dark:bg-black">
+                          ) : (
+                              <div className="flex items-center justify-center min-h-[300px] p-5 bg-gray-100 w-full rounded-log dark:bg-black">
 
-                                <div className="flex space-x-2 animate-pulse">
-                                    <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-                                    <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-                                    <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-                                </div>
-                        
-                            </div>
-                        )}
+                                  <div className="flex space-x-2 animate-pulse">
+                                      <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
+                                      <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
+                                      <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
+                                  </div>
+                          
+                              </div>
+                          )}
 
-                    </div>
-                </div>
-            </div>
-            {/* <div className="px-6 py-2  md:w-1/2 flex flex-col items-start">
-                <div className='bg-white w-full shadow-sm rounded-lg p-4 dark:bg-black'>  
-                    <h2 className="text-lg  font-medium text-gray-900 mt-4 mb-4 dark:text-white">BTC Options Open Interest By Strike Volume</h2>
-                </div>
-            </div> */}
-        </div>
-    </div>  
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>  
     </>
   )
 }
 
-export default strike
+export default strikeVol

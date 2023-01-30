@@ -3,7 +3,7 @@ import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import calculateRatio from '../../../utils/calculateRatio';
 
-const StrikeChart = ({data ,error, loading} : any) => {
+const ExpiryChart = ({data ,error, loading} : any) => {
     const responseData = data.data;
     const {  data: oiData } = responseData;
 
@@ -137,5 +137,4 @@ const StrikeChart = ({data ,error, loading} : any) => {
   )
 }
 
-export default StrikeChart
-
+export default ExpiryChart

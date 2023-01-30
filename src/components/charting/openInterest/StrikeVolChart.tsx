@@ -3,10 +3,9 @@ import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import calculateRatio from '../../../utils/calculateRatio';
 
-const StrikeChart = ({data ,error, loading} : any) => {
+const StrikeVolChart = ({data ,error, loading} : any) => {
     const responseData = data.data;
     const {  data: oiData } = responseData;
-
     const option = {
         tooltip: {
             trigger: 'axis',
@@ -30,7 +29,7 @@ const StrikeChart = ({data ,error, loading} : any) => {
         },
 
         legend: {
-            data: ['Call Open Interest', 'Put Open Interest'],
+            data: ['Call Trading Volume', 'Put Trading Volume'],
             orient: "horizontal",
             bottom: 0
         },
@@ -48,7 +47,7 @@ const StrikeChart = ({data ,error, loading} : any) => {
         },
         yAxis: {
           type: "value",
-          name: "Open Interest (BTC)",
+          name: "Open Interest Volume (BTC)",
           axisLabel:{
             formatter: function (value: any) {
                 if (value >= 1000) {
@@ -63,8 +62,8 @@ const StrikeChart = ({data ,error, loading} : any) => {
         },
         series: [
           {
-            data: oiData.callOIList,
-            name: "Call Open Interest",
+            data: oiData.callVolList,
+            name: "Call Trading Volume",
             stack: "one",
             type: "line",
             smooth: true,
@@ -84,8 +83,8 @@ const StrikeChart = ({data ,error, loading} : any) => {
             },
           },
           {
-            data: oiData.putOIList,
-            name: "Put Open Interest",
+            data: oiData.putVolList,
+            name: "Put Trading Volume",
             stack: "one",
             type: "line",
             smooth: true,
@@ -108,19 +107,18 @@ const StrikeChart = ({data ,error, loading} : any) => {
     };
 
 
-  
   return (
     <>
-        <div className='mt-2 mb-2' style={{height: '400px'}}>
+         <div className='mt-2 mb-2' style={{ maxWidth: "100%", maxHeight: "400px" }}>
             <ReactEcharts option={option} />
             <div className='flex flex-row items-center justify-center mt-6'>
                 <div className="py-4 px-4 text-center">
-                    <div className="border-b border-[#16c784] font-bold">Call Open Interest</div>
-                    <div className='font-bold'>{oiData.callOI} BTC</div>
+                    <div className="border-b border-[#16c784] font-bold">Call Open Interest Volume</div>
+                    <div className='font-bold'>{oiData.callVol} BTC</div>
                 </div>
                 <div className="py-4 px-4 text-center">
-                    <div className="border-b border-[#ea3943] font-bold">Put Open Interest</div>
-                    <div className='font-bold'>{oiData.putOI} BTC</div>
+                    <div className="border-b border-[#ea3943] font-bold">Put Open Interest Volume</div>
+                    <div className='font-bold'>{oiData.putVol} BTC</div>
                 </div>
                 <div className="py-4 px-4 text-center">
                     <div className=" font-bold">Call/Put Ratio</div>
@@ -132,10 +130,16 @@ const StrikeChart = ({data ,error, loading} : any) => {
                     <div className='font-bold'>{calculateRatio(oiData.callVol,oiData.putVol)}</div>
                 </div>
             </div>
+            {/* <style jsx>{`
+                @media (max-width: 767px) {
+                div.resizing {
+                    height: 200px;
+                }
+                }
+            `}</style> */}
         </div>
     </>
   )
 }
 
-export default StrikeChart
-
+export default StrikeVolChart

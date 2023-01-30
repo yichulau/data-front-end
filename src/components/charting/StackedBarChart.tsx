@@ -15,8 +15,12 @@ interface Data {
 
 
 const StackedBarChart = ( {data } : any) => {
-
+    console.log(data)
     const chartRef = useRef<HTMLDivElement>(null);
+
+    const handleSelectOption = (event : any) =>{
+       const { value } = event.target;
+    }
 
     useEffect(() => {
         if (!chartRef.current) {
@@ -49,7 +53,7 @@ const StackedBarChart = ( {data } : any) => {
         const end = Math.round((new Date().getTime() - 24 * 60 * 60 * 1000) / 1000);
         const start = end - 24 * 60 * 60;
         Object.keys(groupedData).forEach(ts => {
-            xData.push(moment.unix(Number(ts)).format('DD HH:mm'));
+            xData.push(moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss'));
             Object.keys(groupedData[ts]).forEach(exchangeId => {
                 if (!seriesData[exchangeId]) {
                     seriesData[exchangeId] = [];
@@ -80,8 +84,10 @@ const StackedBarChart = ( {data } : any) => {
             },
             legend: {
                 data: Object.keys(seriesData),
-                orient: "horizontal",
-                bottom: '0'
+                top: 0,
+                left: 50,
+                orient: 'horizontal'
+
             },
             xAxis: {
                 data: xData
@@ -120,10 +126,10 @@ const StackedBarChart = ( {data } : any) => {
 
         <div className='flex flex-row justify-between'>
             <div>
-                <SelectOption />
+                <SelectOption handleSelectOption={handleSelectOption} />
             </div>
         </div>
-        <div ref={chartRef}  style={{ height: '400px'}}></div>
+        <div ref={chartRef}  style={{ width: '100%', height: '400px'}}></div>
     </div>
    </>
   )

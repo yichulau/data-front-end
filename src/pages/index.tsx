@@ -16,7 +16,7 @@ const Home: NextPage = () => {
 
       <main className="flex flex-col justify-center items-center">
         <div className="grid gap-8 lg:grid-cols-2 w-full">
-          <ChartingCard option="BarChart"/>
+          {/* <ChartingCard option="BarChart"/> */}
           <ChartingCard option="StackedBarChart"/>
              
         </div>  

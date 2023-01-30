@@ -6,7 +6,7 @@ import { echartsResize } from '../../utils/resize';
 const BarChart = ({ data }: any) => {
 
   let dataValues = data; 
-  const chartRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<any>(null);
   const { Option } = Select;
   const [filter, setFilter] = useState(0); // 0 for filter by coin, 1 for filter by exchange
   const layout = {

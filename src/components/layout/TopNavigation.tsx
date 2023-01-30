@@ -2,6 +2,7 @@ import React,  { useContext, useEffect, useState } from 'react'
 import Image from "next/image";
 import MyThemeContext from "../../store/myThemeContext";
 import { FaMoon,FaSun } from 'react-icons/fa';
+import Link from 'next/link'
 
 
 const TopNavigation = () => {
@@ -43,13 +44,27 @@ const TopNavigation = () => {
                 <div className="flex items-center">
                     <ul className="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
                         <li>
-                            <a href="#" className="text-gray-900 dark:text-white hover:underline" aria-current="page">Dashboard</a>
+                            <Link href="/">
+                                <div className="text-gray-900 dark:text-white hover:underline" aria-current="page">Dashboard</div>
+                            </Link>
+                           
                         </li>
                         <li>
-                            <a href="#" className="text-gray-900 dark:text-white hover:underline">Strike Price </a>
+                       
+                            <div className="peer text-gray-900 dark:text-white hover:underline">Activity</div>
+                            <div className="hidden peer-hover:flex hover:flex
+                            w-[200px]
+                            flex-col bg-white drop-shadow-lg absolute">
+                                <Link href="/options/strike">
+                                     <div className="px-5 py-3 hover:bg-gray-200" >Options OI By Strike</div>
+                                </Link>
+                                <Link href="/options/expiry">
+                                    <div className="px-5 py-3 hover:bg-gray-200">Options OI By Expiry</div>
+                                </Link>
+                            </div>
                         </li>
                         <li>
-                            <a href="#" className="text-gray-900 dark:text-white hover:underline">Calculator</a>
+                            <a href="#" className="text-gray-900 dark:text-white hover:underline">Payoff Calculator</a>
                         </li>
                     </ul>
                 </div>

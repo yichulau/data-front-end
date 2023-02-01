@@ -4,9 +4,9 @@ import ReactEcharts from "echarts-for-react";
 import DropdownIndex from '../misc/DropdownIndex';
 
 
-const LineChartVolume = ({data} :any) => {
+const LineChartVolume = ({data , earliestTimestamp} :any) => {
 
-    
+    let newEarliestTimeStamp = Number(earliestTimestamp + '000')
 
     const handleExchangeChange = (value : any)=>{
 
@@ -15,6 +15,8 @@ const LineChartVolume = ({data} :any) => {
     const handleVolumeChange = (value : any )=>{
       
     }
+
+ 
 
     const volumeOption = [
         {id: 0, value: 'Notional'},
@@ -27,15 +29,15 @@ const LineChartVolume = ({data} :any) => {
     ]
 
     let base = +new Date();
+    console.log(base, newEarliestTimeStamp)
     let oneDay = 24 * 3600 * 1000;
     let date = [];
-    let dataSet = [Math.random() * 300];
-    for (let i = 1; i < 20000; i++) {
-        var now = new Date((base += oneDay));
-        date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
-        dataSet.push(Math.round((Math.random() - 0.5) * 20 + dataSet[i - 1]));
-    }
 
+    for (let i = 1; i < 20000; i++) {
+        var now = new Date((newEarliestTimeStamp += oneDay));
+        date.push([now.getFullYear(), now.getMonth() + 1, now.getDate(), now.getHours(), now.getMinutes()].join('/'));
+    }
+    
     const option = {
         tooltip: {
           trigger: 'axis',

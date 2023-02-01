@@ -16,22 +16,22 @@ interface Data {
 }
 
 
-const StackedBarChart = ( {notionalData,  premiumData} : any) => {
+const StackedBarChart = ( {data,  premiumData} : any) => {
 
     const chartRef = useRef<HTMLDivElement>(null);
-    const [data, setData] = useState(notionalData)
+   
 
     const handleExchangeChange = (value : any)=>{
 
     }
 
     const handleVolumeChange = (value : any )=>{
-       if(value === 'Notional'){
-        setData(notionalData)
-       }
-       if(value === 'Premium'){
-        setData(premiumData)
-       }
+    //    if(value === 'Notional'){
+    //     setData(notionalData)
+    //    }
+    //    if(value === 'Premium'){
+    //     setData(premiumData)
+    //    }
     }
 
     const volumeOption = [
@@ -46,7 +46,7 @@ const StackedBarChart = ( {notionalData,  premiumData} : any) => {
     useEffect(() => {
         if (!chartRef.current) {
             return;
-          }
+        }
         const chart = echarts.init(chartRef.current);
 
         // group data by ts and exchangeId
@@ -61,7 +61,7 @@ const StackedBarChart = ( {notionalData,  premiumData} : any) => {
                 groupedData[item.ts][item.exchangeID] += parseFloat(item.value);
             }
         });
-
+        console.log(groupedData)
         // convert grouped data to data array
         const seriesData : any= {};
         const xData: string[] = [];
@@ -145,7 +145,7 @@ const StackedBarChart = ( {notionalData,  premiumData} : any) => {
   return (
    <>
     <h2 className="ml-2 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Chart Of Options Volume</h2>
-    <div style={{ textAlign: "center" }}>
+    <div style={{ textAlign: "left" }}>
 
         <div className='flex flex-row justify-between mb-6'>
             <div className='flex'>

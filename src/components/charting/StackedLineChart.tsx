@@ -3,6 +3,7 @@ import * as echarts from 'echarts';
 import moment from 'moment';
 import { Select, Form } from "antd";  
 import { echartsResize } from '../../utils/resize';
+import DropdownIndex from '../misc/DropdownIndex';
 
 const StackedLineChart = ( {data } : any) => {
 
@@ -14,6 +15,11 @@ const StackedLineChart = ( {data } : any) => {
       wrapperCol: { span: 16 },
       style: { width: "200px" },
     }; 
+
+    const byExchangeCoin = [
+        {id: 0, value: 'By Exchange'},
+        {id: 1, value: 'By Coin'}
+    ]
 
     const getDataByExchange = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
@@ -166,16 +172,29 @@ const StackedLineChart = ( {data } : any) => {
     }, [data, filter]);
 
     const handleFilterChange = (value: number) => {
+        console.log(value)
         setFilter(value); 
     }; 
 
   return (
    <>
     <h2 className="ml-2 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Chart Of Options Open Interest</h2>
-    <br />
-    <div style={{ textAlign: "center" }}>
+    <div style={{ textAlign: "left" }}>
+        <div className='flex flex-row justify-between mb-6'>
+            <div className='flex'>
+                <div className='px-2 flex flex-col'>
+                    <DropdownIndex 
+                        title={`Exchange`}  
+                        options={byExchangeCoin}
+                        onChange={handleFilterChange}
+                   
+                    />
+                </div>
+            </div>
+        </div>
         <div>
-        <Form {...layout}>
+        
+        {/* <Form {...layout}>
             <Form.Item>
                 <Select 
                 defaultValue={filter} 
@@ -184,7 +203,7 @@ const StackedLineChart = ( {data } : any) => {
                     <Option value={1}>By Currency</Option>
                 </Select>
             </Form.Item>
-        </Form>
+        </Form> */}
         </div>
         <div ref={chartRef}  style={{ height: '400px', width:'100%'}}></div>
     </div>

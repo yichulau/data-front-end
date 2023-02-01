@@ -115,15 +115,15 @@ const StrikeChart = ({data ,error, loading} : any) => {
             <ReactEcharts option={option} />
             <div className='flex flex-row items-center justify-center mt-6'>
                 <div className="py-4 px-4 text-center">
-                    <div className="border-b border-[#16c784] font-bold">Call Open Interest</div>
+                    <div className="text-xs md:text-lg border-b border-[#16c784] font-bold">Call Open Interest</div>
                     <div className='font-bold'>{oiData.callOI} BTC</div>
                 </div>
                 <div className="py-4 px-4 text-center">
-                    <div className="border-b border-[#ea3943] font-bold">Put Open Interest</div>
+                    <div className="text-xs md:text-lg border-b border-[#ea3943] font-bold">Put Open Interest</div>
                     <div className='font-bold'>{oiData.putOI} BTC</div>
                 </div>
                 <div className="py-4 px-4 text-center">
-                    <div className=" font-bold">Call/Put Ratio</div>
+                    <div className="text-xs md:text-lg font-bold">Call/Put Ratio</div>
                     <div>
                         <div className="border-b border-[#ea3943]" style={{float: 'left', width: '50%'}}></div>
                         <div className="border-b border-[#16c784]" style={{float: 'left', width: '50%'}}></div>

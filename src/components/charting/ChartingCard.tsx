@@ -12,8 +12,11 @@ import { openInterest } from '../../utils/open-interest-urls';
 import { premiumVolume } from '../../utils/premium-volume-urls';
 import useFetchPremium from '../../hooks/useFetchPremium';
 import LineChartVolume from './LineChartVolume';
+import MiddleMedium from './MiddleMedium';
 
 const ChartingCard = ({option}: any) => {
+
+    const [dataSet, setData] = useState({});
   
     const urlsContracts = contractTraded.urls;
     const urlsNotional = notionalVolume.urls
@@ -23,6 +26,9 @@ const ChartingCard = ({option}: any) => {
     // const fetchMultipleData = useFetchData(urlsContracts, 'contracts-traded');
     const fetchNotionalData = useFetchNotional(urlsNotional);  
     const fetchPremiumData = useFetchPremium(urlsPremium);
+
+    const aggregrateNotionalData = [];
+    const map = new Map();
 
     const newFetchNotionalData = fetchNotionalData.map((item: any)=>{
       return {
@@ -39,9 +45,15 @@ const ChartingCard = ({option}: any) => {
       }
     })
 
-    const aggregrateNotionalData = [];
-    const map = new Map();
+    const fetchInterestData = useFetchNotional(urlsOpenInterest).map((item: any) => {
+      return {
+        ...item, 
+        exchangeID: exchangeModel.getDataByExchange(item.exchangeID), 
+        coinCurrencyID: coinCurrencyModel.getDataByCurrency(item.coinCurrencyID)
+      }
+    })
 
+    
     for (const item of newFetchNotionalData) {
       const key = item.ts + item.coinCurrencyID;
       if (!map.has(key)) {
@@ -52,20 +64,14 @@ const ChartingCard = ({option}: any) => {
     }
     const earliestTimestamp = Math.min(...aggregrateNotionalData.map(item => item.ts));
 
-    const fetchInterestData = useFetchNotional(urlsOpenInterest).map((item: any) => {
-      return {
-        ...item, 
-        exchangeID: exchangeModel.getDataByExchange(item.exchangeID), 
-        coinCurrencyID: coinCurrencyModel.getDataByCurrency(item.coinCurrencyID)
-      }
-    })
 
-    // console.log(fetchNotionalData)
+
     return (
     <>
         <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
           <div className='w-full'>
-            {option === 'StackedBarChart' ? (<StackedBarChart data={newFetchNotionalData} premiumData={newFetchPremiumData} /> ) : null }
+            {option === 'StackedBarChart' ? (<MiddleMedium newFetchNotionalData={newFetchNotionalData} newFetchPremiumData={newFetchPremiumData} /> ) : null }
+            {/* {option === 'StackedBarChart' ? (<StackedBarChart data={newFetchNotionalData} onChange={volFilterChange} /> ) : null } */}
             {/* {option === 'BarChart' ? (<BarChart data={useFetchData(urlsContracts)} />) : null } */}
             {option === "StackedLineChart" ? (<StackedLineChart data={fetchInterestData}  />) : null }
             {option === "LineChartVolume" ? (<LineChartVolume data={aggregrateNotionalData} earliestTimestamp={earliestTimestamp} />) : null }

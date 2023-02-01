@@ -67,7 +67,7 @@ const StackedLineChart = ( {data } : any) => {
         });
 
         Object.keys(groupedData).forEach(ts => {
-            xData.push(moment.unix(Number(ts)).format('DD/MM HH:mm'));
+            xData.push(moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss'));
             Object.keys(groupedData[ts]).forEach(coinCurrencyId => {
                 if (!seriesData[coinCurrencyId]) {
                     seriesData[coinCurrencyId] = [];
@@ -172,7 +172,6 @@ const StackedLineChart = ( {data } : any) => {
     }, [data, filter]);
 
     const handleFilterChange = (value: number) => {
-        console.log(value)
         setFilter(value); 
     }; 
 

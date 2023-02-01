@@ -2,6 +2,7 @@ import React, { useEffect,useState, useRef } from 'react'
 import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import DropdownIndex from '../misc/DropdownIndex';
+import moment from 'moment';
 
 
 const LineChartVolume = ({data , earliestTimestamp} :any) => {
@@ -29,7 +30,7 @@ const LineChartVolume = ({data , earliestTimestamp} :any) => {
     ]
 
     let base = +new Date();
-    console.log(base, newEarliestTimeStamp)
+
     let oneDay = 24 * 3600 * 1000;
     let date = [];
 

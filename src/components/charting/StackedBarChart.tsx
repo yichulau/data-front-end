@@ -16,41 +16,27 @@ interface Data {
 }
 
 
-const StackedBarChart = ( {data,  premiumData} : any) => {
+const StackedBarChart = ( {data,  onChange} : any) => {
 
     const chartRef = useRef<HTMLDivElement>(null);
-   
+    const [filter, setFilter] = useState(0);
 
-    const handleExchangeChange = (value : any)=>{
-
-    }
-
-    const handleVolumeChange = (value : any )=>{
-    //    if(value === 'Notional'){
-    //     setData(notionalData)
-    //    }
-    //    if(value === 'Premium'){
-    //     setData(premiumData)
-    //    }
-    }
+    console.log(data)
 
     const volumeOption = [
         {id: 0, value: 'Notional'},
         {id: 1, value: 'Premium'}
     ]
-    const coinExchangeOption = [
-        {id: 1, value: 'By Exchange'},
-        {id: 2, value: 'By Currency'},
+    const byExchangeCoin = [
+        {id: 0, value: 'By Exchange'},
+        {id: 1, value: 'By Coin'}
     ]
 
-    useEffect(() => {
-        if (!chartRef.current) {
-            return;
-        }
-        const chart = echarts.init(chartRef.current);
-
-        // group data by ts and exchangeId
+    const getDataByExchange = () => {
+        // group data by ts and exchangeId, and return the series data and x-axis data 
         const groupedData : any = {};
+        const seriesData : any= {};
+        const xData: string[] = [];
         data.forEach((item: { ts: string | number; exchangeID: string | number; value: string; }) => {
             if (!groupedData[item.ts]) {
                 groupedData[item.ts] = {};
@@ -61,12 +47,7 @@ const StackedBarChart = ( {data,  premiumData} : any) => {
                 groupedData[item.ts][item.exchangeID] += parseFloat(item.value);
             }
         });
-        console.log(groupedData)
-        // convert grouped data to data array
-        const seriesData : any= {};
-        const xData: string[] = [];
-        const end = Math.round((new Date().getTime() - 24 * 60 * 60 * 1000) / 1000);
-        const start = end - 24 * 60 * 60;
+
         Object.keys(groupedData).forEach(ts => {
             xData.push(moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss'));
             Object.keys(groupedData[ts]).forEach(exchangeId => {
@@ -76,6 +57,70 @@ const StackedBarChart = ( {data,  premiumData} : any) => {
                 seriesData[exchangeId].push(groupedData[ts][exchangeId]);
             });
         });
+
+        return [seriesData, xData]; 
+    }
+
+    const getDataByCoin = () => {
+        // group data by ts and exchangeId, and return the series data and x-axis data 
+        const groupedData : any = {};
+        const seriesData : any= {};
+        const xData: string[] = [];
+        data.forEach((item: { ts: string | number; coinCurrencyID: string | number; value: string; }) => {
+            if (!groupedData[item.ts]) {
+                groupedData[item.ts] = {};
+            }
+            if (!groupedData[item.ts][item.coinCurrencyID]) {
+                groupedData[item.ts][item.coinCurrencyID] = parseFloat(item.value);
+            } else {
+                groupedData[item.ts][item.coinCurrencyID] += parseFloat(item.value);
+            }
+        });
+
+        Object.keys(groupedData).forEach(ts => {
+            xData.push(moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss'));
+            Object.keys(groupedData[ts]).forEach(coinCurrencyId => {
+                if (!seriesData[coinCurrencyId]) {
+                    seriesData[coinCurrencyId] = [];
+                }
+                seriesData[coinCurrencyId].push(groupedData[ts][coinCurrencyId]);
+            });
+        });
+
+        return [seriesData, xData]; 
+    }
+
+
+
+    useEffect(() => {
+        if (!chartRef.current) {
+            return;
+        }
+        const chart = echarts.init(chartRef.current);
+        chart.clear(); 
+
+        // convert grouped data to data array
+        let seriesData : any= {};
+        let xData: string[] = [];
+        const end = Math.round((new Date().getTime() - 24 * 60 * 60 * 1000) / 1000);
+        const start = end - 24 * 60 * 60;
+
+
+        switch (filter) {
+            case 0: 
+            seriesData = getDataByExchange()[0];
+            xData = getDataByExchange()[1];  
+            break; 
+
+            case 1: 
+            seriesData = getDataByCoin()[0];
+            xData = getDataByCoin()[1];  
+            break; 
+      
+            default: 
+              break; 
+        }
+
 
         // set chart options
         chart.setOption({
@@ -137,7 +182,16 @@ const StackedBarChart = ( {data,  premiumData} : any) => {
         });
 
         echartsResize(chart);
-    }, [data]);
+    }, [data,filter]);
+
+    const handleFilterChange = (value: number) => {
+        setFilter(value); 
+    }; 
+
+    const handleFilterVolChange = (value : number) =>{
+        console.log(value)
+        onChange(value)
+    }
 
     
 
@@ -152,15 +206,15 @@ const StackedBarChart = ( {data,  premiumData} : any) => {
                 <div className='px-2 flex flex-col'>
                     <DropdownIndex 
                         title={`Exchange`}
-                        options={coinExchangeOption}
-                        onChange={handleExchangeChange}
+                        options={byExchangeCoin}
+                        onChange={handleFilterChange}
                     />
                 </div>
                 <div className='px-2 flex flex-col'>
                     <DropdownIndex 
                         title={`Type`}
                         options={volumeOption}
-                        onChange={handleVolumeChange}
+                        onChange={handleFilterVolChange}
                    
                     />
                 </div>

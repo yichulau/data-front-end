@@ -1,5 +1,6 @@
 import React,  { useContext, useEffect, useState } from 'react'
 import Image from "next/image";
+import { useRouter } from "next/router";
 import MyThemeContext from "../../store/myThemeContext";
 import { FaMoon,FaSun } from 'react-icons/fa';
 import Link from 'next/link'
@@ -55,16 +56,16 @@ const TopNavigation = () => {
                             <div className="hidden peer-hover:flex hover:flex
                             w-[200px]
                             flex-col bg-white drop-shadow-lg absolute z-50 dark:bg-black">
-                                <Link href="/options/Strike">
+                                <Link href="/options/strike">
                                      <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white" >Options OI By Strike</div>
                                 </Link>
-                                <Link href="/options/StrikeVol">
+                                <Link href="/options/strikeVol">
                                      <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800  dark:text-white" >Options OI Volume By Strike</div>
                                 </Link>
-                                <Link href="/options/Expiry">
+                                <Link href="/options/expiry">
                                     <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white">Options OI By Expiry</div>
                                 </Link>
-                                <Link href="/options/ExpiryVol">
+                                <Link href="/options/expiryVol">
                                     <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white">Options OI Volume By Expiry</div>
                                 </Link>
                             </div>

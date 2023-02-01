@@ -1,8 +1,7 @@
- import React, { useState } from 'react'
+import React, { useState } from 'react'
 
-const Dropdown = ({title , options, onChange} : any) => {
-
-    const initialTitle = title !== 'Symbol' ? 'ALL' : 'BTC';
+const DropdownIndex = ({title , options, onChange} : any) => {
+    const initialTitle = title === 'Exchange' ? 'By Exchange' : 'Notional';
     const [selectedOption, setSelectedOption] = useState(initialTitle);
     const [showOptions, setShowOptions] = useState(false);
   
@@ -19,7 +18,6 @@ const Dropdown = ({title , options, onChange} : any) => {
 
   return (
     <>
-        <label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> {title}</label>
         <button 
             onClick={toggleOptions}
             className="text-[#58667E] bg-[#EFF2F5] hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-800" type="button">{selectedOption}<svg className="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
@@ -40,4 +38,4 @@ const Dropdown = ({title , options, onChange} : any) => {
   )
 }
 
-export default Dropdown 
+export default DropdownIndex

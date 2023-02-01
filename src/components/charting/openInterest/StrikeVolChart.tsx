@@ -38,7 +38,7 @@ const StrikeVolChart = ({data ,error, loading} : any) => {
             feature: {
               mark: { show: true },
               dataView: { show: true, readOnly: false },
-              saveAsImage: { show: true }
+              saveAsImage: { show: true, name: "Options Open Interest Volume By Strike" }
             }
         },  
         xAxis: {
@@ -47,7 +47,7 @@ const StrikeVolChart = ({data ,error, loading} : any) => {
         },
         yAxis: {
           type: "value",
-          name: "Open Interest Volume (BTC)",
+          name: "Open Interest Volume By Coin",
           axisLabel:{
             formatter: function (value: any) {
                 if (value >= 1000) {

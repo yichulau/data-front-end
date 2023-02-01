@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import Dropdown from '../../components/misc/Dropdown'
 import useFetchSingleData from '../../hooks/useFetchSingleData';
 import ExpiryChart from '../../components/charting/openInterest/ExpiryChart';
-const expiry = () => {
+
+const Expiry = () => {
+
     const [exchangeOption, setExchangeOption] = useState('ALL')
     const [ccyOption, setCcyOption] = useState('BTC')
     const [keysOptions, setKeysOptions] = useState('ALL')
@@ -101,4 +103,4 @@ const expiry = () => {
   )
 }
 
-export default expiry
+export default Expiry

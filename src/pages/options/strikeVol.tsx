@@ -3,7 +3,7 @@ import Dropdown from '../../components/misc/Dropdown'
 import useFetchSingleData from '../../hooks/useFetchSingleData';
 import StrikeVolChart from '../../components/charting/openInterest/StrikeVolChart';
 
-const strikeVol = () => {
+const StrikeVol = () => {
   const [exchangeOption, setExchangeOption] = useState('ALL')
     const [ccyOption, setCcyOption] = useState('BTC')
     const [keysOptions, setKeysOptions] = useState('ALL')
@@ -102,4 +102,4 @@ const strikeVol = () => {
   )
 }
 
-export default strikeVol
+export default StrikeVol

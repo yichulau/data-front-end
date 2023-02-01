@@ -4,7 +4,7 @@ import useFetchSingleData from '../../hooks/useFetchSingleData';
 import ExpiryVolChart from '../../components/charting/openInterest/ExpiryVolChart';
 
 
-const expiryVol = () => {
+const ExpiryVol = () => {
     const [exchangeOption, setExchangeOption] = useState('ALL')
     const [ccyOption, setCcyOption] = useState('BTC')
     const [keysOptions, setKeysOptions] = useState('ALL')
@@ -103,4 +103,4 @@ const expiryVol = () => {
   )
 }
 
-export default expiryVol
+export default ExpiryVol

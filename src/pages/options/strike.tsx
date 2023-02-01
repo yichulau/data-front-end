@@ -4,7 +4,7 @@ import StrikeChart from '../../components/charting/openInterest/StrikeChart';
 import useFetchSingleData from '../../hooks/useFetchSingleData';
 
 
-const strike = () => {
+const Strike = () => {
     const [exchangeOption, setExchangeOption] = useState('ALL')
     const [ccyOption, setCcyOption] = useState('BTC')
     const [keysOptions, setKeysOptions] = useState('ALL')
@@ -108,4 +108,4 @@ const strike = () => {
   )
 }
 
-export default strike
+export default Strike

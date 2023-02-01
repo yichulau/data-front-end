@@ -39,7 +39,10 @@ const ExpiryChart = ({data ,error, loading} : any) => {
             feature: {
               mark: { show: true },
               dataView: { show: true, readOnly: false },
-              saveAsImage: { show: true }
+              saveAsImage: { 
+                show: true,
+                name: 'Options Open Interest By Expiry'
+             }
             }
         },  
         xAxis: {
@@ -48,7 +51,7 @@ const ExpiryChart = ({data ,error, loading} : any) => {
         },
         yAxis: {
           type: "value",
-          name: "Open Interest (BTC)",
+          name: "Open Interest By Coin",
           axisLabel:{
             formatter: function (value: any) {
                 if (value >= 1000) {

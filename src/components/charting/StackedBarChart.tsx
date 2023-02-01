@@ -5,6 +5,8 @@ import { echartsResize } from '../../utils/resize';
 import moment from 'moment';
 import { exchangeModel } from '../../models/exchangeModel';
 import SelectOption from '../misc/SelectOption';
+import Dropdown from '../misc/Dropdown';
+import DropdownIndex from '../misc/DropdownIndex';
 
 interface Data {
     coinCurrencyID: number;
@@ -14,25 +16,38 @@ interface Data {
 }
 
 
-const StackedBarChart = ( {data } : any) => {
+const StackedBarChart = ( {notionalData,  premiumData} : any) => {
 
     const chartRef = useRef<HTMLDivElement>(null);
+    const [data, setData] = useState(notionalData)
 
-    const handleSelectOption = (event : any) =>{
-       const { value } = event.target;
+    const handleExchangeChange = (value : any)=>{
+
     }
+
+    const handleVolumeChange = (value : any )=>{
+       if(value === 'Notional'){
+        setData(notionalData)
+       }
+       if(value === 'Premium'){
+        setData(premiumData)
+       }
+    }
+
+    const volumeOption = [
+        {id: 0, value: 'Notional'},
+        {id: 1, value: 'Premium'}
+    ]
+    const coinExchangeOption = [
+        {id: 1, value: 'By Exchange'},
+        {id: 2, value: 'By Currency'},
+    ]
 
     useEffect(() => {
         if (!chartRef.current) {
             return;
           }
         const chart = echarts.init(chartRef.current);
-
-        // format timestamp to local timezone
-        // const dataTimestamp = data.map((item : any)=> {
-        //     item.ts = moment.unix(item.ts).format('DD HH:mm');
-        //     return item;
-        // });
 
         // group data by ts and exchangeId
         const groupedData : any = {};
@@ -78,7 +93,6 @@ const StackedBarChart = ( {data } : any) => {
                 feature: {
                   mark: { show: true },
                   dataView: { show: true, readOnly: false },
-                  magicType: { show: true, type: ['line', 'bar'] },
                   saveAsImage: { show: true }
                 }
             },
@@ -89,7 +103,17 @@ const StackedBarChart = ( {data } : any) => {
             xAxis: {
                 data: xData
             },
-            yAxis: {},
+            yAxis: {
+                name: "Options Volume",
+                axisLabel:{
+                    formatter: function (value: any) {
+                        if (value >= 1000000) {
+                            value = value / 1000000 + 'M';
+                        }
+                        return value;
+                    }
+                  }
+            },
             series: Object.keys(seriesData).map(exchangeId => {
                 return {
                     name: exchangeId,
@@ -120,12 +144,28 @@ const StackedBarChart = ( {data } : any) => {
     
   return (
    <>
-    <h2 className='text-center'>Chart Of Options Volume</h2>
+    <h2 className="ml-2 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Chart Of Options Volume</h2>
     <div style={{ textAlign: "center" }}>
 
-        <div className='flex flex-row justify-between'>
-            <div>
-                <SelectOption handleSelectOption={handleSelectOption} />
+        <div className='flex flex-row justify-between mb-6'>
+            <div className='flex'>
+                <div className='px-2 flex flex-col'>
+                    <DropdownIndex 
+                        title={`Exchange`}
+                        options={coinExchangeOption}
+                        onChange={handleExchangeChange}
+                    />
+                </div>
+                <div className='px-2 flex flex-col'>
+                    <DropdownIndex 
+                        title={`Type`}
+                        options={volumeOption}
+                        onChange={handleVolumeChange}
+                   
+                    />
+                </div>
+   
+               
             </div>
         </div>
         <div ref={chartRef}  style={{ height: '400px', width:'100%'}}></div>

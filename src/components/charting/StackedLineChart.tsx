@@ -130,6 +130,14 @@ const StackedLineChart = ( {data } : any) => {
             },
             yAxis: {
                 name: "Open Interest",
+                axisLabel:{
+                    formatter: function (value: any) {
+                        if (value >= 1000000) {
+                            value = value / 1000000 + 'M';
+                        }
+                        return value;
+                    }
+                  }
             },
             series: Object.keys(seriesData).map(exchangeId => {
                 return {
@@ -163,7 +171,7 @@ const StackedLineChart = ( {data } : any) => {
 
   return (
    <>
-    <h2 className='text-center'>Chart Of Options Open Interest</h2>
+    <h2 className="ml-2 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Chart Of Options Open Interest</h2>
     <br />
     <div style={{ textAlign: "center" }}>
         <div>

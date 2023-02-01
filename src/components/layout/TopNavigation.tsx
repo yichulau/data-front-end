@@ -55,16 +55,16 @@ const TopNavigation = () => {
                             <div className="hidden peer-hover:flex hover:flex
                             w-[200px]
                             flex-col bg-white drop-shadow-lg absolute z-50 dark:bg-black">
-                                <Link href="/options/strike">
+                                <Link href="/options/Strike">
                                      <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white" >Options OI By Strike</div>
                                 </Link>
-                                <Link href="/options/strikeVol">
+                                <Link href="/options/StrikeVol">
                                      <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800  dark:text-white" >Options OI Volume By Strike</div>
                                 </Link>
-                                <Link href="/options/expiry">
+                                <Link href="/options/Expiry">
                                     <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white">Options OI By Expiry</div>
                                 </Link>
-                                <Link href="/options/expiryVol">
+                                <Link href="/options/ExpiryVol">
                                     <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white">Options OI Volume By Expiry</div>
                                 </Link>
                             </div>

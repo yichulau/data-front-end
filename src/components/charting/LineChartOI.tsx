@@ -105,7 +105,7 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
         },
         yAxis: {
           type: 'value',
-          name: 'Open Interest (coin)',
+          name: 'Open Interest',
           boundaryGap: [0, '100%'],
           axisLabel:{
             formatter: function (value: any) {

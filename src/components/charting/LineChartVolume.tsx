@@ -106,7 +106,7 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
         },
         yAxis: {
           type: 'value',
-          name: 'Options Volume (coin)',
+          name: 'Options Volume',
           boundaryGap: [0, '100%'],
           axisLabel:{
             formatter: function (value: any) {

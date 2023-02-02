@@ -96,7 +96,7 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
           feature: {
             mark: { show: true },
             dataView: { show: true, readOnly: false },
-            saveAsImage: { show: true }
+            saveAsImage: { show: true, name:"Options Volume By Coin " }
           }
         },
         xAxis: {

@@ -10,7 +10,7 @@ const Footer = () => {
       &copy; 2022-2023 <a href="#" className="hover:underline" target="_blank">Ribbon Dashboard</a>. All rights reserved.
   </p>
   <div className="flex justify-center items-center space-x-1">
-    <a href="#" data-tooltip-target="tooltip-facebook" className="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 dark:hover:text-white hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-600">
+    {/* <a href="#" data-tooltip-target="tooltip-facebook" className="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 dark:hover:text-white hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-600">
         <svg  className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" >
             <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
         </svg>
@@ -49,7 +49,7 @@ const Footer = () => {
     <div id="tooltip-dribbble" role="tooltip" className="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
         Follow us on Dribbble
         <div className="tooltip-arrow" data-popper-arrow></div>
-    </div>
+    </div> */}
 </div>
 </footer>
   )

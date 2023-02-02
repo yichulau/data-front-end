@@ -101,11 +101,10 @@ const StackedLineChart = ( {data } : any) => {
             seriesData = getDataByCoin()[0];
             xData = getDataByCoin()[1];  
             break; 
-      
+          
             default: 
               break; 
         }
-
         // set chart options
         chart.setOption({
             tooltip: {
@@ -122,7 +121,6 @@ const StackedLineChart = ( {data } : any) => {
                 feature: {
                   mark: { show: true },
                   dataView: { show: true, readOnly: false },
-                  magicType: { show: true, type: ['line'] },
                   saveAsImage: { show: true }
                 }
             },
@@ -156,15 +154,17 @@ const StackedLineChart = ( {data } : any) => {
             }),
             dataZoom: [
                 {
-                    type: 'slider',
-                    start: start,
-                    end: end,
-                    xAxisIndex: [0],
-                },
-                {
                     type: 'inside',
-                    xAxisIndex: [0],
-                }
+                    start: end -30,
+                    end: end,
+                    xAxisIndex: [0]
+                  },
+                  {
+                    type: 'slider',
+                    start: end -30,
+                    end: end,
+                    xAxisIndex: [0]
+                  }
             ],
         });
 

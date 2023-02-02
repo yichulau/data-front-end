@@ -13,6 +13,8 @@ import { premiumVolume } from '../../utils/premium-volume-urls';
 import useFetchPremium from '../../hooks/useFetchPremium';
 import LineChartVolume from './LineChartVolume';
 import MiddleMedium from './MiddleMedium';
+import LineChartOI from './LineChartOI';
+import Loader from '../misc/Loader';
 
 const ChartingCard = ({option}: any) => {
 
@@ -28,7 +30,9 @@ const ChartingCard = ({option}: any) => {
     const fetchPremiumData = useFetchPremium(urlsPremium);
 
     const aggregrateNotionalData = [];
+    const aggregrateOIData = [];
     const map = new Map();
+    const oiMap = new Map();
 
     const newFetchNotionalData = fetchNotionalData.map((item: any)=>{
       return {
@@ -63,18 +67,31 @@ const ChartingCard = ({option}: any) => {
       map.get(key).value += parseFloat(item.value);
     }
     const earliestTimestamp = Math.min(...aggregrateNotionalData.map(item => item.ts));
+    const latestTimeStamp = Math.max(...aggregrateNotionalData.map(item => item.ts))
 
+    for (const item of fetchInterestData) {
+      const key = item.ts + item.coinCurrencyID;
+      if (!oiMap.has(key)) {
+        oiMap.set(key, { ts: item.ts, value: 0, coinCurrencyID: item.coinCurrencyID });
+        aggregrateOIData.push(oiMap.get(key));
+      }
+      oiMap.get(key).value += parseFloat(item.value);
+    }
+    const earliestOITimestamp = Math.min(...aggregrateOIData.map(item => item.ts));
+    const latestOITimeStamp = Math.max(...aggregrateOIData.map(item => item.ts))
 
+    console.log(aggregrateOIData)
 
     return (
     <>
-        <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-black dark:border-gray-700">
           <div className='w-full'>
             {option === 'StackedBarChart' ? (<MiddleMedium newFetchNotionalData={newFetchNotionalData} newFetchPremiumData={newFetchPremiumData} /> ) : null }
             {/* {option === 'StackedBarChart' ? (<StackedBarChart data={newFetchNotionalData} onChange={volFilterChange} /> ) : null } */}
             {/* {option === 'BarChart' ? (<BarChart data={useFetchData(urlsContracts)} />) : null } */}
             {option === "StackedLineChart" ? (<StackedLineChart data={fetchInterestData}  />) : null }
-            {option === "LineChartVolume" ? (<LineChartVolume data={aggregrateNotionalData} earliestTimestamp={earliestTimestamp} />) : null }
+            {option === "LineChartVolume" ? (<LineChartVolume data={aggregrateNotionalData} earliestTimestamp={earliestTimestamp} latestTimeStamp={latestTimeStamp} />) : null }
+            {option === "LineChartOI" ? (<LineChartOI data={aggregrateOIData} earliestTimestamp={earliestOITimestamp} latestTimeStamp={latestOITimeStamp} />) : null }
           </div>
         </div>
     </>

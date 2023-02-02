@@ -21,6 +21,7 @@ const Home: NextPage = () => {
           <ChartingCard option="StackedBarChart"/>
           <ChartingCard option="StackedLineChart"/>
           <ChartingCard option="LineChartVolume"/>
+          <ChartingCard option="LineChartOI" />
         </div>  
  
       </main>

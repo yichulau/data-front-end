@@ -6,7 +6,8 @@ import { echartsResize } from '../../utils/resize';
 import moment from 'moment';
 
 
-const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
+const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
+
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
     const [dataSet,setDataSet] = useState(data);
@@ -58,19 +59,17 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
       const chart = echarts.init(chartRef.current);
       chart.clear(); // clear off any previous plotted chart 
 
-      console.log(xData)
+
 
       switch (filter) {
        
         case 0: 
-        console.log(filter)
         data = getDataByCoin('BTC')[0];
         // seriesData = getDataByExchange()[0];
         xData = getDataByCoin('BTC')[1];  
         break; 
 
         case 1: 
-        console.log(filter)
         data = getDataByCoin('ETH')[0];
         xData = getDataByCoin('ETH')[1];
         break; 
@@ -106,7 +105,7 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
         },
         yAxis: {
           type: 'value',
-          name: 'Options Volume (coin)',
+          name: 'Open Interest (coin)',
           boundaryGap: [0, '100%'],
           axisLabel:{
             formatter: function (value: any) {
@@ -133,7 +132,7 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
         ],
         series: [
             {
-              name: 'Options Volume',
+              name: 'Options Open Interest',
               type: 'line',
               symbol: 'none',
               sampling: 'lttb',
@@ -155,39 +154,38 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
   
       echartsResize(chart);
     },[data,filter])
+
+    return (
+        <>
+        <h2 className="ml-2 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Chart Of Open Interest By Coin</h2>
+        <div style={{ textAlign: "left" }}>
     
-   
-
-  return (
-    <>
-    <h2 className="ml-2 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Chart Of Options Volume By Coin</h2>
-    <div style={{ textAlign: "left" }}>
-
-        <div className='flex flex-row justify-between mb-6'>
-            <div className='flex'>
-                <div className='px-2 flex flex-col'>
-                    <DropdownCoin 
-                        title={`By Coin`}
-                        options={coinExchangeOption}
-                        onChange={handleFilterChange}
-                    />
-                </div>
-                {/* <div className='px-2 flex flex-col'>
-                    <DropdownIndex 
-                        title={`Type`}
-                        options={volumeOption}
-                        onChange={handleVolumeChange}
+            <div className='flex flex-row justify-between mb-6'>
+                <div className='flex'>
+                    <div className='px-2 flex flex-col'>
+                        <DropdownCoin 
+                            title={`By Coin`}
+                            options={coinExchangeOption}
+                            onChange={handleFilterChange}
+                        />
+                    </div>
+                    {/* <div className='px-2 flex flex-col'>
+                        <DropdownIndex 
+                            title={`Type`}
+                            options={volumeOption}
+                            onChange={handleVolumeChange}
+                       
+                        />
+                    </div> */}
+       
                    
-                    />
-                </div> */}
-   
-               
+                </div>
             </div>
+            
+            <div ref={chartRef}  style={{ height: '400px', width:'100%'}}></div>
         </div>
-        <div ref={chartRef}  style={{ height: '400px', width:'100%'}}></div>
-    </div>
-   </>
-  )
+       </>
+      )
 }
 
-export default LineChartVolume
+export default LineChartOI

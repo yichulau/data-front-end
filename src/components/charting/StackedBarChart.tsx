@@ -21,8 +21,6 @@ const StackedBarChart = ( {data,  onChange} : any) => {
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
 
-    console.log(data)
-
     const volumeOption = [
         {id: 0, value: 'Notional'},
         {id: 1, value: 'Premium'}
@@ -169,15 +167,17 @@ const StackedBarChart = ( {data,  onChange} : any) => {
             }),
             dataZoom: [
                 {
-                    type: 'slider',
-                    start: start,
-                    end: end,
-                    xAxisIndex: [0],
-                },
-                {
                     type: 'inside',
-                    xAxisIndex: [0],
-                }
+                    start: end -30,
+                    end: end,
+                    xAxisIndex: [0]
+                  },
+                  {
+                    type: 'slider',
+                    start: end -30,
+                    end: end,
+                    xAxisIndex: [0]
+                  }
             ],
         });
 

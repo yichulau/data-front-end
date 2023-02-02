@@ -11,9 +11,7 @@ const useFetchNotional = (urls: string[]) => {
               const responses = await Promise.all(urls.map(url => fetch(url)));
               const data : any = await Promise.all(responses.map(response => response.json()));
               const results = data.map((result : any, index: any)=>{
-                const regex = /\/api\/v1\.0\/([a-zA-Z]+?)\/([a-zA-Z.]+?)\/volume-notional/;
-
-                const match = urls[index].match(regex) || '';
+ 
                 const results = result.result;
 
                 return results

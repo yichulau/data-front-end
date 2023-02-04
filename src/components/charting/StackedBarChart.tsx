@@ -96,7 +96,7 @@ const StackedBarChart = ( {data,  onChange} : any) => {
         console.log(value)
         onChange(value)
     }
-
+   
     useEffect(() => {
         if (!chartRef.current) {
             return;
@@ -160,6 +160,9 @@ const StackedBarChart = ( {data,  onChange} : any) => {
             },
             legend: {
                 data: Object.keys(seriesData),
+                itemWidth: 16,
+                itemHeight: 9,
+                x: window.innerWidth < 600 ? 'left' :'center',
                 orient: "horizontal",
             },
             xAxis: {

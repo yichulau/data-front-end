@@ -8,21 +8,18 @@ import MyThemeContext from '../../store/myThemeContext';
 
 
 const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
+    const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
+    let xData: string[] = [];
+    let chart: any;
 
-    const volumeOption = [
-        {id: 0, value: 'Notional'},
-        {id: 1, value: 'Premium'}
-    ] 
     const coinExchangeOption = [
         {id: 0, value: 'BTC'},
         {id: 1, value: 'ETH'},
         {id: 2, value: 'SOL'},
     ]
-    let xData: string[] = [];
-
-
+    
     const handleFilterChange = (value: number) => {
       setFilter(value); 
     }; 
@@ -33,21 +30,16 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
       filteredDataset.forEach((item:any)=>{
         xData.push(moment.unix(Number(item.ts)).format('DD-MM-yy HH:mm:ss'));
       })
-
       return [filteredDataset, xData]
-      
     } 
-
-
 
     useEffect(()=>{
       if (!chartRef.current) {
         return;
       }
-
       const end =  latestTimeStamp;
       const start = earliestTimestamp;
-      const chart = echarts.init(chartRef.current);
+      chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
       chart.clear(); // clear off any previous plotted chart 
 
       switch (filter) {
@@ -71,12 +63,36 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
         default: 
           break; 
       }
-
-      chart.setOption({
+      const option = {
+        backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
         tooltip: {
+          show: true,
           trigger: 'axis',
-          position: function (pt : any) {
-            return [pt[0], '10%'];
+          textStyle: {
+              color: '#fff',
+              fontSize: 14
+          },
+          backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+          borderColor: "rgba(18, 57, 60, .8)",
+          formatter: function (params : any) {
+            let str = "";
+            let strike = "";
+            for (let i = 0; i < params.length; i++) {
+                if (params[i].seriesName !== "") {
+                    let value = params[i].value
+                    if (value >= 1000000) {
+                      value = Number(value / 1000000).toFixed(2) + 'M';
+                    }
+                    strike = 'Time: '+ params[0].name + "<br/>";
+                    str +=  
+                        params[i].marker +
+                        params[i].seriesName +
+                        ' : '+
+                        value + ` ` +
+                        "<br/>";
+                }
+            }
+            return  strike + str;
           }
         },
         toolbox: {
@@ -87,6 +103,13 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
             saveAsImage: { show: true, name:"Options Volume By Coin " }
           }
         },
+        grid: {
+          top: '18%',
+          left: '2%',
+          right: '4%',
+          bottom: '8%',
+          containLabel: true
+        },
         xAxis: {
           type: 'category',
           boundaryGap: false,
@@ -94,7 +117,7 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
         },
         yAxis: {
           type: 'value',
-          name: 'Options Volume',
+          name: `Options Vol (${filter === 0 ? 'BTC' : (filter === 1 ? 'ETH' : (filter === 2 ? 'SOL' : ''))})`,
           boundaryGap: [0, '100%'],
           axisLabel:{
             formatter: function (value: any) {
@@ -105,8 +128,6 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
             },
             textStyle: {
               fontWeight: 'bold',
-              color: 'text-white dark:text-white',
-
             }
           }
         },
@@ -144,10 +165,14 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
               data: data
             }
           ]
-      })
-  
+      }
+
+      chart.setOption(option)
       echartsResize(chart);
-    },[data,filter])
+      return () => {
+        chart.dispose();
+      };
+    },[data,filter, isDarkTheme])
     
    
 

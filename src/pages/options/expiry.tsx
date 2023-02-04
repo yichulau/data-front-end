@@ -80,6 +80,7 @@ const Expiry = () => {
                                 data={data}
                                 error={error}
                                 loading={loading}
+                                ccyOption={ccyOption}
                             />
 
                         ) : (

@@ -1,18 +1,24 @@
-import React, { useEffect,useState, useRef } from 'react'
+import React, { useEffect,useState, useRef, useContext } from 'react'
 import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import DropdownCoin from '../misc/DropdownCoin';
 import { echartsResize } from '../../utils/resize';
 import moment from 'moment';
+import MyThemeContext from '../../store/myThemeContext';
 
 
 const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
-
+    const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
-    const [dataSet,setDataSet] = useState(data);
-
     let xData: string[] = [];
+    let chart: any;
+
+    const coinExchangeOption = [
+      {id: 0, value: 'BTC'},
+      {id: 1, value: 'ETH'},
+      {id: 2, value: 'SOL'},
+    ]
 
     const handleFilterChange = (value: number) => {
       setFilter(value); 
@@ -29,43 +35,18 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
       
     } 
 
- 
-
-    const volumeOption = [
-        {id: 0, value: 'Notional'},
-        {id: 1, value: 'Premium'}
-    ]
-    const coinExchangeOption = [
-        {id: 0, value: 'BTC'},
-        {id: 1, value: 'ETH'},
-        {id: 2, value: 'SOL'},
-    ]
-
-
-
-
-
-
-    
-
-
     useEffect(()=>{
       if (!chartRef.current) {
         return;
       }
-
       const end =  latestTimeStamp;
       const start = earliestTimestamp;
-      const chart = echarts.init(chartRef.current);
+      chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
       chart.clear(); // clear off any previous plotted chart 
 
-
-
       switch (filter) {
-       
         case 0: 
         data = getDataByCoin('BTC')[0];
-        // seriesData = getDataByExchange()[0];
         xData = getDataByCoin('BTC')[1];  
         break; 
 
@@ -83,11 +64,36 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
           break; 
       }
 
-      chart.setOption({
+      const option = {
+        backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
         tooltip: {
+          show: true,
           trigger: 'axis',
-          position: function (pt : any) {
-            return [pt[0], '10%'];
+          textStyle: {
+              color: '#fff',
+              fontSize: 14
+          },
+          backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+          borderColor: "rgba(18, 57, 60, .8)",
+          formatter: function (params : any) {
+            let str = "";
+            let strike = "";
+            for (let i = 0; i < params.length; i++) {
+                if (params[i].seriesName !== "") {
+                    let value = params[i].value
+                    if (value >= 1000000) {
+                      value = Number(value / 1000000).toFixed(2) + 'M';
+                    }
+                    strike = 'Time: '+ params[0].name + "<br/>";
+                    str +=  
+                        params[i].marker +
+                        params[i].seriesName +
+                        ' : '+
+                        value + ` ` +
+                        "<br/>";
+                }
+            }
+            return  strike + str;
           }
         },
         toolbox: {
@@ -98,6 +104,13 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
             saveAsImage: { show: true, name:"Options Open Interest By Coin " }
           }
         },
+        grid: {
+          top: '18%',
+          left: '2%',
+          right: '4%',
+          bottom: '8%',
+          containLabel: true
+        },
         xAxis: {
           type: 'category',
           boundaryGap: false,
@@ -105,7 +118,7 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
         },
         yAxis: {
           type: 'value',
-          name: 'Open Interest',
+          name: `Open Interest (${filter === 0 ? 'BTC' : (filter === 1 ? 'ETH' : (filter === 2 ? 'SOL' : ''))})`,
           boundaryGap: [0, '100%'],
           axisLabel:{
             formatter: function (value: any) {
@@ -150,10 +163,13 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
               data: data
             }
           ]
-      })
-  
+      }
+      chart.setOption(option)
       echartsResize(chart);
-    },[data,filter])
+      return () => {
+        chart.dispose();
+      };
+    },[data,filter, isDarkTheme])
 
     return (
         <>

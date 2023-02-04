@@ -1,19 +1,21 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import calculateRatio from '../../../utils/calculateRatio';
 import { echartsResize } from '../../../utils/resize';
+import MyThemeContext from '../../../store/myThemeContext';
 
-const ExpiryVolChart = ({data ,error, loading} : any) => {
+const ExpiryVolChart = ({data ,error, loading, ccyOption} : any) => {
+    const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef: any = useRef();
     const responseData = data.data;
     const {  data: oiData } = responseData;
-  
-    
+    let chart: any;
 
     useEffect(()=>{
-      const chart = echarts.init(chartRef.current);
+      chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
       const option = {
+        backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
         tooltip: {
           show: true,
           trigger: 'axis',
@@ -24,22 +26,21 @@ const ExpiryVolChart = ({data ,error, loading} : any) => {
           backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
           borderColor: "rgba(18, 57, 60, .8)",
           formatter: function (params : any) {
-              console.log(params, '6666666')
-              return (
-                  'Expiry '+ params[0].name +
-                  '<br/>' +
-                  params[0].marker +
-                  params[0].seriesName +
-                  ' : ' +
-                  params[0].value +
-                  '<br/>' +
-                  params[1].marker +
-                  params[1].seriesName +
-                  ' : ' +
-                  params[1].value 
-                  
-              );
-          },
+            let str = "";
+            let strike = "";
+            for (let i = 0; i < params.length; i++) {
+                if (params[i].seriesName !== "") {
+                    strike = 'Expiry '+ params[0].name + "<br/>";
+                    str +=  
+                        params[i].marker +
+                        params[i].seriesName +
+                        ' : '+
+                        params[i].value + ` ${ccyOption}` +
+                        "<br/>";
+                }
+            }
+            return  strike + str;
+        },
           axisPointer: {
               lineStyle: {
                   color: {
@@ -72,6 +73,13 @@ const ExpiryVolChart = ({data ,error, loading} : any) => {
               orient: "horizontal",
               bottom: 0
           },
+          grid: {
+              top: '18%',
+              left: '2%',
+              right: '4%',
+              bottom: '8%',
+              containLabel: true
+          },
           toolbox: {
               show: true,
               feature: {
@@ -86,7 +94,7 @@ const ExpiryVolChart = ({data ,error, loading} : any) => {
           },
           yAxis: {
             type: "value",
-            name: "Open Interest Volume By Coin",
+            name: `Open Interest Vol (${ccyOption})`,
             axisLabel:{
               formatter: function (value: any) {
                   if (value >= 1000) {
@@ -95,9 +103,6 @@ const ExpiryVolChart = ({data ,error, loading} : any) => {
                   return value;
               }
             }
-          },
-          grid:{
-              bottom: 60
           },
           series: [
             {
@@ -146,22 +151,28 @@ const ExpiryVolChart = ({data ,error, loading} : any) => {
       };
       chart.setOption(option);
       echartsResize(chart)
+      return () => {
+        chart.dispose();
+      };
+    },[data,isDarkTheme])
 
-    },[oiData])
+
+
+    
 
   return (
     <>
          <div className='mt-2 mb-2' style={{ maxWidth: "100%", maxHeight: "400px" }}>
             {/* <ReactEcharts option={option}/> */}
-            <div ref={chartRef} style={{height: "300px"}}></div>
+            <div ref={chartRef} style={{height: "310px"}}></div>
             <div className='flex flex-row items-center justify-center mt-6'>
                 <div className="py-4 px-4 text-center">
                     <div className="text-xs md:text-lg border-b border-[#16c784] font-bold">Call Open Interest Volume</div>
-                    <div className='text-xs md:text-lg font-bold'>{oiData.callVol} BTC</div>
+                    <div className='text-xs md:text-lg font-bold'>{oiData.callVol} {ccyOption}</div>
                 </div>
                 <div className="py-4 px-4 text-center">
                     <div className="text-xs md:text-lg border-b border-[#ea3943] font-bold">Put Open Interest Volume</div>
-                    <div className='text-xs md:text-lg font-bold'>{oiData.putVol} BTC</div>
+                    <div className='text-xs md:text-lg font-bold'>{oiData.putVol} {ccyOption}</div>
                 </div>
                 <div className="py-4 px-4 text-center">
                     <div className="text-xs md:text-lg font-bold">Call/Put Ratio</div>

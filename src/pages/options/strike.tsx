@@ -80,6 +80,7 @@ const Strike = () => {
                                 data={data}
                                 error={error}
                                 loading={loading}
+                                ccyOption={ccyOption}
                             />
 
                         ) : (

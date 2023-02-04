@@ -80,6 +80,7 @@ const ExpiryVol = () => {
                                   data={data}
                                   error={error}
                                   loading={loading}
+                                  ccyOption={ccyOption}
                               />
 
                           ) : (

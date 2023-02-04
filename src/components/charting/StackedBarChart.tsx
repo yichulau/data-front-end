@@ -1,4 +1,4 @@
-import React, { useEffect,useState, useRef } from 'react'
+import React, { useEffect,useState, useRef, useContext } from 'react'
 import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { echartsResize } from '../../utils/resize';
@@ -7,6 +7,7 @@ import { exchangeModel } from '../../models/exchangeModel';
 import SelectOption from '../misc/SelectOption';
 import Dropdown from '../misc/Dropdown';
 import DropdownIndex from '../misc/DropdownIndex';
+import MyThemeContext from '../../store/myThemeContext';
 
 interface Data {
     coinCurrencyID: number;
@@ -17,10 +18,12 @@ interface Data {
 
 
 const StackedBarChart = ( {data,  onChange} : any) => {
-
+    const { isDarkTheme }= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
-
+    let seriesData : any= {};
+    let xData: string[] = [];
+    let chart: any;
     const volumeOption = [
         {id: 0, value: 'Notional'},
         {id: 1, value: 'Premium'}
@@ -29,7 +32,6 @@ const StackedBarChart = ( {data,  onChange} : any) => {
         {id: 0, value: 'By Exchange'},
         {id: 1, value: 'By Coin'}
     ]
-
     const getDataByExchange = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
         const groupedData : any = {};
@@ -58,7 +60,6 @@ const StackedBarChart = ( {data,  onChange} : any) => {
 
         return [seriesData, xData]; 
     }
-
     const getDataByCoin = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
         const groupedData : any = {};
@@ -87,48 +88,65 @@ const StackedBarChart = ( {data,  onChange} : any) => {
 
         return [seriesData, xData]; 
     }
-
-
+    const handleFilterChange = (value: number) => {
+        setFilter(value); 
+    }; 
+    const handleFilterVolChange = (value : number) =>{
+        console.log(value)
+        onChange(value)
+    }
 
     useEffect(() => {
         if (!chartRef.current) {
             return;
         }
-        const chart = echarts.init(chartRef.current);
-        chart.clear(); 
-
-        // convert grouped data to data array
-        let seriesData : any= {};
-        let xData: string[] = [];
         const end = Math.round((new Date().getTime() - 24 * 60 * 60 * 1000) / 1000);
         const start = end - 24 * 60 * 60;
-
+        chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
+        chart.clear(); 
 
         switch (filter) {
             case 0: 
             seriesData = getDataByExchange()[0];
             xData = getDataByExchange()[1];  
             break; 
-
             case 1: 
             seriesData = getDataByCoin()[0];
             xData = getDataByCoin()[1];  
             break; 
-      
             default: 
               break; 
         }
-
-
-        // set chart options
-        chart.setOption({
+        const options = {
+            backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
             tooltip: {
+                show: true,
                 trigger: 'axis',
-                axisPointer: {
-                  type: 'shadow',
-                  label: {
-                    show: true
+                textStyle: {
+                    color: '#fff',
+                    fontSize: 14
+                },
+                backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+                borderColor: "rgba(18, 57, 60, .8)",
+                formatter: function (params : any) {
+                  let str = "";
+                  let strike = "";
+                  for (let i = 0; i < params.length; i++) {
+                      if (params[i].seriesName !== "") {
+                          let value = params[i].value
+                          if (value >= 1000000) {
+                            value = Number(value / 1000000).toFixed(2) + 'M';
+                          }
+                          strike = 'Time: '+ params[0].name + "<br/>";
+                          str +=  
+                              params[i].marker +
+                              params[i].seriesName +
+                              ' : '+
+                              value + ` ` +
+                              "<br/>";
+                      }
                   }
+                  return  strike + str;
                 }
             },
             toolbox: {
@@ -179,19 +197,14 @@ const StackedBarChart = ( {data,  onChange} : any) => {
                     xAxisIndex: [0]
                   }
             ],
-        });
-
+        }
+        chart.setOption(options);
         echartsResize(chart);
-    }, [data,filter]);
+        return () => {
+            chart.dispose();
+        };
+    }, [data,filter, isDarkTheme]);
 
-    const handleFilterChange = (value: number) => {
-        setFilter(value); 
-    }; 
-
-    const handleFilterVolChange = (value : number) =>{
-        console.log(value)
-        onChange(value)
-    }
 
     
 

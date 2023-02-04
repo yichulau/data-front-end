@@ -1,20 +1,19 @@
-import React, { useEffect,useState, useRef } from 'react'
+import React, { useEffect,useState, useRef, useContext } from 'react'
 import * as echarts from 'echarts';
 import moment from 'moment';
 import { Select, Form } from "antd";  
 import { echartsResize } from '../../utils/resize';
 import DropdownIndex from '../misc/DropdownIndex';
+import MyThemeContext from '../../store/myThemeContext';
 
 const StackedLineChart = ( {data } : any) => {
-
+    const { isDarkTheme }= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
-    const { Option } = Select;
     const [filter, setFilter] = useState(0); // 0 for filter by exchange, 1 for filter by currency
-    const layout = {
-      labelCol: { span: 8 },
-      wrapperCol: { span: 16 },
-      style: { width: "200px" },
-    }; 
+    
+    let seriesData : any= {};
+    let xData: string[] = [];
+    let chart: any;
 
     const byExchangeCoin = [
         {id: 0, value: 'By Exchange'},
@@ -49,7 +48,6 @@ const StackedLineChart = ( {data } : any) => {
 
         return [seriesData, xData]; 
     }
-
     const getDataByCoin = () => {
         // group data by ts and coinCurrencyID, and return the series data and x-axis data 
         const groupedData : any = {};
@@ -78,18 +76,18 @@ const StackedLineChart = ( {data } : any) => {
 
         return [seriesData, xData]; 
     }; 
+    const handleFilterChange = (value: number) => {
+        setFilter(value); 
+    }; 
 
     useEffect(() => {
         if (!chartRef.current) {
             return;
         }
-        const chart = echarts.init(chartRef.current);
-        chart.clear(); // clear off any previous plotted chart 
-
-        let seriesData : any= {};
-        let xData: string[] = [];
         const end = Math.round((new Date().getTime() - 24 * 60 * 60 * 1000) / 1000);
         const start = end - 24 * 60 * 60;
+        chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
+        chart.clear(); // clear off any previous plotted chart 
 
         switch (filter) {
             case 0: 
@@ -105,15 +103,37 @@ const StackedLineChart = ( {data } : any) => {
             default: 
               break; 
         }
-        // set chart options
-        chart.setOption({
+        
+        const options = {
+            backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
             tooltip: {
+                show: true,
                 trigger: 'axis',
-                axisPointer: {
-                  type: 'shadow',
-                  label: {
-                    show: true
+                textStyle: {
+                    color: '#fff',
+                    fontSize: 14
+                },
+                backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+                borderColor: "rgba(18, 57, 60, .8)",
+                formatter: function (params : any) {
+                  let str = "";
+                  let strike = "";
+                  for (let i = 0; i < params.length; i++) {
+                      if (params[i].seriesName !== "") {
+                          let value = params[i].value
+                          if (value >= 1000000) {
+                            value = Number(value / 1000000).toFixed(2) + 'M';
+                          }
+                          strike = 'Time: '+ params[0].name + "<br/>";
+                          str +=  
+                              params[i].marker +
+                              params[i].seriesName +
+                              ' : '+
+                              value + ` ` +
+                              "<br/>";
+                      }
                   }
+                  return  strike + str;
                 }
             },
             toolbox: {
@@ -166,14 +186,16 @@ const StackedLineChart = ( {data } : any) => {
                     xAxisIndex: [0]
                   }
             ],
-        });
+        }
 
-    echartsResize(chart);
-    }, [data, filter]);
+        chart.setOption(options);
+        echartsResize(chart);
+        return () => {
+            chart.dispose();
+        };
+    }, [data, filter, isDarkTheme]);
 
-    const handleFilterChange = (value: number) => {
-        setFilter(value); 
-    }; 
+
 
   return (
    <>

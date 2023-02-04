@@ -203,6 +203,13 @@ const StackedBarChart = ( {data,  onChange} : any) => {
                     },
                 }
             }),
+            grid: {
+                top: '18%',
+                left: '2%',
+                right: '4%',
+                bottom: '8%',
+                containLabel: true
+            },
             dataZoom: [
                 {
                     type: 'inside',

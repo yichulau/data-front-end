@@ -151,7 +151,7 @@ const StackedLineChart = ( {data } : any) => {
                 x: window.innerWidth < 600 ? 'left' :'center',
                 orient: "horizontal",
                 textStyle: {
-                    fontSize: window.innerWidth < 600 ? 6 : 12,
+                    fontSize: window.innerWidth < 600 ? 8 : 12,
                 }
             },
             xAxis: {

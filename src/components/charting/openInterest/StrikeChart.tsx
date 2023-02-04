@@ -97,8 +97,12 @@ const StrikeChart = ({data ,error, loading, ccyOption} : any) => {
           }
         }
       },
-      grid:{
-          bottom: 60
+      grid: {
+        top: '18%',
+        left: '6%',
+        right: '4%',
+        bottom: '8%',
+        containLabel: true
       },
       series: [
         {

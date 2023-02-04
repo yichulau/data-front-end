@@ -80,8 +80,6 @@ const ChartingCard = ({option}: any) => {
     const earliestOITimestamp = Math.min(...aggregrateOIData.map(item => item.ts));
     const latestOITimeStamp = Math.max(...aggregrateOIData.map(item => item.ts))
 
-    console.log(aggregrateOIData)
-
     return (
     <>
         <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-black dark:border-gray-700">

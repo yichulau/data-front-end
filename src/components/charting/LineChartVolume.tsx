@@ -1,17 +1,27 @@
-import React, { useEffect,useState, useRef } from 'react'
+import React, { useEffect,useState, useRef, useContext } from 'react'
 import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import DropdownCoin from '../misc/DropdownCoin';
 import { echartsResize } from '../../utils/resize';
 import moment from 'moment';
+import MyThemeContext from '../../store/myThemeContext';
 
 
 const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
-    const [dataSet,setDataSet] = useState(data);
 
+    const volumeOption = [
+        {id: 0, value: 'Notional'},
+        {id: 1, value: 'Premium'}
+    ] 
+    const coinExchangeOption = [
+        {id: 0, value: 'BTC'},
+        {id: 1, value: 'ETH'},
+        {id: 2, value: 'SOL'},
+    ]
     let xData: string[] = [];
+
 
     const handleFilterChange = (value: number) => {
       setFilter(value); 
@@ -28,24 +38,6 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
       
     } 
 
- 
-
-    const volumeOption = [
-        {id: 0, value: 'Notional'},
-        {id: 1, value: 'Premium'}
-    ]
-    const coinExchangeOption = [
-        {id: 0, value: 'BTC'},
-        {id: 1, value: 'ETH'},
-        {id: 2, value: 'SOL'},
-    ]
-
-
-
-
-
-
-    
 
 
     useEffect(()=>{
@@ -58,19 +50,15 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
       const chart = echarts.init(chartRef.current);
       chart.clear(); // clear off any previous plotted chart 
 
-      console.log(xData)
-
       switch (filter) {
        
         case 0: 
-        console.log(filter)
         data = getDataByCoin('BTC')[0];
         // seriesData = getDataByExchange()[0];
         xData = getDataByCoin('BTC')[1];  
         break; 
 
         case 1: 
-        console.log(filter)
         data = getDataByCoin('ETH')[0];
         xData = getDataByCoin('ETH')[1];
         break; 
@@ -114,6 +102,11 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
                     value = value / 1000000 + 'M';
                 }
                 return value;
+            },
+            textStyle: {
+              fontWeight: 'bold',
+              color: 'text-white dark:text-white',
+
             }
           }
         },

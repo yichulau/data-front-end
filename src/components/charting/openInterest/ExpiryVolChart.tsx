@@ -1,116 +1,159 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import calculateRatio from '../../../utils/calculateRatio';
+import { echartsResize } from '../../../utils/resize';
 
 const ExpiryVolChart = ({data ,error, loading} : any) => {
+    const chartRef: any = useRef();
     const responseData = data.data;
     const {  data: oiData } = responseData;
-    console.log(oiData)
-    const option = {
+  
+    
+
+    useEffect(()=>{
+      const chart = echarts.init(chartRef.current);
+      const option = {
         tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'shadow',
-              label: {
-                show: true
+          show: true,
+          trigger: 'axis',
+          textStyle: {
+              color: '#fff',
+              fontSize: 14
+          },
+          backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+          borderColor: "rgba(18, 57, 60, .8)",
+          formatter: function (params : any) {
+              console.log(params, '6666666')
+              return (
+                  'Expiry '+ params[0].name +
+                  '<br/>' +
+                  params[0].marker +
+                  params[0].seriesName +
+                  ' : ' +
+                  params[0].value +
+                  '<br/>' +
+                  params[1].marker +
+                  params[1].seriesName +
+                  ' : ' +
+                  params[1].value 
+                  
+              );
+          },
+          axisPointer: {
+              lineStyle: {
+                  color: {
+                      type: 'linear',
+                      x: 0,
+                      y: 0,
+                      x2: 0,
+                      y2: 1,
+                        colorStops: [
+                            {
+                                offset: 0,
+                                color: 'rgba(0, 255, 233,0)',
+                            },
+                            {
+                                offset: 0.5,
+                                color: 'rgba(255, 255, 255,1)',
+                            },
+                            {
+                                offset: 1,
+                                color: 'rgba(0, 255, 233,0)',
+                            },
+                        ],
+                        global: false,
+                    },
+                },
+            },
+          },
+          legend: {
+              data: ['Call Trading Volume', 'Put Trading Volume'],
+              orient: "horizontal",
+              bottom: 0
+          },
+          toolbox: {
+              show: true,
+              feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                saveAsImage: { show: true, name: "Options Open Interest Volume By Expiry" }
               }
-            },
-            // position: function (pt: any) {
-            //     return [pt[0], '10%'];
-            //   },
-            formatter: (params : any) => {
-              return `
-                        <div style="font-weight: bold">Strike Price: ${params[0].axisValue} </div> 
-
-                        ${params[0].seriesName}: ${params[0].value}<br />
-                        ${params[1].seriesName}: ${params[1].value}
-                        `;
-            },
-        },
-
-        legend: {
-            data: ['Call Trading Volume', 'Put Trading Volume'],
-            orient: "horizontal",
-            bottom: 0
-        },
-        toolbox: {
-            show: true,
-            feature: {
-              mark: { show: true },
-              dataView: { show: true, readOnly: false },
-              saveAsImage: { show: true, name: "Options Open Interest Volume By Expiry" }
-            }
-        },  
-        xAxis: {
-          type: "category",
-          data: oiData.keyList,
-        },
-        yAxis: {
-          type: "value",
-          name: "Open Interest Volume By Coin",
-          axisLabel:{
-            formatter: function (value: any) {
-                if (value >= 1000) {
-                    value = value / 1000 + 'K';
-                }
-                return value;
-            }
-          }
-        },
-        grid:{
-            bottom: 60
-        },
-        series: [
-          {
-            data: oiData.callVolList,
-            name: "Call Trading Volume",
-            stack: "one",
-            type: "line",
-            smooth: true,
-            itemStyle: {
-                color: 'rgb(46,189,133)'
-            },
-            areaStyle: {
-                color: new echarts.graphic.LinearGradient(0, 1, 1, 1, [
-                  {
-                    offset: 1,
-                    color: 'rgb(46,189,133)'
-                  }
-                ])
-              },
-            emphasis: {
-                focus: 'series'
-            },
+          },  
+          xAxis: {
+            type: "category",
+            data: oiData.keyList,
           },
-          {
-            data: oiData.putVolList,
-            name: "Put Trading Volume",
-            stack: "one",
-            type: "line",
-            smooth: true,
-            itemStyle: {
-                color: 'rgb(224,41,74)'
-              },
-            areaStyle: {
-                color: new echarts.graphic.LinearGradient(0, 1, 1, 1, [
-                  {
-                    offset: 0,
-                    color: 'rgb(224,41,74)'
+          yAxis: {
+            type: "value",
+            name: "Open Interest Volume By Coin",
+            axisLabel:{
+              formatter: function (value: any) {
+                  if (value >= 1000) {
+                      value = value / 1000 + 'K';
                   }
-                ])
-              },
-            emphasis: {
-                focus: 'series'
-            },
+                  return value;
+              }
+            }
           },
-        ],
-    };
+          grid:{
+              bottom: 60
+          },
+          series: [
+            {
+              data: oiData.callVolList,
+              name: "Call Trading Volume",
+              stack: "one",
+              type: "line",
+              smooth: true,
+              itemStyle: {
+                  color: 'rgb(46,189,133)'
+              },
+              areaStyle: {
+                  color: new echarts.graphic.LinearGradient(0, 1, 1, 1, [
+                    {
+                      offset: 1,
+                      color: 'rgb(46,189,133)'
+                    }
+                  ])
+                },
+              emphasis: {
+                  focus: 'series'
+              },
+            },
+            {
+              data: oiData.putVolList,
+              name: "Put Trading Volume",
+              stack: "one",
+              type: "line",
+              smooth: true,
+              itemStyle: {
+                  color: 'rgb(224,41,74)'
+                },
+              areaStyle: {
+                  color: new echarts.graphic.LinearGradient(0, 1, 1, 1, [
+                    {
+                      offset: 0,
+                      color: 'rgb(224,41,74)'
+                    }
+                  ])
+                },
+              emphasis: {
+                  focus: 'series'
+              },
+            },
+          ],
+      };
+      chart.setOption(option);
+      echartsResize(chart)
+
+    },[oiData])
 
   return (
     <>
          <div className='mt-2 mb-2' style={{ maxWidth: "100%", maxHeight: "400px" }}>
-            <ReactEcharts option={option} />
+            {/* <ReactEcharts option={option}/> */}
+            <div ref={chartRef} style={{height: "300px"}}></div>
             <div className='flex flex-row items-center justify-center mt-6'>
                 <div className="py-4 px-4 text-center">
                     <div className="text-xs md:text-lg border-b border-[#16c784] font-bold">Call Open Interest Volume</div>

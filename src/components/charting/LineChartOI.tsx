@@ -140,7 +140,7 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
             type: 'slider',
             start: end -30,
             end: end,
-            xAxisIndex: [0]
+            xAxisIndex: [0],
           }
         ],
         series: [

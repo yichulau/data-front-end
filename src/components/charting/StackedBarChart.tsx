@@ -199,12 +199,6 @@ const StackedBarChart = ( {data,  onChange} : any) => {
                         },
                     },
                 }
-                // return {
-                //     name: exchangeId,
-                //     type: 'bar',
-                //     stack: 'total',
-                //     data: seriesData[exchangeId]
-                // };
             }),
             dataZoom: [
                 {
@@ -217,7 +211,8 @@ const StackedBarChart = ( {data,  onChange} : any) => {
                     type: 'slider',
                     start: end -30,
                     end: end,
-                    xAxisIndex: [0]
+                    xAxisIndex: [0],
+                    bottom: '10px'
                   }
             ],
         }

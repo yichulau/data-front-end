@@ -32,6 +32,7 @@ const StackedBarChart = ( {data,  onChange} : any) => {
         {id: 0, value: 'By Exchange'},
         {id: 1, value: 'By Coin'}
     ]
+
     const getDataByExchange = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
         const groupedData : any = {};
@@ -175,13 +176,32 @@ const StackedBarChart = ( {data,  onChange} : any) => {
                     }
                   }
             },
+            // color: [
+            //     '#FF3333', '#FF7744', '#FFCC22', '#33FF33', '#33CCFF', '#7744FF', '#E93EFF'
+            // ],
             series: Object.keys(seriesData).map(exchangeId => {
                 return {
                     name: exchangeId,
                     type: 'bar',
                     stack: 'total',
-                    data: seriesData[exchangeId]
-                };
+                    data: seriesData[exchangeId],
+                    // 设置柱子的宽度
+                    barWidth: '50%',
+                    label: {
+                        show: true,
+                        position: 'top',
+                        color: '#333',
+                        formatter: function (param : any) {
+                            return '';
+                        },
+                    },
+                }
+                // return {
+                //     name: exchangeId,
+                //     type: 'bar',
+                //     stack: 'total',
+                //     data: seriesData[exchangeId]
+                // };
             }),
             dataZoom: [
                 {

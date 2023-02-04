@@ -163,6 +163,9 @@ const StackedLineChart = ( {data } : any) => {
                     }
                   }
             },
+            // color: [
+            //     '#FF3333', '#FF7744', '#FFCC22', '#33FF33', '#33CCFF', '#7744FF', '#E93EFF'
+            // ],
             series: Object.keys(seriesData).map(exchangeId => {
                 return {
                     name: exchangeId,

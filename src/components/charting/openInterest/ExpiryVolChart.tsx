@@ -157,9 +157,6 @@ const ExpiryVolChart = ({data ,error, loading, ccyOption} : any) => {
     },[data,isDarkTheme])
 
 
-
-    
-
   return (
     <>
          <div className='mt-2 mb-2' style={{ maxWidth: "100%", maxHeight: "400px" }}>

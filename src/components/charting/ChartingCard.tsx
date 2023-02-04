@@ -82,7 +82,7 @@ const ChartingCard = ({option}: any) => {
 
     return (
     <>
-        <div className="p-2 md:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-black dark:border-black">
+        <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-black dark:border-black">
           <div className='w-full'>
             {option === 'StackedBarChart' ? (<MiddleMedium newFetchNotionalData={newFetchNotionalData} newFetchPremiumData={newFetchPremiumData} /> ) : null }
             {/* {option === 'StackedBarChart' ? (<StackedBarChart data={newFetchNotionalData} onChange={volFilterChange} /> ) : null } */}

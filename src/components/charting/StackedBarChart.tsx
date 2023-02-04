@@ -164,6 +164,9 @@ const StackedBarChart = ( {data,  onChange} : any) => {
                 itemHeight: 9,
                 x: window.innerWidth < 600 ? 'left' :'center',
                 orient: "horizontal",
+                textStyle: {
+                    fontSize: window.innerWidth < 600 ? 6 : 12,
+                }
             },
             xAxis: {
                 data: xData

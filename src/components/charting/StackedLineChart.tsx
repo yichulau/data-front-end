@@ -146,8 +146,13 @@ const StackedLineChart = ( {data } : any) => {
             },
             legend: {
                 data: Object.keys(seriesData),
+                itemWidth: 16,
+                itemHeight: 9,
+                x: window.innerWidth < 600 ? 'left' :'center',
                 orient: "horizontal",
-
+                textStyle: {
+                    fontSize: window.innerWidth < 600 ? 6 : 12,
+                }
             },
             xAxis: {
                 data: xData

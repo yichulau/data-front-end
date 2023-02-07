@@ -70,7 +70,7 @@ const ExpiryChart = ({data ,error, loading, ccyOption} : any) => {
                   },
               },
           },
-        },
+      },
       legend: {
           data: ['Call Open Interest', 'Put Open Interest'],
           orient: "horizontal",

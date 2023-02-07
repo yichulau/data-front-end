@@ -72,7 +72,7 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
               color: '#fff',
               fontSize: 14
           },
-          backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+          backgroundColor: 'rgba(18, 57, 60, .8)', 
           borderColor: "rgba(18, 57, 60, .8)",
           formatter: function (params : any) {
             let str = "";
@@ -126,9 +126,6 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
                 }
                 return value;
             },
-            textStyle: {
-              fontWeight: 'bold',
-            }
           }
         },
         dataZoom: [

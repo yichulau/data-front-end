@@ -13,7 +13,7 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
     const [filter, setFilter] = useState(0);
     let xData: string[] = [];
     let chart: any;
-
+  
     const coinExchangeOption = [
       {id: 0, value: 'BTC'},
       {id: 1, value: 'ETH'},
@@ -108,7 +108,7 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
           top: '18%',
           left: '2%',
           right: '4%',
-          bottom: '8%',
+          bottom: '15%',
           containLabel: true
         },
         xAxis: {

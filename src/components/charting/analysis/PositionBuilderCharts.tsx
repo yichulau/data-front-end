@@ -86,8 +86,8 @@ const PositionBuilderCharts = ({data} : any) => {
               }
           },
           yAxis: {
-              min: -200,
-              max: 1200,
+              min: -2000,
+              max: 2000,
               position: 'right',
 
           },

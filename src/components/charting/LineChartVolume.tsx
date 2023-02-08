@@ -107,7 +107,7 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
           top: '18%',
           left: '2%',
           right: '4%',
-          bottom: '8%',
+          bottom: '15%',
           containLabel: true
         },
         xAxis: {
@@ -139,7 +139,7 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
             type: 'slider',
             start: end -30,
             end: end,
-            xAxisIndex: [0]
+            xAxisIndex: [0],
           }
         ],
         series: [

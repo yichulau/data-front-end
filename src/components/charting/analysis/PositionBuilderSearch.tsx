@@ -6,7 +6,7 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
   const {data: fetchData} = data;
 
   const filteredInstrumentData = fetchData.map((item : any, index : any) => ({id: index, value: item.instrument_id}));
-  
+
   const handleButtonClick = (event : any)=>{
     handleLongShort(event.target.name)
   }

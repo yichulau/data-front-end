@@ -15,6 +15,7 @@ import LineChartVolume from './LineChartVolume';
 import MiddleMedium from './MiddleMedium';
 import LineChartOI from './LineChartOI';
 import Loader from '../misc/Loader';
+import moment from 'moment';
 
 const ChartingCard = ({option}: any) => {
 
@@ -33,6 +34,7 @@ const ChartingCard = ({option}: any) => {
     const aggregrateOIData = [];
     const map = new Map();
     const oiMap = new Map();
+
 
     const newFetchNotionalData = fetchNotionalData.map((item: any)=>{
       return {
@@ -77,9 +79,20 @@ const ChartingCard = ({option}: any) => {
       }
       oiMap.get(key).value += parseFloat(item.value);
     }
+
     const earliestOITimestamp = Math.min(...aggregrateOIData.map(item => item.ts));
     const latestOITimeStamp = Math.max(...aggregrateOIData.map(item => item.ts))
 
+    aggregrateNotionalData.sort((a, b) =>{return a.ts - b.ts;});
+    aggregrateOIData.sort((a,b)=>{return a.ts - b.ts});
+
+    // const last24hNewFetchNotionalData = newFetchNotionalData.splice(-49);
+    // const last24hNewFetchPremiumData = newFetchPremiumData.splice(-49);
+    // const last24hFetchInterestData = fetchInterestData.splice(-49);
+    
+    // const last24hAggregrateNotionalData = aggregrateNotionalData.splice(-49);
+    // const last24hAggregrateOIData = aggregrateOIData.splice(-49);
+  
     return (
     <>
         <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-black dark:border-black">

@@ -218,7 +218,7 @@ const StackedLineChart = ( {data } : any) => {
                 top: '18%',
                 left: '2%',
                 right: '4%',
-                bottom: '8%',
+                bottom: '15%',
                 containLabel: true
             },
             dataZoom: [

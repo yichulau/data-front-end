@@ -30,11 +30,12 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   let array :any= [];
 
   const bitComUrl = `https://api.bit.com/v1/instruments?currency=${currency}&category=${category}&active=${active}`;
+
   const { data } = useFetchSingleData(bitComUrl)
 
 
   const min : number = -99;
-  const max : number = 100;
+  const max : number = 200;
 
   function storeToLocalStorage(value: any){
 
@@ -47,12 +48,14 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   }
 
   function buyCallOption(stockPricePercent : number) {
-    const stockPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
 
-    const profit = ((stockPrice - strikePrice ) / stockPrice)
-    const total = profit * amount
+    const amountBought = Number(amount)
+    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
+    const diffStrikeExpiration = expiryPrice - strikePrice;
+    const profit = expiryPrice > strikePrice ? (diffStrikeExpiration  * amountBought)- (optionPrice * amountBought * currentPrice) : ( optionPrice * amountBought  * expiryPrice)
 
-    return total;
+
+    return profit;
   }
 
   function sellCallOption(stockPricePercent : number){
@@ -133,6 +136,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const instrumentString = value.split('-');
     const instrumentStrikePrice = Number(instrumentString[2])
     const instrumentType = instrumentString[3];
+
     setTempData(data)
     setCurrentPrice(Number(data.index_price))
     setOptionPrice(Number(data.last_price))

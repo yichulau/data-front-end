@@ -145,6 +145,7 @@ const StackedBarChart = ( {data,  onChange} : any) => {
             case 0: 
             seriesData = getDataByExchange()[0];
             xData = getDataByExchange()[1];  
+            console.log(seriesData)
             break; 
             case 1: 
             seriesData = getDataByCoin()[0];
@@ -242,7 +243,7 @@ const StackedBarChart = ( {data,  onChange} : any) => {
                 top: '18%',
                 left: '2%',
                 right: '4%',
-                bottom: '8%',
+                bottom: '15%',
                 containLabel: true
             },
             dataZoom: [

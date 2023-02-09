@@ -5,15 +5,20 @@ import DropdownCoin from '../misc/DropdownCoin';
 import { echartsResize } from '../../utils/resize';
 import moment from 'moment';
 import MyThemeContext from '../../store/myThemeContext';
+import DropdownIndex from '../misc/DropdownIndex';
 
 
-const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
+const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp , onChange} :any) => {
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
     let xData: string[] = [];
     let chart: any;
 
+    const volumeOption = [
+      {id: 0, value: 'Notional'},
+      {id: 1, value: 'Premium'}
+    ]
     const coinExchangeOption = [
         {id: 0, value: 'BTC'},
         {id: 1, value: 'ETH'},
@@ -33,6 +38,10 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
       return [filteredDataset, xData]
     } 
 
+    const handleFilterVolChange = (value : number) =>{
+      onChange(value)
+    }
+
     useEffect(()=>{
       if (!chartRef.current) {
         return;
@@ -46,7 +55,6 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
        
         case 0: 
         data = getDataByCoin('BTC')[0];
-        // seriesData = getDataByExchange()[0];
         xData = getDataByCoin('BTC')[1];  
         break; 
 
@@ -87,13 +95,18 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
                     str +=  
                         params[i].marker +
                         params[i].seriesName +
-                        ' : '+
+                        ' : $'+
                         value + ` ` +
                         "<br/>";
                 }
             }
             return  strike + str;
           }
+        },
+        legend: {
+          data: ['Options Volume'],
+          orient: 'horizontal',
+          x: window.innerWidth < 600 ? 'left' :'center',
         },
         toolbox: {
           show: true,
@@ -105,7 +118,7 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
         },
         grid: {
           top: '18%',
-          left: '2%',
+          left: '4%',
           right: '4%',
           bottom: '15%',
           containLabel: true
@@ -187,14 +200,13 @@ const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp} :any) => {
                         onChange={handleFilterChange}
                     />
                 </div>
-                {/* <div className='px-2 flex flex-col'>
+                <div className='px-2 flex flex-col'>
                     <DropdownIndex 
                         title={`Type`}
                         options={volumeOption}
-                        onChange={handleVolumeChange}
-                   
+                        onChange={handleFilterVolChange}
                     />
-                </div> */}
+                </div>
    
                
             </div>

@@ -54,35 +54,41 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const diffStrikeExpiration = expiryPrice - strikePrice;
     const profit = expiryPrice > strikePrice ? (diffStrikeExpiration  * amountBought)- (optionPrice * amountBought * currentPrice) : ( optionPrice * amountBought  * expiryPrice)
 
-
     return profit;
   }
 
   function sellCallOption(stockPricePercent : number){
-    const stockPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
 
-    const profit = ((stockPrice - strikePrice ) / stockPrice)
-    const total = profit * amount
+    const amountBought = Number(amount)
+    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
+    const diffStrikeExpiration = expiryPrice - strikePrice;
 
-    return total;
+    const profit = expiryPrice > strikePrice ? (optionPrice * amountBought * currentPrice) - (diffStrikeExpiration  * amountBought) : ( optionPrice * amountBought  * expiryPrice)
+
+
+    return profit;
   }
 
   function buyPutOption(stockPricePercent : number){
-    const stockPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
+    const amountBought = Number(amount)
+    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
+    const diffStrikeExpiration = expiryPrice - strikePrice;
 
-    const profit = ((strikePrice - stockPrice) / stockPrice) - optionPrice
-    const total = profit * amount
+    const profit = expiryPrice < strikePrice ? (diffStrikeExpiration  * amountBought)- (optionPrice * amountBought * currentPrice) : ( optionPrice * amountBought  * expiryPrice)
 
-    return total;
+
+    return profit;
   }
 
   function sellPutOption(stockPricePercent : number){
-    const stockPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
+    const amountBought = Number(amount)
+    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
+    const diffStrikeExpiration = expiryPrice - strikePrice;
 
-    const profit = optionPrice - ((strikePrice - stockPrice) / stockPrice)
-    const total = profit * amount 
+    const profit = expiryPrice < strikePrice ? (optionPrice * amountBought * currentPrice) - (diffStrikeExpiration  * amountBought) : ( optionPrice * amountBought  * expiryPrice)
 
-    return total;
+
+    return profit;
   }
 
   function calculation(triggerType : any){

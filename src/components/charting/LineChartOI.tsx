@@ -88,13 +88,18 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
                     str +=  
                         params[i].marker +
                         params[i].seriesName +
-                        ' : '+
+                        ' : $'+
                         value + ` ` +
                         "<br/>";
                 }
             }
             return  strike + str;
           }
+        },
+        legend: {
+          data: ['Options Open Interest'],
+          orient: 'horizontal',
+          x: window.innerWidth < 600 ? 'left' :'center',
         },
         toolbox: {
           show: true,
@@ -106,7 +111,7 @@ const LineChartOI = ({data , earliestTimestamp, latestTimeStamp} :any) => {
         },
         grid: {
           top: '18%',
-          left: '2%',
+          left: '4%',
           right: '4%',
           bottom: '15%',
           containLabel: true

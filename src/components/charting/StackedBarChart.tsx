@@ -145,7 +145,6 @@ const StackedBarChart = ( {data,  onChange} : any) => {
             case 0: 
             seriesData = getDataByExchange()[0];
             xData = getDataByExchange()[1];  
-            console.log(seriesData)
             break; 
             case 1: 
             seriesData = getDataByCoin()[0];
@@ -178,7 +177,7 @@ const StackedBarChart = ( {data,  onChange} : any) => {
                           str +=  
                               params[i].marker +
                               params[i].seriesName +
-                              ' : '+
+                              ' : $'+
                               value + ` ` +
                               "<br/>";
                       }
@@ -241,7 +240,7 @@ const StackedBarChart = ( {data,  onChange} : any) => {
             }),
             grid: {
                 top: '18%',
-                left: '2%',
+                left: '4%',
                 right: '4%',
                 bottom: '15%',
                 containLabel: true

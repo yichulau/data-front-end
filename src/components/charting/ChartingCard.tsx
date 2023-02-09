@@ -16,6 +16,7 @@ import MiddleMedium from './MiddleMedium';
 import LineChartOI from './LineChartOI';
 import Loader from '../misc/Loader';
 import moment from 'moment';
+import { MiddleMediumVol } from './MiddleMediumVol';
 
 const ChartingCard = ({option}: any) => {
 
@@ -31,8 +32,10 @@ const ChartingCard = ({option}: any) => {
     const fetchPremiumData = useFetchPremium(urlsPremium);
 
     const aggregrateNotionalData = [];
+    const aggregratePremiumData = [];
     const aggregrateOIData = [];
     const map = new Map();
+    const premiumMap = new Map();
     const oiMap = new Map();
 
 
@@ -71,6 +74,18 @@ const ChartingCard = ({option}: any) => {
     const earliestTimestamp = Math.min(...aggregrateNotionalData.map(item => item.ts));
     const latestTimeStamp = Math.max(...aggregrateNotionalData.map(item => item.ts))
 
+    for (const item of newFetchPremiumData) {
+      const key = item.ts + item.coinCurrencyID;
+      if (!premiumMap.has(key)) {
+        premiumMap.set(key, { ts: item.ts, value: 0, coinCurrencyID: item.coinCurrencyID });
+        aggregratePremiumData.push(premiumMap.get(key));
+      }
+      premiumMap.get(key).value += parseFloat(item.value);
+    }
+    const earliestPremiumTimestamp = Math.min(...aggregratePremiumData.map(item => item.ts));
+    const latestPremiumTimeStamp = Math.max(...aggregratePremiumData.map(item => item.ts))
+
+
     for (const item of fetchInterestData) {
       const key = item.ts + item.coinCurrencyID;
       if (!oiMap.has(key)) {
@@ -84,6 +99,7 @@ const ChartingCard = ({option}: any) => {
     const latestOITimeStamp = Math.max(...aggregrateOIData.map(item => item.ts))
 
     aggregrateNotionalData.sort((a, b) =>{return a.ts - b.ts;});
+    aggregratePremiumData.sort((a,b) => {return a.ts - b.ts});
     aggregrateOIData.sort((a,b)=>{return a.ts - b.ts});
 
     // const last24hNewFetchNotionalData = newFetchNotionalData.splice(-49);
@@ -101,7 +117,7 @@ const ChartingCard = ({option}: any) => {
             {/* {option === 'StackedBarChart' ? (<StackedBarChart data={newFetchNotionalData} onChange={volFilterChange} /> ) : null } */}
             {/* {option === 'BarChart' ? (<BarChart data={useFetchData(urlsContracts)} />) : null } */}
             {option === "StackedLineChart" ? (<StackedLineChart data={fetchInterestData}  />) : null }
-            {option === "LineChartVolume" ? (<LineChartVolume data={aggregrateNotionalData} earliestTimestamp={earliestTimestamp} latestTimeStamp={latestTimeStamp} />) : null }
+            {option === "LineChartVolume" ? (<MiddleMediumVol newFetchNotionalData={aggregrateNotionalData} newFetchPremiumData={aggregratePremiumData} earliestTimestamp={earliestTimestamp} latestTimeStamp={latestTimeStamp} />) : null }
             {option === "LineChartOI" ? (<LineChartOI data={aggregrateOIData} earliestTimestamp={earliestOITimestamp} latestTimeStamp={latestOITimeStamp} />) : null }
           </div>
         </div>

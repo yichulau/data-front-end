@@ -162,7 +162,7 @@ const StackedLineChart = ( {data } : any) => {
                           str +=  
                               params[i].marker +
                               params[i].seriesName +
-                              ' : '+
+                              ' : $'+
                               value + ` ` +
                               "<br/>";
                       }
@@ -216,7 +216,7 @@ const StackedLineChart = ( {data } : any) => {
             }),
             grid: {
                 top: '18%',
-                left: '2%',
+                left: '4%',
                 right: '4%',
                 bottom: '15%',
                 containLabel: true

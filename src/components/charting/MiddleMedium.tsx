@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import StackedBarChart from './StackedBarChart'
 
 const MiddleMedium = ({newFetchNotionalData, newFetchPremiumData} : any) => {
@@ -9,13 +9,14 @@ const MiddleMedium = ({newFetchNotionalData, newFetchPremiumData} : any) => {
       setDataSet(value === 0 ? newFetchNotionalData : newFetchPremiumData);
     };
 
-    useEffect(() => {
-        setDataSet(dataSet);
-      }, [dataSet]);
+    const memoizedDataSet = useMemo(
+      () => (dataSet === null ? newFetchNotionalData : dataSet),
+      [dataSet, newFetchNotionalData, newFetchPremiumData]
+    );
     
   return (
     <>
-        <StackedBarChart data={dataSet || newFetchNotionalData} onChange={volFilterChange} />
+        <StackedBarChart data={memoizedDataSet} onChange={volFilterChange} />
     </>
   )
 }

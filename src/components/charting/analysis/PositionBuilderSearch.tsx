@@ -1,18 +1,24 @@
 import React from 'react'
-import Dropdown from '../../misc/Dropdown'
 import DropdownLong from '../../misc/DropdownLong'
+import DropdownLargeFilter from '../../misc/DropdownLargeFilter';
 
 const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange, handleSymbolChange, handleAmountChange, handleLongShort } : any) => {
-  const {data: fetchData} = data;
-
-  const filteredInstrumentData = fetchData.map((item : any, index : any) => ({id: index, value: item.instrument_id}));
-
+  const fetchData = data;
+  
+  const filteredInstrumentData = fetchData.map((item : any, index : any) => ({id: index, value: item}));
+  filteredInstrumentData.sort(function(a: number,b: number){
+    return a - b;
+  })
   const handleButtonClick = (event : any)=>{
     handleLongShort(event.target.name)
   }
 
   const option = [
-    {id: 1, value: 'Bit.com'}
+    {id: 0, value: 'Bit.com'},
+    {id: 1, value: 'Binance'},
+    {id: 2, value: 'Bybit'},
+    {id: 3, value: 'Deribit'},
+    {id: 4, value: 'OKEX'}
   ]
   const coinCurrencyOption = [
     {id: 1, value: 'BTC'},
@@ -32,7 +38,7 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
               <DropdownLong title={`Currency`} options={coinCurrencyOption} onChange={(value: any) => handleCurrencyChange(value)}/>
             </div>
             <div className='w-full my-1'>
-              <DropdownLong title={`Instruments`} options={filteredInstrumentData} onChange={(value: any) => handleSymbolChange(value)}  />
+              <DropdownLargeFilter title={`Instruments`} options={filteredInstrumentData} onChange={(value: any) => handleSymbolChange(value)}  />
             </div>
             <div className='w-full my-1'>
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
@@ -43,13 +49,13 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
             <div className='flex flex-row w-full my-4 '>
             <button type="button"
               name='Long' 
-              className="w-full focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              className="w-full md:w-1/2 focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               onClick={handleButtonClick}
             >
               Long</button>
             <button type="button" 
               name='Short' 
-              className="w-full focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+              className="w-full md:w-1/2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
               onClick={handleButtonClick}
             >
               Short</button>

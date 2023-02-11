@@ -7,5 +7,5 @@ export default function calculateRatio(num_1 :number, num_2:number){
     }
     let ratio = ((num_1/num_2));
     let roundOff = Math.round(ratio * 100) / 100
-    return roundOff;
+    return roundOff ? roundOff : 0;
 }

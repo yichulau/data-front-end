@@ -7,23 +7,46 @@ const Expiry = () => {
 
     const [exchangeOption, setExchangeOption] = useState('ALL')
     const [ccyOption, setCcyOption] = useState('BTC')
-    const [keysOptions, setKeysOptions] = useState('ALL')
-    let url = `https://fapi.coinglass.com/api/option/chart?type=Delivery&ex=${exchangeOption}&symbol=${ccyOption}&subtype=${keysOptions}`;
-    if(exchangeOption === 'Binance'){
-            // expiry url https://data-ribbon-collector.com/api/v1.0/btc/binance/option-chart?expiry=230121
-        url = `https://data-ribbon-collector.com/api/v1.0/${ccyOption}/${exchangeOption}/option-chart`
-    }
-    
-
+    const [keysOptions, setKeysOptions] = useState('ALL');
+    let spotVal = `https://api4.binance.com/api/v3/ticker/price?symbol=${ccyOption}USDT`;
+    let url = `https://data-ribbon-collector.com/api/v1.0/${ccyOption.toLowerCase()}/${exchangeOption.toLowerCase()}/option-chart?strike=${keysOptions === 'ALL' ? '' : keysOptions}`;
     const { data, error, loading} = useFetchSingleData(url)
-    const responseData = data || [];
+    const spotData : any = useFetchSingleData(spotVal)
+    const responseData : any = data || [];
     let keysOption = [];
 
+
+    const price  = spotData? spotData.data?.price : null;
+    const dataList =  data !== null && price !== null ? formatData(responseData.expiryData, price) : [] ;
+ 
+
+
     if(data!== null){
-        // @ts-ignore
-        const keyList = responseData.data.keys ? responseData.data.keys : responseData.data.strikeList ;
+        const keyList = responseData.strikeList ;
         keysOption = keyList.map((str :any, index : any) => ({id: index + 1, value: str}));
         keysOption.unshift({id: 0, value: 'ALL'})
+       
+    }
+
+    function formatData(data : any, spotVal : number) {
+        const formattedData  : any  = {
+          callOIList: [],
+          putOIList: [],
+          callVolList: [],
+          putVolList: [],
+          expiryList: []
+        };
+        
+            data.forEach((item :any) => {
+                formattedData.callOIList.push(item.callOITotal/spotVal);
+                formattedData.putOIList.push(item.putOITotal/spotVal);
+                formattedData.callVolList.push(item.callVolTotal/spotVal);
+                formattedData.putVolList.push(item.putVolTotal/spotVal);
+                formattedData.expiryList.push(item.expiry);
+            });
+       
+
+        return formattedData;
     }
 
 
@@ -40,13 +63,16 @@ const Expiry = () => {
     const option = [
         {id: 0, value: 'ALL'},
         {id: 1, value: 'Deribit'},
-        {id: 2, value: 'OKX'},
-        {id: 3, value: 'Bit.com'}
+        {id: 2, value: 'OKEX'},
+        {id: 3, value: 'Bit.com'},
+        {id: 4, value: 'Binance'},
+        {id: 5, value: 'Bybit'}
     ]
     const coinCurrencyOption = [
         {id: 1, value: 'BTC'},
         {id: 2, value: 'ETH'},
     ]
+
   return (
     <>
     <div className="container py-1 mx-auto">
@@ -82,14 +108,16 @@ const Expiry = () => {
                     </div>
                     <div className='md:w-full mt-2'>
                         {data !== null ? (
-                            <ExpiryChart 
-                                data={data}
-                                error={error}
-                                loading={loading}
-                                ccyOption={ccyOption}
-                                exchangeOption={exchangeOption}
-                            />
-
+                            <>
+                                <ExpiryChart 
+                                    data={dataList}
+                                    error={error}
+                                    loading={loading}
+                                    ccyOption={ccyOption}
+                                    exchangeOption={exchangeOption}
+                                />
+                            </>
+        
                         ) : (
                             <div className="flex items-center justify-center min-h-[300px] p-5 bg-gray-100 w-full rounded-log dark:bg-black">
 

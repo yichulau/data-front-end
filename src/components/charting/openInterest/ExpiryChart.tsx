@@ -1,20 +1,27 @@
-import React, { useEffect,useState, useRef, useContext } from 'react'
+import React, { useEffect,useState, useRef, useContext, useMemo } from 'react'
 import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import calculateRatio from '../../../utils/calculateRatio';
 import { echartsResize } from '../../../utils/resize';
 import MyThemeContext from '../../../store/myThemeContext';
 
-const ExpiryChart = ({data ,error, loading, ccyOption} : any) => {
+const ExpiryChart = ({data ,error, loading, ccyOption, exchangeOption} : any) => {
   const { isDarkTheme}= useContext(MyThemeContext); 
   const chartRef: any = useRef();
-  const responseData = data.data;
-  const {  data: oiData } = responseData;
+  const responseData = useMemo(()=> data, [data]);
+  const callOITotal  = (sumCalculation(responseData.callOIList)).toFixed(2)
+  const putOITotal  = (sumCalculation(responseData.putOIList)).toFixed(2)
   let chart: any;
 
+  function sumCalculation(data : any) :number {
+    let sum = 0;
+    data.forEach((element : any) => {
+      sum += element
+    });
 
-   
-  
+    return sum;
+  }
+
   useEffect(()=>{
     chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
     const option = {
@@ -89,7 +96,7 @@ const ExpiryChart = ({data ,error, loading, ccyOption} : any) => {
       },  
       xAxis: {
         type: "category",
-        data: oiData.keyList,
+        data: responseData.expiryList,
       },
       yAxis: {
         type: "value",
@@ -112,7 +119,7 @@ const ExpiryChart = ({data ,error, loading, ccyOption} : any) => {
       },
       series: [
         {
-          data: oiData.callOIList,
+          data: responseData.callOIList,
           name: "Call Open Interest",
           stack: "one",
           type: "line",
@@ -133,7 +140,7 @@ const ExpiryChart = ({data ,error, loading, ccyOption} : any) => {
           },
         },
         {
-          data: oiData.putOIList,
+          data: responseData.putOIList,
           name: "Put Open Interest",
           stack: "one",
           type: "line",
@@ -170,11 +177,11 @@ const ExpiryChart = ({data ,error, loading, ccyOption} : any) => {
             <div className='flex flex-row items-center justify-center mt-6'>
                 <div className="py-4 px-4 text-center">
                     <div className="text-xs md:text-lg border-b border-[#16c784] font-bold">Call Open Interest</div>
-                    <div className='text-xs md:text-lg font-bold'>{oiData.callOI} {ccyOption}</div>
+                    <div className='text-xs md:text-lg font-bold'>{callOITotal} {ccyOption}</div>
                 </div>
                 <div className="py-4 px-4 text-center">
                     <div className="text-xs md:text-lg border-b border-[#ea3943] font-bold">Put Open Interest</div>
-                    <div className='text-xs md:text-lg font-bold'>{oiData.putOI} {ccyOption}</div>
+                    <div className='text-xs md:text-lg font-bold'>{putOITotal} {ccyOption}</div>
                 </div>
                 <div className="py-4 px-4 text-center">
                     <div className="text-xs md:text-lg font-bold">Call/Put Ratio</div>
@@ -183,7 +190,7 @@ const ExpiryChart = ({data ,error, loading, ccyOption} : any) => {
                         <div className="border-b border-[#16c784]" style={{float: 'left', width: '50%'}}></div>
                         <div style={{clear: 'both'}}></div>
                     </div>
-                    <div className='text-xs md:text-lg font-bold'>{calculateRatio(oiData.callVol,oiData.putVol)}</div>
+                    <div className='text-xs md:text-lg font-bold'>{callOITotal && putOITotal ? calculateRatio(Number(callOITotal), Number(putOITotal)) : 0}</div>
                 </div>
             </div>
         </div>

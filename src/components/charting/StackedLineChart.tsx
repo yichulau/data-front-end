@@ -1,4 +1,4 @@
-import React, { useEffect,useState, useRef, useContext } from 'react'
+import React, { useEffect,useState, useRef, useContext, useMemo } from 'react'
 import * as echarts from 'echarts';
 import moment from 'moment';
 import { Select, Form } from "antd";  
@@ -6,8 +6,9 @@ import { echartsResize } from '../../utils/resize';
 import DropdownIndex from '../misc/DropdownIndex';
 import MyThemeContext from '../../store/myThemeContext';
 
-const StackedLineChart = ( {data } : any) => {
+const StackedLineChart = ( {data: dataSet } : any) => {
     const { isDarkTheme }= useContext(MyThemeContext); 
+    const data = useMemo(() => dataSet, [dataSet]);
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0); // 0 for filter by exchange, 1 for filter by currency
     

@@ -20,7 +20,7 @@ const ExpiryVol = () => {
         keysOption.unshift({id: 0, value: 'ALL'})
     }
 
-
+    console.log(data)
     const handleOnChange = (value:any) =>{
         setExchangeOption(value)
     }

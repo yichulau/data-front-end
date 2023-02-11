@@ -1,4 +1,4 @@
-import React, { useEffect,useState, useRef, useContext } from 'react'
+import React, { useEffect,useState, useRef, useContext, useMemo } from 'react'
 import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import DropdownCoin from '../misc/DropdownCoin';
@@ -8,10 +8,11 @@ import MyThemeContext from '../../store/myThemeContext';
 import DropdownIndex from '../misc/DropdownIndex';
 
 
-const LineChartVolume = ({data , earliestTimestamp, latestTimeStamp , onChange} :any) => {
+const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , onChange} :any) => {
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
+    let data = useMemo(()=> dataSet, [dataSet])
     let xData: string[] = [];
     let chart: any;
 

@@ -1,4 +1,4 @@
-import React, { useEffect,useState, useRef, useContext } from 'react'
+import React, { useEffect,useState, useRef, useContext, useMemo } from 'react'
 import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { echartsResize } from '../../utils/resize';
@@ -10,26 +10,37 @@ import DropdownIndex from '../misc/DropdownIndex';
 import MyThemeContext from '../../store/myThemeContext';
 
 interface Data {
-    coinCurrencyID: number;
-    exchangeID: number;
-    ts: number;
+    ts: string | number;
+    exchangeID?: string | number;
+    coinCurrencyID?: string | number;
     value: string;
 }
 
+interface Filter {
+    id: number;
+    value: string;
+}
 
-const StackedBarChart = ( {data,  onChange} : any) => {
+interface Props {
+    data: Data[];
+    onChange: (value: number) => void;
+}
+
+
+const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
     const { isDarkTheme }= useContext(MyThemeContext); 
+    const data = useMemo(()=> dataSet, [dataSet])
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
     let seriesData : any= {};
     let xData: string[] = [];
     let chart: any;
 
-    const volumeOption = [
+    const volumeOption: Filter[] = [
         {id: 0, value: 'Notional'},
         {id: 1, value: 'Premium'}
     ]
-    const byExchangeCoin = [
+    const byExchangeCoin: Filter[] = [
         {id: 0, value: 'By Exchange'},
         {id: 1, value: 'By Coin'}
     ]
@@ -44,7 +55,7 @@ const StackedBarChart = ( {data,  onChange} : any) => {
         const dataset2: { [key: string]: number[] } = {};
         let keys;
 
-        data.forEach((item: { ts: string | number; exchangeID: string | number; value: string; }) => {
+        data.forEach((item : any) => {
             if (!groupedData[item.ts]) {
                 groupedData[item.ts] = {};
             }
@@ -101,7 +112,7 @@ const StackedBarChart = ( {data,  onChange} : any) => {
         const seriesData : any= {};
         const xData: string[] = [];
 
-        data.forEach((item: { ts: string | number; coinCurrencyID: string | number; value: string; }) => {
+        data.forEach((item: any) => {
             if (!groupedData[item.ts]) {
                 groupedData[item.ts] = {};
             }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import LineChartVolume  from './LineChartVolume';
 export const MiddleMediumVol = ({newFetchNotionalData, newFetchPremiumData, earliestTimestamp ,latestTimeStamp} : any) => {
     const [dataSet, setDataSet] = useState(null);
@@ -7,14 +7,14 @@ export const MiddleMediumVol = ({newFetchNotionalData, newFetchPremiumData, earl
       setDataSet(value === 0 ? newFetchNotionalData : newFetchPremiumData);
     };
 
-    useEffect(() => {
-        setDataSet(dataSet);
-      }, [dataSet]);
-
+    const memoizedDataSet = useMemo(
+        () => (dataSet === null ? newFetchNotionalData : dataSet),
+        [dataSet, newFetchNotionalData, newFetchPremiumData]
+    );
 
   return (
     <>
-        <LineChartVolume data={dataSet || newFetchNotionalData} earliestTimestamp={earliestTimestamp} latestTimeStamp={latestTimeStamp}  onChange={volFilterChange} />
+        <LineChartVolume data={memoizedDataSet} earliestTimestamp={earliestTimestamp} latestTimeStamp={latestTimeStamp}  onChange={volFilterChange} />
     </>
   )
 }

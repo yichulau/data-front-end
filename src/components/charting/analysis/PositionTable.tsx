@@ -112,7 +112,7 @@ const PositionTable = ({dataSet} : any) => {
         },
         useExpanded // Use the useExpanded plugin hook
       )
-        console.log(hiddenColumns)
+        console.log(headerGroups)
   return (
     <>
   
@@ -127,9 +127,9 @@ const PositionTable = ({dataSet} : any) => {
                     <input type="text" id="table-search" className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for items"/>
                 </div>
             </div>
-            <table {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            {/* <table {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-white dark:bg-black dark:text-white">
-                {headerGroups.map(headerGroup => (
+                {headerGroups.map((headerGroup, index )=> (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                         <th scope="col" className="p-4">
                             <div className="flex items-center">
@@ -147,7 +147,8 @@ const PositionTable = ({dataSet} : any) => {
                         </th>
                         ))}
                     </tr>
-                    ))}
+                    )
+                    )}
                 </thead>
                 <tbody {...getTableBodyProps()}>
 
@@ -166,48 +167,13 @@ const PositionTable = ({dataSet} : any) => {
                                     {row.cells.map(cell => {
                                         return <td className="px-6 py-4" {...cell.getCellProps()}>{cell.render('Cell')}</td>
                                     })}
-                                    {/* <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {original.instrumentName}
-                                    </th>
-                                    <td className="px-6 py-4">
-                                        {original.exchange}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {original.amount}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {original.price}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {original.lastPrice}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {original.lastPrice * original.indexPrice}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {original.markPrice}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {original.indexPrice}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {original.gamma}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {original.vega}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {original.theta}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {original.rho}
-                                    </td> */}
+                                
                                 </tr>
                         )
                     })}
                     
                 </tbody>
-            </table>
+            </table> */}
         </div>
     </>
   )

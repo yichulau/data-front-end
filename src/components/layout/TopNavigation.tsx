@@ -71,7 +71,9 @@ const TopNavigation = () => {
                             </div>
                         </li>
                         <li>
-                            <a href="/analysis/positionBuilder" className="text-gray-900 dark:text-white hover:underline">Payoff Calculator</a>
+                            <Link href="/analysis/positionBuilder">
+                                <div  className="text-gray-900 dark:text-white hover:underline">Payoff Calculator</div>
+                            </Link>
                         </li>
                     </ul>
                 </div>

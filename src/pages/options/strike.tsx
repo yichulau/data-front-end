@@ -8,18 +8,44 @@ const Strike = () => {
     const [exchangeOption, setExchangeOption] = useState('ALL')
     const [ccyOption, setCcyOption] = useState('BTC')
     const [keysOptions, setKeysOptions] = useState('ALL')
-    const url = `https://fapi.coinglass.com/api/option/chart?type=Strike&ex=${exchangeOption}&symbol=${ccyOption}&subtype=${keysOptions}`;
+    let spotVal = `https://api4.binance.com/api/v3/ticker/price?symbol=${ccyOption}USDT`;
+    let url = `https://data-ribbon-collector.com/api/v1.0/${ccyOption.toLowerCase()}/${exchangeOption.toLowerCase()}/option-chart?expiry=${keysOptions === 'ALL' ? '' : keysOptions}`;
     const { data, error, loading} = useFetchSingleData(url)
-    const responseData = data || [];
+    const spotData : any = useFetchSingleData(spotVal)
+    const responseData : any = data || [];
     let keysOption = [];
     
+    const price  = spotData? spotData.data?.price : null;
+    const dataList =  data !== null && price !== null ? formatData(responseData.strikeData, price) : [] ;
+
     if(data!== null){
-        // @ts-ignore
-        const keyList = responseData.data.keys;
+        const keyList = responseData.expiryData.map((item : any) => item.expiry);
         keysOption = keyList.map((str :any, index : any) => ({id: index + 1, value: str}));
         keysOption.unshift({id: 0, value: 'ALL'})
+       
     }
 
+
+    function formatData(data : any, spotVal : number) {
+        const formattedData  : any  = {
+          callOIList: [],
+          putOIList: [],
+          callVolList: [],
+          putVolList: [],
+          strikeList: []
+        };
+        
+            data.forEach((item :any) => {
+                formattedData.callOIList.push(item.callOITotal/spotVal);
+                formattedData.putOIList.push(item.putOITotal/spotVal);
+                formattedData.callVolList.push(item.callVolTotal/spotVal);
+                formattedData.putVolList.push(item.putVolTotal/spotVal);
+                formattedData.strikeList.push(item.strike);
+            });
+       
+
+        return formattedData;
+    }
 
     const handleOnChange = (value:any) =>{
         setExchangeOption(value)
@@ -34,8 +60,10 @@ const Strike = () => {
     const option = [
         {id: 0, value: 'ALL'},
         {id: 1, value: 'Deribit'},
-        {id: 2, value: 'OKX'},
+        {id: 2, value: 'OKEX'},
         {id: 3, value: 'Bit.com'},
+        {id: 4, value: 'Binance'},
+        {id: 5, value: 'Bybit'}
     ]
     const coinCurrencyOption = [
         {id: 1, value: 'BTC'},
@@ -77,7 +105,7 @@ const Strike = () => {
                     <div className='md:w-full mt-2'>
                         {data !== null ? (
                             <StrikeChart 
-                                data={data}
+                                data={dataList}
                                 error={error}
                                 loading={loading}
                                 ccyOption={ccyOption}

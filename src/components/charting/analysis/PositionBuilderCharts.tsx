@@ -12,6 +12,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart} : any) => 
     const max = Number(indexPrice*amount*2);
     let chart: any;
 
+
     const clearChart = () =>{
       resetChart()
     }
@@ -79,10 +80,10 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart} : any) => 
             },
         },
         grid: {
-          top: '10%',
+          top: '4%',
           left: '2%',
           right: '2%',
-          bottom: '10%',
+          bottom: '4  %',
           containLabel: true
         },
         xAxis: {
@@ -169,7 +170,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart} : any) => 
             </div>
           </div>
             
-            <div ref={chartRef}  style={{ width: "100%", height: "450px" }} />
+            <div ref={chartRef}  style={{ width: "100%", height: "600px" }} />
         </div>
     
     </>

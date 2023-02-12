@@ -20,7 +20,7 @@ const ExpiryVol = () => {
     const dataList =  data !== null && price !== null ? formatData(responseData.expiryData, price) : [] ;
 
     if(data!== null){
-        const keyList = responseData.strikeList ;
+        const keyList = responseData.strikeData.map((item : any) => item.strike);
         keysOption = keyList.map((str :any, index : any) => ({id: index + 1, value: str}));
         keysOption.unshift({id: 0, value: 'ALL'})
        
@@ -61,7 +61,7 @@ const ExpiryVol = () => {
     const option = [
         {id: 0, value: 'ALL'},
         {id: 1, value: 'Deribit'},
-        {id: 2, value: 'OKX'},
+        {id: 2, value: 'OKEX'},
         {id: 3, value: 'Bit.com'},
         {id: 4, value: 'Binance'},
         {id: 5, value: 'Bybit'}

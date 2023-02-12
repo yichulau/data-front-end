@@ -45,7 +45,7 @@ const ExpiryVolChart = ({data ,error, loading, ccyOption} : any) => {
                       params[i].marker +
                       params[i].seriesName +
                       ' : '+
-                      params[i].value + ` ${ccyOption}` +
+                      params[i].value.toFixed(2) + ` ${ccyOption}` +
                       "<br/>";
               }
           }

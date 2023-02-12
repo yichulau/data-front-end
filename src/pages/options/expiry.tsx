@@ -22,7 +22,7 @@ const Expiry = () => {
 
 
     if(data!== null){
-        const keyList = responseData.strikeList ;
+        const keyList = responseData.strikeData.map((item : any) => item.strike);
         keysOption = keyList.map((str :any, index : any) => ({id: index + 1, value: str}));
         keysOption.unshift({id: 0, value: 'ALL'})
        

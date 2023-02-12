@@ -1,4 +1,4 @@
-import React, { useEffect,useState, useRef, useContext } from 'react'
+import React, { useEffect,useState, useRef, useContext, useMemo } from 'react'
 import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import calculateRatio from '../../../utils/calculateRatio';
@@ -8,10 +8,20 @@ import { echartsResize } from '../../../utils/resize';
 const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
   const { isDarkTheme}= useContext(MyThemeContext); 
   const chartRef: any = useRef();
-  const responseData = data.data;
-  const {  data: oiData } = responseData;
+  const responseData = useMemo(()=> data, [data]);
+  const callVolTotal  = (sumCalculation(responseData.callVolList)).toFixed(2)
+  const putVolTotal  = (sumCalculation(responseData.putVolList)).toFixed(2)
   let chart: any;
-   
+
+  function sumCalculation(data : any) :number {
+    let sum = 0;
+    data.forEach((element : any) => {
+      sum += element
+    });
+
+    return sum;
+  }
+
 
   useEffect(()=>{
     chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
@@ -36,7 +46,7 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
                       params[i].marker +
                       params[i].seriesName +
                       ' : '+
-                      params[i].value + ` ${ccyOption}` +
+                      params[i].value.toFixed(2) + ` ${ccyOption}` +
                       "<br/>";
               }
           }
@@ -84,7 +94,7 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
       },  
       xAxis: {
         type: "category",
-        data: oiData.keyList,
+        data: responseData.strikeList,
       },
       yAxis: {
         type: "value",
@@ -107,7 +117,7 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
       },
       series: [
         {
-          data: oiData.callVolList,
+          data: responseData.callVolList,
           name: "Call Trading Volume",
           stack: "one",
           type: "line",
@@ -128,7 +138,7 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
           },
         },
         {
-          data: oiData.putVolList,
+          data: responseData.putVolList,
           name: "Put Trading Volume",
           stack: "one",
           type: "line",
@@ -164,13 +174,13 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
          <div className='mt-2 mb-2' style={{ maxWidth: "100%", maxHeight: "400px" }}>
             <div ref={chartRef} style={{height: "310px"}}></div>
             <div className='flex flex-row items-center justify-center mt-6'>
-                <div className="py-4 px-4 text-center">
-                    <div className="text-xs md:text-lg  border-b border-[#16c784] font-bold">Call Open Interest Volume</div>
-                    <div className='text-xs md:text-lg font-bold'>{oiData.callVol} {ccyOption}</div>
+            <div className="py-4 px-4 text-center">
+                    <div className="text-xs md:text-lg border-b border-[#16c784] font-bold">Call Open Interest Volume</div>
+                    <div className='text-xs md:text-lg font-bold'>{callVolTotal} {ccyOption}</div>
                 </div>
                 <div className="py-4 px-4 text-center">
-                    <div className="text-xs md:text-lg  border-b border-[#ea3943] font-bold">Put Open Interest Volume</div>
-                    <div className='text-xs md:text-lg font-bold'>{oiData.putVol} {ccyOption}</div>
+                    <div className="text-xs md:text-lg border-b border-[#ea3943] font-bold">Put Open Interest Volume</div>
+                    <div className='text-xs md:text-lg font-bold'>{putVolTotal} {ccyOption}</div>
                 </div>
                 <div className="py-4 px-4 text-center">
                     <div className="text-xs md:text-lg  font-bold">Call/Put Ratio</div>
@@ -179,7 +189,7 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
                         <div className="border-b border-[#16c784]" style={{float: 'left', width: '50%'}}></div>
                         <div style={{clear: 'both'}}></div>
                     </div>
-                    <div className='text-xs md:text-lg font-bold'>{calculateRatio(oiData.callVol,oiData.putVol)}</div>
+                    <div className='text-xs md:text-lg font-bold'>{callVolTotal && putVolTotal ? calculateRatio(Number(callVolTotal), Number(putVolTotal)) : 0}</div>
                 </div>
             </div>
             {/* <style jsx>{`

@@ -102,7 +102,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     dataSet.length = 0;
     const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
     const storeDataArray : any = Object.values(storeData)
-    console.log(storeDataArray)
+
     let sums : any = {};
     let result: any= [];
     if(storeDataArray.length > 0){
@@ -155,6 +155,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
 
     }
+
     setFinalData(result)    
   }
 
@@ -261,7 +262,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
           <div className="px-2 py-2 w-full md:w-3/4 flex flex-col items-start">
               <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
                   <div className='md:w-full mt-2'>
-                    {data ? (
+                    {finalData ? (
                       <PositionBuilderCharts 
                         data={finalData} 
                         amount={amount} 
@@ -282,7 +283,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       </div>
       <div className="flex flex-wrap">
         <div className="flex flex-col items-start py-2 w-full">
-          <div className="bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
+          <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
               {/* <PositionTable dataSet={store}/> */}
               <PositionBuilderExpandable dataSet={store} onDelete={handleDelete}/>
           </div>

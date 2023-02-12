@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import moment from 'moment';
 import PositionTable from './PositionTable';
+import { FaTrashAlt} from 'react-icons/fa';
 
 const PositionBuilderExpandable = ({dataSet, onDelete} : any) => {
     const objToArr :object [] = Object.values(dataSet)
@@ -43,6 +44,23 @@ const PositionBuilderExpandable = ({dataSet, onDelete} : any) => {
           {
             Header: 'Position Type',
             accessor: 'position', // accessor is the "key" in the data
+            // Cell: (row : any) => {
+            //     const {cell} = row
+
+            //     return (
+            //         <span 
+            //             style={{
+            //                 backgroundColor: cell.value === 'Long' ? '#00A8A0' : '#FC5328',
+            //                 color: '#ffffff',
+            //                 padding: '4px 10px 4px 10px',
+            //                 borderRadius: '5px'
+            //             }}
+            //             key={row.data.id}  
+            //         >
+            //         {cell.value}
+            //         </span>
+            //     )
+            // } 
           },
           {
             Header: 'Amount',
@@ -53,7 +71,7 @@ const PositionBuilderExpandable = ({dataSet, onDelete} : any) => {
             accessor: 'price'
           },
           { 
-            Header: 'Avg Price',
+            Header: 'AvgPrice',
             accessor: 'lastPrice'
           },
           { 
@@ -90,7 +108,7 @@ const PositionBuilderExpandable = ({dataSet, onDelete} : any) => {
             Cell: (row : any) => {
                 return (
                     <div>
-                        <button onClick={e=> handleBtnClick(row.row.original)}>Delete</button>
+                        <button onClick={e=> handleBtnClick(row.row.original)}><FaTrashAlt /></button>
                     </div>
                 )
             }
@@ -186,7 +204,7 @@ const PositionBuilderExpandable = ({dataSet, onDelete} : any) => {
        onDelete(value)
     }
             
-  
+
   return (
     <>
         {objToArr ? (<PositionTable columns={columns}  data={data} />) : null }

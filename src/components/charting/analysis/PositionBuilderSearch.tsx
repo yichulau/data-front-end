@@ -4,7 +4,7 @@ import DropdownLargeFilter from '../../misc/DropdownLargeFilter';
 
 const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange, handleSymbolChange, handleAmountChange, handleLongShort } : any) => {
   const fetchData = data;
-  
+
   const filteredInstrumentData = fetchData.map((item : any, index : any) => ({id: index, value: item}));
   filteredInstrumentData.sort(function(a: number,b: number){
     return a - b;
@@ -23,6 +23,7 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
   const coinCurrencyOption = [
     {id: 1, value: 'BTC'},
     {id: 2, value: 'ETH'},
+    {id: 3, value: 'SOL'},
 ]
 
   return (

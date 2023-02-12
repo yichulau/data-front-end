@@ -24,9 +24,9 @@ const PositionTable = ({columns, data} : any) => {
         )
 
         
-    // useMemo(()=>{
-    //     toggleAllRowsExpanded(true); 
-    // },[toggleAllRowsExpanded])
+    useMemo(()=>{
+        toggleAllRowsExpanded(true); 
+    },[toggleAllRowsExpanded])
 
 
   return (
@@ -45,7 +45,29 @@ const PositionTable = ({columns, data} : any) => {
             <table {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-white dark:bg-black dark:text-white">
                 {headerGroups.map((headerGroup, index )=> (
-                   <></>
+                    // <tr {...headerGroup.getHeaderGroupProps()}>
+                     <tr key={headerGroup.id}>
+                        {/* <th scope="col" className="p-4">
+                            <div className="flex items-center">
+                                <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                                <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
+                            </div>
+                        </th> */}
+                        {headerGroup.headers.map(column => (
+                        // <th
+                        //     {...column.getHeaderProps()}
+                        //     scope="col"
+                        //     className="px-6 py-3"
+                        // >
+                        <th
+                            key={column.id}
+                            scope="col"
+                            className="px-6 py-3"
+                        >
+                            {column.render('Header')}
+                        </th>
+                        ))}
+                    </tr>
                     )
                     )}
                 </thead>
@@ -56,7 +78,21 @@ const PositionTable = ({columns, data} : any) => {
                         const { original } : any = row 
                         
                         return (
-                            <></>
+                                //  {...row.getRowProps()}
+                                <tr key={row.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    {/* <td className="w-4 p-4">
+                                        <div className="flex items-center">
+                                            <input id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                                            <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
+                                        </div>
+                                    </td> */}
+                                    {row.cells.map(cell => {
+                                        // {...cell.getCellProps()}
+                                        // @ts-ignore: Unreachable code error
+                                        return <td className="px-6 py-4" >{cell.render('Cell')}</td>
+                                    })}
+                                
+                                </tr>
                         )
                     })}
                     

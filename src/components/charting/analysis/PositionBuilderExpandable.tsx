@@ -76,7 +76,7 @@ const PositionBuilderExpandable = ({dataSet, onDelete} : any) => {
           },
           { 
             Header: 'Avg_Price(USD)',
-            accessor: 'lastPriceUSD'
+            accessor: 'lastPriceUSD',
           },
           { 
             Header: 'Mark Price',

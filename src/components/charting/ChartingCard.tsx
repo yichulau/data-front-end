@@ -14,7 +14,6 @@ import useFetchPremium from '../../hooks/useFetchPremium';
 import LineChartVolume from './LineChartVolume';
 import MiddleMedium from './MiddleMedium';
 import LineChartOI from './LineChartOI';
-import Loader from '../misc/Loader';
 import moment from 'moment';
 import { MiddleMediumVol } from './MiddleMediumVol';
 

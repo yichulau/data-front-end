@@ -95,7 +95,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           type: 'value',
           data: [0, 20, 40, 60, 80, 100],
           min: -100,
-          max: 100,
+          max: 200,
           axisLabel: {
             formatter: "{value} %",
             textStyle: {
@@ -128,7 +128,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
         }],
         yAxis: {
           min: min,
-          max: max,
+       
           position: 'right',
           bottom: 0,
           name: 'PnL (USD)',
@@ -152,13 +152,19 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           {
             type: 'inside',
             xAxisIndex: [0],
-            yAxisIndex: [0]
+            yAxisIndex: [0],
+            start: 0,
+            end: 70,
+            moveOnMouseMove: true,
+            moveOnMouseWheel: true
           },
           {
             type: 'slider',
             xAxisIndex: [0],
             yAxisIndex: [0],
-            show: false
+            show: false,
+            start: 0,
+            end: 70,
           }
         ],
         series: [{

@@ -5,6 +5,7 @@ import { Select, Form } from "antd";
 import { echartsResize } from '../../utils/resize';
 import DropdownIndex from '../misc/DropdownIndex';
 import MyThemeContext from '../../store/myThemeContext';
+import Loader from '../misc/Loader';
 
 const StackedLineChart = ( {data: dataSet } : any) => {
     const { isDarkTheme }= useContext(MyThemeContext); 
@@ -286,7 +287,7 @@ const StackedLineChart = ( {data: dataSet } : any) => {
             </Form.Item>
         </Form> */}
         </div>
-        <div ref={chartRef}  style={{ height: '400px', width:'100%'}}></div>
+        {data ? (<div ref={chartRef}  style={{ height: '400px', width:'100%'}}></div>) : (<Loader />) }
     </div>
    </>
   )

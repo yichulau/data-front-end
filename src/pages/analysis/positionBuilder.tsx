@@ -40,13 +40,13 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
 
   const min : number = -99;
-  const max : number = 200;
+  const max : number = 300;
 
   function storeToLocalStorage(value: any, triggerType :any){
 
     const storedPositions = localStorage.getItem("positions");
     const positionArray = storedPositions ? Object.values(JSON.parse(storedPositions)) : [];
-    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4()});
+    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPriceUSD: value.lastPrice* value.indexPrice});
     let obj = positionArray.reduce(function(acc : any, cur : any, i : any) {
       acc[i] = cur;
       return acc;

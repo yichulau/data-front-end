@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 const useFetchData = (urls: string[]) => {
 
     const [data, setData] = useState([]);
     
-    useEffect(() => {
+    useMemo(() => {
         const fetchData = async () => {
             try {
               const responses = await Promise.all(urls.map(url => fetch(url)));
@@ -28,7 +28,7 @@ const useFetchData = (urls: string[]) => {
                 }
               })
 
-              setData(data);
+              setData(results);
             } catch (error) {
               console.error(error);
             }

@@ -9,6 +9,8 @@ import PositionTable from "../../components/charting/analysis/PositionTable";
 import PositionBuilderExpandable from "../../components/charting/analysis/PositionBuilderExpandable";
 import { v4 as uuidv4 } from 'uuid';
 import { Toaster, ToastIcon, toast, resolveValue } from "react-hot-toast";
+import getLatestDate from "../../utils/getLatestDate";
+import moment from "moment";
 
 interface PositionProps {
   stockPrice : number,
@@ -31,6 +33,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [finalData, setFinalData] = useState(dataSet)
   const [tempData, setTempData] = useState('');
   const [store, setStore] = useState({});
+  const [latestDate, setLatestDate] = useState('');
 
   const url = `https://data-ribbon-collector.com/api/v1.0/${currency}/${exchange}/instrument/`
   const { data } = useFetchSingleData(url)
@@ -102,6 +105,9 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     dataSet.length = 0;
     const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
     const storeDataArray : any = Object.values(storeData)
+    const expiryData = storeDataArray.map((item : any) => {return item.expiry})
+    const latestDate : any = expiryData.length > 0 ? getLatestDate(expiryData) : new Date()
+    setLatestDate(latestDate)
 
     let sums : any = {};
     let result: any= [];
@@ -155,6 +161,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
 
     }
+
+
     setFinalData(result)    
   }
 
@@ -228,7 +236,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         <div
           className={`${
             t.visible ? 'animate-enter' : 'animate-leave'
-          } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+          } max-w-md w-full bg-white dark:bg-black  shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
         >
           <div className="flex-1 w-0 p-4">
             <div className="flex items-start">
@@ -236,10 +244,10 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                 <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
               </div>
               <div className="ml-3 flex-1">
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
                   Position Added!
                 </p>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-gray-500 dark:text-white">
                   Instrument {value.instrumentName} has been added!
                 </p>
               </div>
@@ -255,7 +263,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       <div
         className={`${
           t.visible ? 'animate-enter' : 'animate-leave'
-        } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        } max-w-md w-full bg-white dark:bg-black  shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
       >
         <div className="flex-1 w-0 p-4">
           <div className="flex items-start">
@@ -263,10 +271,10 @@ const PositionBuilder : React.FC<PositionProps> = () => {
             <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
             </div>
             <div className="ml-3 flex-1">
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
                 Position Deleted!
               </p>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-white">
                 Instrument {value.instrumentName} has been deleted!
               </p>
             </div>
@@ -323,6 +331,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                         amount={amount} 
                         indexPrice={currentPrice} 
                         resetChart={clearChart}
+                        latestDate={latestDate}
                       />
                     ) : (
                       <PositionBuilderCharts 
@@ -330,6 +339,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                         amount={amount} 
                         indexPrice={currentPrice} 
                         resetChart={clearChart}
+                        latestDate={latestDate}
                       />
                     ) }
                   </div>
@@ -337,9 +347,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
           </div>
       </div>
       <div className="flex flex-wrap">
-        <div className="flex flex-col items-start py-2 w-full">
+        <div className="flex flex-col items-start py-2 px-2 w-full">
           <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
-              {/* <PositionTable dataSet={store}/> */}
               <PositionBuilderExpandable dataSet={store} onDelete={handleDelete}/>
           </div>
         </div>

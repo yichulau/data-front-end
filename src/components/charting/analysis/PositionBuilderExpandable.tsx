@@ -42,7 +42,7 @@ const PositionBuilderExpandable = ({dataSet, onDelete} : any) => {
             accessor: 'exchange', // accessor is the "key" in the data
           },
           {
-            Header: 'Position Type',
+            Header: 'Position',
             accessor: 'position', // accessor is the "key" in the data
             Cell: (row : any) => {
                 const {cell} = row

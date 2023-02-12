@@ -26,10 +26,12 @@ const TopNavigation = () => {
     <>
         <nav className="bg-white border-gray-200 dark:bg-black">
             <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl px-4 md:px-6 py-2.5">
-                <a href="#" className="flex items-center">
-                    <img src="/assets/ribbon-logo.png" className="h-6 mr-3 sm:h-9" alt="Ribbon Logo" />
-                    <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Ribbon Dashboard</span>
-                </a>
+                <Link href="/">
+                    <div className="flex items-center">
+                        <img src="/assets/ribbon-logo.png" className="h-6 mr-3 sm:h-9" alt="Ribbon Logo" />
+                        <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Ribbon Dashboard</span>
+                    </div>
+                </Link>
                 <div className="flex items-center">
                     <button className="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
                         onClick={toggleThemeHandler}

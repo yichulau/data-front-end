@@ -6,16 +6,17 @@ import MyThemeContext from '../../../store/myThemeContext';
 import abbreviateNumber from "../../../utils/numberFormatter";
 import { FaCalendarPlus,FaCalendarMinus } from 'react-icons/fa';
 import moment from "moment";
+import ribbonImg from "../../../../public/assets/ribbon-logo.png";
 
-const PositionBuilderCharts = ({data, amount, indexPrice, resetChart} : any) => {
+const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate} : any) => {
     
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
     const min = Number(-indexPrice*amount*2);
     const max = Number(indexPrice*amount*2);
     const currentDate = moment(new Date()).format('DD-MM-YYYY')
+    const lateDate = moment(latestDate).format('DD-MM-YYYY')
     let chart: any;
-
 
     const clearChart = () =>{
       resetChart()
@@ -101,11 +102,30 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart} : any) => 
               color: isDarkTheme  ? '#ffffff' : '#000000'   ,
             }
           },
+          splitLine: {
+            lineStyle: {
+                color: isDarkTheme  ? '#1a1a1a' :  '#f2f2f2',
+            }
+          },
           name: 'Index Price',
           position: 'bottom',
           nameLocation: 'middle',
           nameGap: 25
         },
+        graphic: [{
+          elements: [{
+            type: 'image',
+            style: {
+              image: ribbonImg.src,
+              width: 300,
+              height: 300,
+              opacity: 0.09
+            },
+            left: 'center',
+            top: 'center'
+            
+          }]
+        }],
         yAxis: {
           min: min,
           max: max,
@@ -116,7 +136,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart} : any) => 
           nameGap: 50,
           splitLine: {
             lineStyle: {
-                color: isDarkTheme  ? '#000000' : '#ffffff' ,
+                color: isDarkTheme  ? '#1a1a1a' :  '#f2f2f2' ,
             }
           },
           axisLabel: {
@@ -183,12 +203,12 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart} : any) => 
     <>
         <div className='mt-2 mb-2'>
           <div className="flex flex-col justify-between">
-            <h2 className='block mb-2 text-2xl font-medium text-gray-900 dark:text-white'>Position Builder</h2>
+            <h2 className='block mb-2 text-lg font-medium text-gray-900 dark:text-white'>Position Builder</h2>
             <div className="flex flex-row justify-between">
               <div></div>
               <div>
                 <button type="button" 
-                  className="text-gray-900 bg-[#EFF2F5] border focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-4  mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  className="text-gray-900 bg-[#EFF2F5] border focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-2.5 py-2.5  mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                   onClick={clearChart}
                 >
                   Reset Chart
@@ -196,7 +216,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart} : any) => 
               </div>
             </div>
             <div className="flex flex-row justify-between items-center">
-              <div className="flex justify-between space-between border items-center  border-indigo-500 w-72 md:w-44 px-4 py-4 rounded-lg shadow-sm">
+              <div className="flex justify-between space-between border items-center  border-indigo-500 w-72 md:w-44  px-2.5 py-2.5 rounded-lg shadow-sm">
                 <span className="text-indigo-500 font-medium text-xs sm:text-sm" >
                   {currentDate}
                 </span>
@@ -207,9 +227,9 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart} : any) => 
               <div className="w-full px-8">
                 {/* <input id="default-range" type="range" value="50" className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"/> */}
               </div>
-              <div className="flex justify-between space-between border items-center  border-teal-500 w-72 md:w-44 px-4 py-4 rounded-lg shadow-sm">
+              <div className="flex justify-between space-between border items-center  border-teal-500 w-72 md:w-44  px-2.5 py-2.5 rounded-lg shadow-sm">
                 <span className="text-teal-500 font-medium text-xs sm:text-sm" >
-                {currentDate}
+                {lateDate ? lateDate : latestDate}
                 </span>
                 <span
                   className="flex ml-2 text-teal-500 font-medium text-lg"
@@ -221,7 +241,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart} : any) => 
           </div>
           
             
-            <div ref={chartRef}  style={{ width: "100%", height: "600px" }} />
+            <div ref={chartRef}  style={{ width: "100%", height: "500px" }} />
         </div>
     
     </>

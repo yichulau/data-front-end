@@ -88,8 +88,8 @@ const PositionTable = ({columns, data} : any) => {
                                     </td> */}
                                     {row.cells.map(cell => {
                                         // {...cell.getCellProps()}
-                                        // @ts-ignore: Unreachable code error
-                                        return <td className="px-6 py-4" >{cell.render('Cell')}</td>
+                                       
+                                        return <td key={cell.row.id} className="px-6 py-4" >{cell.render('Cell')}</td>
                                     })}
                                 
                                 </tr>

@@ -36,7 +36,7 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
       filteredDataset.forEach((item:any)=>{
         xData.push(moment.unix(Number(item.ts)).format('DD-MM-yy HH:mm:ss'));
       })
-      return [filteredDataset, xData]
+      return [filteredDataset, xData.splice(-48)]
     } 
 
     const handleFilterVolChange = (value : number) =>{
@@ -145,14 +145,14 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
         dataZoom: [
           {
             type: 'inside',
-            start: end -30,
-            end: end,
+            start: 0,
+            end: 100,
             xAxisIndex: [0]
           },
           {
             type: 'slider',
-            start: end -30,
-            end: end,
+            start: 0,
+            end: 100,
             xAxisIndex: [0],
           }
         ],

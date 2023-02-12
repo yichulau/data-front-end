@@ -36,6 +36,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
     let xData: string[] = [];
     let chart: any;
 
+   
     const volumeOption: Filter[] = [
         {id: 0, value: 'Notional'},
         {id: 1, value: 'Premium'}
@@ -52,7 +53,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
         const xData: string[] = [];
         const arr = [];
         const result : any = [];
-        const dataset2: { [key: string]: number[] } = {};
+        let dataset2: { [key: string]: number[] } = {};
         let keys;
 
         data.forEach((item : any) => {
@@ -103,8 +104,18 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
         }
          
 
+        if(Object.keys(dataset2).length !== 0){
+            dataset2 = {
+                Binance: dataset2.Binance.slice(-48),
+                BitCom: dataset2.BitCom.slice(-48),
+                ByBit: dataset2.ByBit.slice(-48),
+                Deribit: dataset2.Deribit.slice(-48),
+                OKEX: dataset2.OKEX.slice(-48)
+            }   
+        }
+      
 
-        return [dataset2 ? dataset2 : seriesData, xData]; 
+        return [dataset2 ? dataset2 : seriesData, xData.slice(-48)]; 
     }
     const getDataByCoin = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
@@ -134,7 +145,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
         });
 
 
-        return [seriesData, xData]; 
+        return [seriesData, xData.slice(-48)]; 
     }
     const handleFilterChange = (value: number) => {
         setFilter(value); 
@@ -142,7 +153,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
     const handleFilterVolChange = (value : number) =>{
         onChange(value)
     }
-   
+    
     useEffect(() => {
         if (!chartRef.current) {
             return;
@@ -259,14 +270,14 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
             dataZoom: [
                 {
                     type: 'inside',
-                    start: end -30,
-                    end: end,
+                    start: 0,
+                    end: 100,
                     xAxisIndex: [0]
                   },
                   {
                     type: 'slider',
-                    start: end -30,
-                    end: end,
+                    start: 0,
+                    end: 100,
                     xAxisIndex: [0],
                     bottom: '10px'
                   }

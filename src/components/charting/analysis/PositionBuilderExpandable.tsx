@@ -44,23 +44,23 @@ const PositionBuilderExpandable = ({dataSet, onDelete} : any) => {
           {
             Header: 'Position Type',
             accessor: 'position', // accessor is the "key" in the data
-            // Cell: (row : any) => {
-            //     const {cell} = row
+            Cell: (row : any) => {
+                const {cell} = row
 
-            //     return (
-            //         <span 
-            //             style={{
-            //                 backgroundColor: cell.value === 'Long' ? '#00A8A0' : '#FC5328',
-            //                 color: '#ffffff',
-            //                 padding: '4px 10px 4px 10px',
-            //                 borderRadius: '5px'
-            //             }}
-            //             key={row.data.id}  
-            //         >
-            //         {cell.value}
-            //         </span>
-            //     )
-            // } 
+                return (
+                    <span 
+                        style={{
+                            backgroundColor: cell.value === 'Long' ? '#00A8A0' : '#FC5328',
+                            color: '#ffffff',
+                            padding: '4px 10px 4px 10px',
+                            borderRadius: '5px'
+                        }}
+                        key={row.data.id}  
+                    >
+                    {cell.value}
+                    </span>
+                )
+            } 
           },
           {
             Header: 'Amount',

@@ -6,9 +6,14 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
   const fetchData = data;
 
   const filteredInstrumentData = fetchData.map((item : any, index : any) => ({id: index, value: item}));
-  filteredInstrumentData.sort(function(a: number,b: number){
-    return a - b;
+  filteredInstrumentData.sort(function(a: any,b: any){
+    const aValue = a.value.split('-')
+    const bValue = b.value.split('-')
+    const aStrike = Number(aValue[2])
+    const bStrike = Number(bValue[2])
+    return aStrike - bStrike;
   })
+
   const handleButtonClick = (event : any)=>{
     handleLongShort(event.target.name)
   }

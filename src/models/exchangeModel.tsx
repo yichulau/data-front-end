@@ -10,7 +10,7 @@ function getDataByExchange(exchangeID: number) {
       case 2:
         return "Binance";
       case 3:
-        return "Bit.com";
+        return "BitCom";
       case 4:
         return "Deribit";
       case 5:

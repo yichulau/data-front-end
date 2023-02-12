@@ -28,7 +28,7 @@ const StackedLineChart = ( {data: dataSet } : any) => {
         const xData: string[] = [];
         const arr = [];
         const result : any = [];
-        const dataset2: { [key: string]: number[] } = {};
+        let dataset2: { [key: string]: number[] } = {};
         let keys;
 
         data.forEach((item: { ts: string | number; exchangeID: string | number; value: string; }) => {
@@ -78,10 +78,19 @@ const StackedLineChart = ( {data: dataSet } : any) => {
             });
         }
          
+        if(Object.keys(dataset2).length !== 0){
+            dataset2 = {
+                Binance: dataset2.Binance.slice(-48),
+                BitCom: dataset2.BitCom.slice(-48),
+                ByBit: dataset2.ByBit.slice(-48),
+                Deribit: dataset2.Deribit.slice(-48),
+                OKEX: dataset2.OKEX.slice(-48)
+            }   
+        }
 
 
 
-        return [dataset2 ? dataset2 : seriesData, xData]; 
+        return [dataset2 ? dataset2 : seriesData, xData.slice(-48)]; 
     }
     const getDataByCoin = () => {
         // group data by ts and coinCurrencyID, and return the series data and x-axis data 
@@ -109,7 +118,7 @@ const StackedLineChart = ( {data: dataSet } : any) => {
             });
         });
 
-        return [seriesData, xData]; 
+        return [seriesData, xData.slice(-48)]; 
     }; 
     const handleFilterChange = (value: number) => {
         setFilter(value); 
@@ -225,14 +234,14 @@ const StackedLineChart = ( {data: dataSet } : any) => {
             dataZoom: [
                 {
                     type: 'inside',
-                    start: end -30,
-                    end: end,
+                    start: 0,
+                    end: 100,
                     xAxisIndex: [0]
                   },
                   {
                     type: 'slider',
-                    start: end -30,
-                    end: end,
+                    start: 0,
+                    end: 100,
                     xAxisIndex: [0],
                     bottom: '10px'
                   }

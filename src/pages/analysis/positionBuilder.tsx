@@ -6,6 +6,8 @@ import PositionBuilderCharts from "../../components/charting/analysis/PositionBu
 import PositionBuilderSearch from "../../components/charting/analysis/PositionBuilderSearch";
 import useFetchSingleData from "../../hooks/useFetchSingleData";
 import PositionTable from "../../components/charting/analysis/PositionTable";
+import PositionBuilderExpandable from "../../components/charting/analysis/PositionBuilderExpandable";
+import { v4 as uuidv4 } from 'uuid';
 
 interface PositionProps {
   stockPrice : number,
@@ -22,7 +24,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   
   const dataSet: number[][] = []
   const [currency, setCurrency] = useState('BTC')
-  const [exchange, setExchange] = useState('binance')
+  const [exchange, setExchange] = useState('')
   const [currentPrice, setCurrentPrice] = useState(0)
   const [amount, setAmount] = useState(0)
   const [finalData, setFinalData] = useState(dataSet)
@@ -41,7 +43,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
     const storedPositions = localStorage.getItem("positions");
     const positionArray = storedPositions ? Object.values(JSON.parse(storedPositions)) : [];
-    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType});
+    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4()});
     let obj = positionArray.reduce(function(acc : any, cur : any, i : any) {
       acc[i] = cur;
       return acc;
@@ -100,57 +102,59 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     dataSet.length = 0;
     const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
     const storeDataArray : any = Object.values(storeData)
+    console.log(storeDataArray)
     let sums : any = {};
-    let result = [];
+    let result: any= [];
+    if(storeDataArray.length > 0){
+      storeDataArray.map((item : any)=>{
+        setCurrentPrice(Number(item.indexPrice))
+        setAmount(item.amount)
+        const instrumentType = item.callOrPut;
+        const instrumentStrikePrice = Number(item.strike)
+        const amount = item.amount;
+        const currentPrice = Number(item.indexPrice);
+        const optionPrice = Number(item.lastPrice);
+        const strikePrice = instrumentStrikePrice;
+        const type = instrumentType;
+        
+        if(item.position === 'Long' && type === 'C'){
+          for (let i = min; i <= max; i++) {
+            dataSet.push([i, buyCallOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+          }
+        }
+        if(item.position === 'Short' && type === 'C'){
+          for (let i = min; i <= max; i++) {
+            dataSet.push([i, sellCallOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+          }
+        }
+        if(item.position  === 'Long' && type === 'P'){
+          for (let i = min; i <= max; i++) {
+            dataSet.push([i, buyPutOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+          }
+        }
+        if(item.position  === 'Short' && type === 'P'){
+          for (let i = min; i <= max; i++) {
+            dataSet.push([i, sellPutOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+          }
+        }
+      })
+  
+      for (let i = 0; i < dataSet.length; i++) {
+          if (!sums[dataSet[i][0]]) {
+              sums[dataSet[i][0]] = 0;
+          }
+          sums[dataSet[i][0]] += dataSet[i][1];
+      }
+  
+      for (let key in sums) {
+        result.push([Number(key), sums[key]]);
+      }
+      result.sort(function(a: any,b: any){
+        return a[0] - b[0];
+      })
 
-    storeDataArray.map((item : any)=>{
-      setCurrentPrice(Number(item.indexPrice))
-      setAmount(item.amount)
-      const instrumentString = item.instrumentName.split('-');
-      const instrumentStrikePrice = Number(instrumentString[2])
-      const instrumentType = instrumentString[3];
-      const amount = item.amount;
-      const currentPrice = Number(item.indexPrice);
-      const optionPrice = Number(item.lastPrice);
-      const strikePrice = instrumentStrikePrice;
-      const type = instrumentType;
-      
-      if(item.position === 'Long' && type === 'C'){
-        for (let i = min; i <= max; i++) {
-          dataSet.push([i, buyCallOption(i,amount, currentPrice,strikePrice, optionPrice)]);
-        }
-      }
-      if(item.position === 'Short' && type === 'C'){
-        for (let i = min; i <= max; i++) {
-          dataSet.push([i, sellCallOption(i,amount, currentPrice,strikePrice, optionPrice)]);
-        }
-      }
-      if(item.position  === 'Long' && type === 'P'){
-        for (let i = min; i <= max; i++) {
-          dataSet.push([i, buyPutOption(i,amount, currentPrice,strikePrice, optionPrice)]);
-        }
-      }
-      if(item.position  === 'Short' && type === 'P'){
-        for (let i = min; i <= max; i++) {
-          dataSet.push([i, sellPutOption(i,amount, currentPrice,strikePrice, optionPrice)]);
-        }
-      }
-    })
 
-    for (let i = 0; i < dataSet.length; i++) {
-        if (!sums[dataSet[i][0]]) {
-            sums[dataSet[i][0]] = 0;
-        }
-        sums[dataSet[i][0]] += dataSet[i][1];
     }
-
-    for (let key in sums) {
-      result.push([Number(key), sums[key]]);
-    }
-    result.sort(function(a: any,b: any){
-      return a[0] - b[0];
-    })
-
     setFinalData(result)    
   }
 
@@ -170,6 +174,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
   const handleExchangeChange = (value : string) => {
     setExchange(value)
+    setCurrency('')
+    setTempData('')
   }
   
   const handleSymbolChange = async (value:string) =>{
@@ -197,6 +203,25 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     localStorage.removeItem('positions');
   }
 
+  const handleDelete = (value : any) =>{
+    const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
+    const storeDataArray : any = Object.values(storeData)
+    const idToDelete = value.id;
+
+    storeDataArray.map((arr : any, index : any) =>{
+      if(arr.id === idToDelete){
+        storeDataArray.splice(index,1);
+        return storeDataArray
+      }
+    })
+    const obj = Object.assign({}, storeDataArray)
+    localStorage.setItem("positions", JSON.stringify(obj));
+    const localData = (JSON.parse(localStorage.getItem('positions') || '{}'));
+    setStore(localData)
+    calculation()
+
+  }
+
   useEffect(()=>{
     setStore(JSON.parse(localStorage.getItem('positions') || '{}'))
     calculation();
@@ -219,7 +244,17 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                         handleLongShort={handleLongShort}
                         handleCurrencyChange={handleCurrencyChange}
                         
-                      />) : null }
+                      />) : (
+                        <PositionBuilderSearch data={[]}
+                          handleExchangeChange={handleExchangeChange}
+                          handleSymbolChange={handleSymbolChange}
+                          handleAmountChange={handleAmountChange}
+                          handleLongShort={handleLongShort}
+                          handleCurrencyChange={handleCurrencyChange}
+                        
+                        />
+
+                      ) }
                   </div>
               </div>
           </div>
@@ -233,7 +268,14 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                         indexPrice={currentPrice} 
                         resetChart={clearChart}
                       />
-                    ) : null }
+                    ) : (
+                      <PositionBuilderCharts 
+                        data={[]} 
+                        amount={amount} 
+                        indexPrice={currentPrice} 
+                        resetChart={clearChart}
+                      />
+                    ) }
                   </div>
               </div>
           </div>
@@ -241,7 +283,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       <div className="flex flex-wrap">
         <div className="flex flex-col items-start py-2 w-full">
           <div className="bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
-              <PositionTable dataSet={store}/>
+              {/* <PositionTable dataSet={store}/> */}
+              <PositionBuilderExpandable dataSet={store} onDelete={handleDelete}/>
           </div>
         </div>
       </div>

@@ -4,11 +4,11 @@ import listenForOutsideClicks from '../../utils/listen-for-outside-clicks';
 const DropdownLong = ({title , options, onChange} : any) => {
     let initialTitle = title;
     if(initialTitle === 'Exchange'){
-        initialTitle = 'Bit.com'
+        initialTitle = 'Choose Exchange'
     } else if (initialTitle === 'Instruments'){
         initialTitle = 'Instruments'
     } else if (initialTitle === 'Currency'){
-        initialTitle = 'BTC'
+        initialTitle = 'Choose Currency'
     }
    
     const [selectedOption, setSelectedOption] = useState(initialTitle);

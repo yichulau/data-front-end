@@ -68,6 +68,7 @@ const StrikeVol = () => {
     const coinCurrencyOption = [
         {id: 1, value: 'BTC'},
         {id: 2, value: 'ETH'},
+        {id: 3, value: 'SOL'},
     ]
   return (
     <>

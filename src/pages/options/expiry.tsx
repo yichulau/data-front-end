@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Dropdown from '../../components/misc/Dropdown'
 import useFetchSingleData from '../../hooks/useFetchSingleData';
 import ExpiryChart from '../../components/charting/openInterest/ExpiryChart';
@@ -13,19 +13,18 @@ const Expiry = () => {
     const { data, error, loading} = useFetchSingleData(url)
     const spotData : any = useFetchSingleData(spotVal)
     const responseData : any = data || [];
-    let keysOption = [];
+    let keysOption = [];   
 
 
     const price  = spotData? spotData.data?.price : null;
     const dataList =  data !== null && price !== null ? formatData(responseData.expiryData, price) : [] ;
  
 
-
     if(data!== null){
-        const keyList = responseData.strikeData.map((item : any) => item.strike);
+        // const keyList = responseData.strikeData.map((item : any) => item.strike);
+        const keyList = responseData.strikeList
         keysOption = keyList.map((str :any, index : any) => ({id: index + 1, value: str}));
         keysOption.unshift({id: 0, value: 'ALL'})
-       
     }
 
     function formatData(data : any, spotVal : number) {
@@ -74,6 +73,8 @@ const Expiry = () => {
         {id: 3, value: 'SOL'},
     ]
 
+  
+
   return (
     <>
     <div className="container py-1 mx-auto">
@@ -103,7 +104,7 @@ const Expiry = () => {
                                     title={`Strike Price`}
                                     options={keysOption}
                                     onChange={handleKeyChange}
-                                />
+                                /> 
                             </div>
                         </div>
                     </div>

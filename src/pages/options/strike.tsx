@@ -19,7 +19,7 @@ const Strike = () => {
     const dataList =  data !== null && price !== null ? formatData(responseData.strikeData, price) : [] ;
 
     if(data!== null){
-        const keyList = responseData.expiryData.map((item : any) => item.expiry);
+        const keyList = responseData.expiryList;
         keysOption = keyList.map((str :any, index : any) => ({id: index + 1, value: str}));
         keysOption.unshift({id: 0, value: 'ALL'})
        

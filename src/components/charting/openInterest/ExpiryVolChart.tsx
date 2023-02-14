@@ -114,6 +114,14 @@ const ExpiryVolChart = ({data ,error, loading, ccyOption} : any) => {
             }
           }
         },
+        dataZoom: [
+          {
+              type: 'inside',
+              start: 0,
+              end: 100,
+              xAxisIndex: [0]
+            }
+        ],
         series: [
           {
             data: responseData.callVolList,

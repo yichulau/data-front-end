@@ -114,6 +114,14 @@ const StrikeChart = ({data ,error, loading, ccyOption} : any) => {
         bottom: '8%',
         containLabel: true
       },
+      dataZoom: [
+        {
+            type: 'inside',
+            start: 0,
+            end: 100,
+            xAxisIndex: [0]
+          }
+      ],
       series: [
         {
           data: responseData.callOIList,

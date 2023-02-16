@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Dropdown from '../../components/misc/Dropdown'
 import StrikeChart from '../../components/charting/openInterest/StrikeChart';
 import useFetchSingleData from '../../hooks/useFetchSingleData';
+import DropdownLeftOption from '../../components/misc/DropdownLeftOption';
 
 
 const Strike = () => {
@@ -95,7 +96,7 @@ const Strike = () => {
                                 />
                             </div>
                             <div className='px-2'>
-                                <Dropdown 
+                                <DropdownLeftOption 
                                     title={`Expiry`}
                                     options={keysOption}
                                     onChange={handleKeyChange}

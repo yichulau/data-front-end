@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import listenForOutsideClicks from '../../utils/listen-for-outside-clicks';
 
-const DropdownLeft = ({title , options, onChange} : any) => {
-
-    const initialTitle = title !== 'Granularity' ? 'ALL' : '1D';
+const DropdownLeftOption = ({title , options, onChange} : any) => {
+    const initialTitle = title !== 'Symbol' ? 'ALL' : 'BTC';
     const [selectedOption, setSelectedOption] = useState(initialTitle);
     const [isOpen, setIsOpen] = useState(false)
   
@@ -14,12 +13,11 @@ const DropdownLeft = ({title , options, onChange} : any) => {
     };
     const menuRef = useRef(null)
     const [listening, setListening] = useState(false)
-    const selectOption = (option: any , optionValue: string) => {
-        setSelectedOption(optionValue);
+    const selectOption = (option: any) => {
+        setSelectedOption(option);
         setIsOpen(false);
         onChange(option)
     };
-
     useEffect(listenForOutsideClicks(listening, setListening, menuRef, setIsOpen))
 
     return (
@@ -35,8 +33,8 @@ const DropdownLeft = ({title , options, onChange} : any) => {
                         <ul className="py-2 text-sm text-gray-700 dark:text-gray-200 max-h-48`" aria-labelledby="dropdownDelayButton">
                             {options.map((item : any)=>{ 
                                 return ( 
-                                <li key={item.id} onClick={() => selectOption(item.id, item.value)}>
-                                    <div className=" px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white pointer">{item.value}</div>
+                                    <li key={item.id} onClick={() => selectOption(item.value)}>
+                                    <div className=" px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{item.value}</div>
                                 </li>)
                             })}
                         </ul>
@@ -47,4 +45,4 @@ const DropdownLeft = ({title , options, onChange} : any) => {
   )
 }
 
-export default DropdownLeft
+export default DropdownLeftOption

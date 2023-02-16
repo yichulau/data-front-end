@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Dropdown from '../../components/misc/Dropdown'
 import useFetchSingleData from '../../hooks/useFetchSingleData';
 import StrikeVolChart from '../../components/charting/openInterest/StrikeVolChart';
+import DropdownLeftOption from '../../components/misc/DropdownLeftOption';
 
 const StrikeVol = () => {
     const [exchangeOption, setExchangeOption] = useState('ALL')
@@ -95,7 +96,7 @@ const StrikeVol = () => {
                                 />
                             </div>
                             <div className='px-2'>
-                                <Dropdown 
+                                <DropdownLeftOption 
                                     title={`Expiry`}
                                     options={keysOption}
                                     onChange={handleKeyChange}

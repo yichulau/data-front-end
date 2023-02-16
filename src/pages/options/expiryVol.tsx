@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Dropdown from '../../components/misc/Dropdown'
 import useFetchSingleData from '../../hooks/useFetchSingleData';
 import ExpiryVolChart from '../../components/charting/openInterest/ExpiryVolChart';
+import DropdownLeftOption from '../../components/misc/DropdownLeftOption';
 
 
 const ExpiryVol = () => {
@@ -96,7 +97,7 @@ const ExpiryVol = () => {
                                 />
                             </div>
                             <div className='px-2'>
-                                <Dropdown 
+                                <DropdownLeftOption 
                                     title={`Strike Price`}
                                     options={keysOption}
                                     onChange={handleKeyChange}

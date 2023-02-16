@@ -358,13 +358,13 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                    
                     />
                 </div>
-                <div className='px-2 flex flex-col'>
+                {/* <div className='px-2 flex flex-col'>
                     <DropdownLeft 
                         title={`Granularity`}
                         options={granularityOption}
                         onChange={handleGranularityChange}
                     />
-                </div>
+                </div> */}
    
                
             </div>

@@ -33,6 +33,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
     const data = useMemo(()=> dataSet, [dataSet])
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
+    const [granularity, setGranularity] = useState(0);
     let seriesData : any= {};
     let xData: string[] = [];
     let chart: any;
@@ -45,6 +46,11 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
     const byExchangeCoin: Filter[] = [
         {id: 0, value: 'By Exchange'},
         {id: 1, value: 'By Coin'}
+    ]
+
+    const granularityOption: Filter[] = [
+        {id: 0, value: '1D'},
+        {id: 1, value: 'Raw'}
     ]
 
     const getDataByExchange = () => {
@@ -77,13 +83,18 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                 seriesData[exchangeId].push([groupedData[ts][exchangeId],moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss')]);
             });
         });
-        
-        const dailyAverageAggregrationData = aggregrationCalculation(seriesData);
-        arr.push(dailyAverageAggregrationData)
-        const filteredDates = xData.map(dateString => dateString.slice(0, 10));
-        const uniqueDates = Array.from(new Set(filteredDates)).map((obj: any)=>{return obj+" 00:00:00"});
-        xData = uniqueDates;
 
+        if(granularity === 0){
+            const dailyAverageAggregrationData = aggregrationCalculation(seriesData);
+            arr.push(dailyAverageAggregrationData)
+            const filteredDates = xData.map(dateString => dateString.slice(0, 10));
+            const uniqueDates = Array.from(new Set(filteredDates)).map((obj: any)=>{return obj+" 00:00:00"});
+            xData = uniqueDates;
+        }
+        if(granularity === 1){
+            arr.push(seriesData)
+        }
+        
         if(arr.length > 0){
             for (const time of xData) {
                 const obj : any= {};
@@ -114,6 +125,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
         const groupedData : any = {};
         const seriesData : any= {};
+        let dailyAverageAggregrationData;
         let xData: string[] = [];
 
         data.forEach((item: any) => {
@@ -127,30 +139,49 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
             }
         });
 
-        Object.keys(groupedData).forEach(ts => {
-            xData.push(moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss'));
-            Object.keys(groupedData[ts]).forEach(coinCurrencyId => {
-                if (!seriesData[coinCurrencyId]) {
-                    seriesData[coinCurrencyId] = [];
-                }
-                seriesData[coinCurrencyId].push([groupedData[ts][coinCurrencyId],moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss')]);
+        if(granularity === 0){
+            Object.keys(groupedData).forEach(ts => {
+                xData.push(moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss'));
+                Object.keys(groupedData[ts]).forEach(coinCurrencyId => {
+                    if (!seriesData[coinCurrencyId]) {
+                        seriesData[coinCurrencyId] = [];
+                    }
+                    seriesData[coinCurrencyId].push([groupedData[ts][coinCurrencyId],moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss')]);
+                });
             });
-        });
-        const dailyAverageAggregrationData = aggregrationCalculation(seriesData)
-        for (const key in dailyAverageAggregrationData) {
-            dailyAverageAggregrationData[key] = dailyAverageAggregrationData[key].map((entry :any) => entry[0]);
+            dailyAverageAggregrationData = aggregrationCalculation(seriesData)
+            for (const key in dailyAverageAggregrationData) {
+                dailyAverageAggregrationData[key] = dailyAverageAggregrationData[key].map((entry :any) => entry[0]);
+            }
+            const filteredDates = xData.map(dateString => dateString.slice(0, 10));
+            const uniqueDates = Array.from(new Set(filteredDates)).map((obj: any)=>{return obj+" 00:00:00"});
+            xData = uniqueDates;
         }
-        const filteredDates = xData.map(dateString => dateString.slice(0, 10));
-        const uniqueDates = Array.from(new Set(filteredDates)).map((obj: any)=>{return obj+" 00:00:00"});
-        xData = uniqueDates;
 
-        return [dailyAverageAggregrationData, xData]; 
+        if(granularity === 1){
+            Object.keys(groupedData).forEach(ts => {
+                xData.push(moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss'));
+                Object.keys(groupedData[ts]).forEach(coinCurrencyId => {
+                    if (!seriesData[coinCurrencyId]) {
+                        seriesData[coinCurrencyId] = [];
+                    }
+                    seriesData[coinCurrencyId].push(groupedData[ts][coinCurrencyId]);
+                });
+            });
+        }
+
+
+        return [granularity === 0 ? dailyAverageAggregrationData : seriesData , xData]; 
     }
     const handleFilterChange = (value: number) => {
         setFilter(value); 
     }; 
     const handleFilterVolChange = (value : number) =>{
         onChange(value)
+    }
+
+    const handleGranularityChange = (value : number ) =>{
+        setGranularity(value)
     }
     
     useEffect(() => {
@@ -166,7 +197,6 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
             case 0: 
             seriesData = getDataByExchange()[0];
             xData = getDataByExchange()[1];  
-            console.log(seriesData)
             break; 
             case 1: 
             seriesData = getDataByCoin()[0];
@@ -189,6 +219,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                 formatter: function (params : any) {
                   let str = "";
                   let strike = "";
+                  let timing = "";
                   for (let i = 0; i < params.length; i++) {
                       if (params[i].seriesName !== "") {
                           let value = params[i].value
@@ -198,8 +229,8 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                           if (value >= 1000000) {
                             value = Number(value / 1000000).toFixed(2) + 'M';
                           }
-                      
-                          strike = 'Date: '+ params[0].name.slice(0,10) + "<br/>";
+                          timing = granularity === 0 ? params[0].name.slice(0,10) : params[0].name
+                          strike = 'Date: '+ timing + "<br/>";
                           str +=  
                               params[i].marker +
                               params[i].seriesName +
@@ -298,7 +329,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
         return () => {
             chart.dispose();
         };
-    }, [data,filter, isDarkTheme]);
+    }, [data,filter, isDarkTheme,granularity]);
 
 
     
@@ -309,7 +340,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
     <h2 className="ml-2 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Chart Of Options Volume</h2>
     <div style={{ textAlign: "left" }}>
 
-        <div className='flex flex-row justify-between mb-6'>
+        <div className='flex flex-row md:justify-between mb-6'>
             <div className='flex'>
                 <div className='px-2 flex flex-col'>
                     <DropdownIndex 
@@ -324,6 +355,13 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                         options={volumeOption}
                         onChange={handleFilterVolChange}
                    
+                    />
+                </div>
+                <div className='px-2 flex flex-col'>
+                    <DropdownIndex 
+                        title={`Granularity`}
+                        options={granularityOption}
+                        onChange={handleGranularityChange}
                     />
                 </div>
    

@@ -12,8 +12,9 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
+    const [granularity, setGranularity] = useState(0);
     let data = useMemo(()=> dataSet, [dataSet])
-    let xData: string[] = [];
+    let xData: any = [];
     let chart: any;
 
     const volumeOption = [
@@ -25,6 +26,11 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
         {id: 1, value: 'ETH'},
         {id: 2, value: 'SOL'},
     ]
+
+    const granularityOption = [
+      {id: 0, value: '1D'},
+      {id: 1, value: 'Raw'}
+    ]
     
     const handleFilterChange = (value: number) => {
       setFilter(value); 
@@ -32,15 +38,56 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
 
     const getDataByCoin = (coin : string) =>{
       const filteredDataset = data.filter(({ coinCurrencyID } :any) => coinCurrencyID === coin);
-      const xData: string[] = [];
+      const dailyAverages = [];
+      const dailyValues : any= {};
+      let xData: string[] = [];
+
       filteredDataset.forEach((item:any)=>{
-        xData.push(moment.unix(Number(item.ts)).format('DD-MM-yy HH:mm:ss'));
+        xData.push(moment.unix(item.ts).format('DD-MM-YYYY HH:mm:ss'));
       })
-      return [filteredDataset, xData.splice(-48)]
+      const filterTimeFormat = filteredDataset.map((obj : any)=>{
+        const formattedDate = moment.unix(obj.ts).format('DD-MM-YYYY HH:mm:ss');
+        return { ...obj, ts: formattedDate };
+      })
+
+      for (const dataPoint of filterTimeFormat) {
+        const date = dataPoint.ts.split(" ")[0];
+        if (!dailyValues[date]) {
+          dailyValues[date] = {
+            total: dataPoint.value,
+            count: 1
+          };
+        } else {
+          dailyValues[date].total += dataPoint.value;
+          dailyValues[date].count++;
+        }
+      }
+
+      for (const date in dailyValues) {
+        const average = dailyValues[date].total / dailyValues[date].count;
+        dailyAverages.push({
+          ts: moment(date, "DD-MM-YYYY HH:mm:ss").unix(),
+          value: average,
+          coinCurrencyID: coin
+        });
+      }
+
+      if(granularity === 0){
+        const filteredDates = xData.map(dateString => dateString.slice(0, 10));
+        const uniqueDates = Array.from(new Set(filteredDates)).map((obj: any)=>{return obj});
+        xData = uniqueDates;
+      }
+
+    
+      return [granularity === 0 ? dailyAverages : filteredDataset, xData]
     } 
 
     const handleFilterVolChange = (value : number) =>{
       onChange(value)
+    }
+
+    const handleGranularityChange = (value : number ) =>{
+      setGranularity(value)
     }
 
     useEffect(()=>{
@@ -86,13 +133,18 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
           formatter: function (params : any) {
             let str = "";
             let strike = "";
+            let timing = "";
             for (let i = 0; i < params.length; i++) {
                 if (params[i].seriesName !== "") {
                     let value = params[i].value
+                    if (value >= 1000000000){
+                      value = Number(value / 1000000000).toFixed(2) + 'B';
+                    }
                     if (value >= 1000000) {
                       value = Number(value / 1000000).toFixed(2) + 'M';
                     }
-                    strike = 'Time: '+ params[0].name + "<br/>";
+                    timing = granularity === 0 ? params[0].name.slice(0,10) : params[0].name
+                    strike = 'Time: '+ timing + "<br/>";
                     str +=  
                         params[i].marker +
                         params[i].seriesName +
@@ -127,6 +179,12 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
         xAxis: {
           type: 'category',
           boundaryGap: false,
+          axisLabel:{
+            formatter: function (value: any) {
+                const formatDate = value
+                return formatDate;
+            }
+          },
           data: xData
         },
         yAxis: {
@@ -183,7 +241,7 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
       return () => {
         chart.dispose();
       };
-    },[data,filter, isDarkTheme])
+    },[data,filter, isDarkTheme, granularity])
     
    
 
@@ -206,6 +264,13 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
                         title={`Type`}
                         options={volumeOption}
                         onChange={handleFilterVolChange}
+                    />
+                </div>
+                <div className='px-2 flex flex-col'>
+                    <DropdownIndex 
+                        title={`Granularity`}
+                        options={granularityOption}
+                        onChange={handleGranularityChange}
                     />
                 </div>
    

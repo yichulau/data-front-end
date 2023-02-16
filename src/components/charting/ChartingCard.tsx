@@ -107,7 +107,7 @@ const ChartingCard = ({option}: any) => {
     
     // const last24hAggregrateNotionalData = aggregrateNotionalData.splice(-49);
     // const last24hAggregrateOIData = aggregrateOIData.splice(-49);
-  
+
     return (
     <>
         <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-black dark:border-black">

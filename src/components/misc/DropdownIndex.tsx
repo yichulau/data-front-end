@@ -2,7 +2,10 @@ import React, { useState, useRef, useEffect } from 'react'
 import listenForOutsideClicks from '../../utils/listen-for-outside-clicks';
 
 const DropdownIndex = ({title , options, onChange} : any) => {
-    const initialTitle = title === 'Exchange' ? 'By Exchange' : 'Notional';
+    let initialTitle =  title === 'Exchange' ? 'By Exchange' : title === 'Granularity' ? '1D' : 'Notional';
+
+
+
     const [selectedOption, setSelectedOption] = useState(initialTitle);
     const [isOpen, setIsOpen] = useState(false)
   

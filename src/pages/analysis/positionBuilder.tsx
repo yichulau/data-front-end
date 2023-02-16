@@ -55,16 +55,20 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const localData = (JSON.parse(localStorage.getItem('positions') || '{}'));
     setStore(localData)
   }
-
+  // ITM: (diffStrikeExpiration  * amountBought)- (optionPrice * amountBought * currentPrice) 
+	// OTM: -( optionPrice * amountBought  * currentPrice)
   function buyCallOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number ) {
 
     const amountBought = Number(amount)
     const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
     const diffStrikeExpiration = expiryPrice - strikePrice;
-    const profit = expiryPrice > strikePrice ? (diffStrikeExpiration  * amountBought)- (optionPrice * amountBought * currentPrice) : -( optionPrice * amountBought  * expiryPrice)
+    const profit = expiryPrice > strikePrice ? (diffStrikeExpiration  * amountBought)- (optionPrice * amountBought * currentPrice) : -( optionPrice * amountBought  * currentPrice)
 
     return profit;
   }
+    // ITM: (optionPrice * amountBought * currentPrice) - (diffStrikeExpiration  * amountBought) 
+	// OTM: ( optionPrice * amountBought  * currentPrice)
+
 
   function sellCallOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number ){
 
@@ -72,29 +76,34 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
     const diffStrikeExpiration = expiryPrice - strikePrice;
 
-    const profit = expiryPrice > strikePrice ? (optionPrice * amountBought * currentPrice) - (diffStrikeExpiration  * amountBought) : ( optionPrice * amountBought  * expiryPrice)
+    const profit = expiryPrice > strikePrice ? (optionPrice * amountBought * currentPrice) - (diffStrikeExpiration  * amountBought) : ( optionPrice * amountBought  * currentPrice)
 
 
     return profit;
   }
-
+  
+  // ITM: (diffStrikeExpiration  * amountBought) -(optionPrice * amountBought * currentPrice) 
+  // OTM: -( optionPrice * amountBought  * currentPrice)
   function buyPutOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number){
     const amountBought = Number(amount)
     const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
     const diffStrikeExpiration = expiryPrice - strikePrice;
 
-    const profit = expiryPrice < strikePrice ? (optionPrice * amountBought * currentPrice) - (diffStrikeExpiration  * amountBought) : -( optionPrice * amountBought  * expiryPrice)
+    const profit = expiryPrice < strikePrice ? -(diffStrikeExpiration  * amountBought) - (optionPrice * amountBought * currentPrice) : -( optionPrice * amountBought  * currentPrice)
 
 
     return profit;
   }
 
+  // ITM:(diffStrikeExpiration  * amountBought)+ (optionPrice * amountBought * currentPrice) 
+	// OTM: ( optionPrice * amountBought  * currentPrice)
+	
   function sellPutOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number){
     const amountBought = Number(amount)
     const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
     const diffStrikeExpiration = expiryPrice - strikePrice;
 
-    const profit = expiryPrice < strikePrice ? (diffStrikeExpiration  * amountBought)- (optionPrice * amountBought * currentPrice) : ( optionPrice * amountBought  * expiryPrice)
+    const profit = expiryPrice < strikePrice ? (diffStrikeExpiration  * amountBought) + (optionPrice * amountBought * currentPrice) : ( optionPrice * amountBought  * currentPrice)
 
 
 

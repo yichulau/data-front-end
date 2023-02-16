@@ -6,6 +6,7 @@ import { echartsResize } from '../../utils/resize';
 import moment from 'moment';
 import MyThemeContext from '../../store/myThemeContext';
 import DropdownIndex from '../misc/DropdownIndex';
+import DropdownLeft from '../misc/DropdownLeft';
 
 
 const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , onChange} :any) => {
@@ -267,7 +268,7 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
                     />
                 </div>
                 <div className='px-2 flex flex-col'>
-                    <DropdownIndex 
+                    <DropdownLeft 
                         title={`Granularity`}
                         options={granularityOption}
                         onChange={handleGranularityChange}

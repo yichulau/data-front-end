@@ -9,6 +9,7 @@ import Dropdown from '../misc/Dropdown';
 import DropdownIndex from '../misc/DropdownIndex';
 import MyThemeContext from '../../store/myThemeContext';
 import aggregrationCalculation from '../../utils/aggregrationCalculation';
+import DropdownLeft from '../misc/DropdownLeft';
 
 interface Data {
     ts: string | number;
@@ -358,7 +359,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                     />
                 </div>
                 <div className='px-2 flex flex-col'>
-                    <DropdownIndex 
+                    <DropdownLeft 
                         title={`Granularity`}
                         options={granularityOption}
                         onChange={handleGranularityChange}

@@ -133,7 +133,7 @@ const LineChartOI = ({data: dataSet , earliestTimestamp, latestTimeStamp} :any) 
                       value = Number(value / 1000000).toFixed(2) + 'M';
                     }
                     timing = granularity === 0 ? params[0].name.slice(0,10) : params[0].name
-                    strike = 'Time: '+ timing + "<br/>";
+                    strike = timing + "<br/>";
                     str +=  
                         params[i].marker +
                         params[i].seriesName +

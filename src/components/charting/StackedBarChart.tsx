@@ -231,7 +231,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                             value = Number(value / 1000000).toFixed(2) + 'M';
                           }
                           timing = granularity === 0 ? params[0].name.slice(0,10) : params[0].name
-                          strike = 'Date: '+ timing + "<br/>";
+                          strike = timing + "<br/>";
                           str +=  
                               params[i].marker +
                               params[i].seriesName +
@@ -358,13 +358,13 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                    
                     />
                 </div>
-                {/* <div className='px-2 flex flex-col'>
+                <div className='px-2 flex flex-col'>
                     <DropdownLeft 
                         title={`Granularity`}
                         options={granularityOption}
                         onChange={handleGranularityChange}
                     />
-                </div> */}
+                </div>
    
                
             </div>

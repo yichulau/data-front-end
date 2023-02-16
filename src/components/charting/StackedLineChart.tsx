@@ -6,6 +6,7 @@ import { echartsResize } from '../../utils/resize';
 import DropdownIndex from '../misc/DropdownIndex';
 import MyThemeContext from '../../store/myThemeContext';
 import Loader from '../misc/Loader';
+import aggregrationCalculation from '../../utils/aggregrationCalculation';
 
 const StackedLineChart = ( {data: dataSet } : any) => {
     const { isDarkTheme }= useContext(MyThemeContext); 
@@ -26,9 +27,9 @@ const StackedLineChart = ( {data: dataSet } : any) => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
         const groupedData : any = {};
         const seriesData : any= {};
-        const xData: string[] = [];
         const arr = [];
         const result : any = [];
+        let xData: string[] = [];
         let dataset2: { [key: string]: number[] } = {};
         let keys;
 
@@ -53,7 +54,11 @@ const StackedLineChart = ( {data: dataSet } : any) => {
             });
         });
 
-        arr.push(seriesData)
+        const dailyAverageAggregrationData = aggregrationCalculation(seriesData)
+        arr.push(dailyAverageAggregrationData)
+        const filteredDates = xData.map(dateString => dateString.slice(0, 10));
+        const uniqueDates = Array.from(new Set(filteredDates)).map((obj: any)=>{return obj+" 00:00:00"});
+        xData = uniqueDates;
 
         if(arr.length > 0){
             for (const time of xData) {
@@ -71,33 +76,21 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                 result.push(obj);
             }
         }
-
+        
         if(result.length > 0 ){
             keys = Object.keys(result[0]);
             keys.forEach(key => {
                 dataset2[key] = result.map((obj: any) => obj[key]);
             });
-        }
-         
-        if(Object.keys(dataset2).length !== 0){
-            dataset2 = {
-                Binance: dataset2.Binance.slice(-48),
-                BitCom: dataset2.BitCom.slice(-48),
-                ByBit: dataset2.ByBit.slice(-48),
-                Deribit: dataset2.Deribit.slice(-48),
-                OKEX: dataset2.OKEX.slice(-48)
-            }   
-        }
+        }      
 
-
-
-        return [dataset2 ? dataset2 : seriesData, xData.slice(-48)]; 
+        return [dataset2 ? dataset2 : seriesData, xData]; 
     }
     const getDataByCoin = () => {
         // group data by ts and coinCurrencyID, and return the series data and x-axis data 
         const groupedData : any = {};
         const seriesData : any= {};
-        const xData: string[] = [];
+        let xData: string[] = [];
         data.forEach((item: { ts: string | number; coinCurrencyID: string | number; value: string; }) => {
             if (!groupedData[item.ts]) {
                 groupedData[item.ts] = {};
@@ -115,11 +108,19 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                 if (!seriesData[coinCurrencyId]) {
                     seriesData[coinCurrencyId] = [];
                 }
-                seriesData[coinCurrencyId].push(groupedData[ts][coinCurrencyId]);
+                seriesData[coinCurrencyId].push([groupedData[ts][coinCurrencyId],moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss')]);
             });
         });
 
-        return [seriesData, xData.slice(-48)]; 
+        const dailyAverageAggregrationData = aggregrationCalculation(seriesData)
+        for (const key in dailyAverageAggregrationData) {
+            dailyAverageAggregrationData[key] = dailyAverageAggregrationData[key].map((entry :any) => entry[0]);
+        }
+        const filteredDates = xData.map(dateString => dateString.slice(0, 10));
+        const uniqueDates = Array.from(new Set(filteredDates)).map((obj: any)=>{return obj+" 00:00:00"});
+        xData = uniqueDates;
+
+        return [dailyAverageAggregrationData, xData]; 
     }; 
     const handleFilterChange = (value: number) => {
         setFilter(value); 
@@ -169,7 +170,7 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                           if (value >= 1000000) {
                             value = Number(value / 1000000).toFixed(2) + 'M';
                           }
-                          strike = 'Time: '+ params[0].name + "<br/>";
+                          strike = 'Date: '+ params[0].name.slice(0,10) + "<br/>";
                           str +=  
                               params[i].marker +
                               params[i].seriesName +
@@ -200,7 +201,13 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                 }
             },
             xAxis: {
-                data: xData
+                data: xData,
+                axisLabel:{
+                    formatter: function (value: any) {
+                        const formatDate = value.slice(0,10)
+                        return formatDate;
+                    }
+                }
             },
             yAxis: {
                 name: "Open Interest",

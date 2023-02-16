@@ -8,6 +8,7 @@ import SelectOption from '../misc/SelectOption';
 import Dropdown from '../misc/Dropdown';
 import DropdownIndex from '../misc/DropdownIndex';
 import MyThemeContext from '../../store/myThemeContext';
+import aggregrationCalculation from '../../utils/aggregrationCalculation';
 
 interface Data {
     ts: string | number;
@@ -50,9 +51,9 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
         const groupedData : any = {};
         const seriesData : any= {};
-        const xData: string[] = [];
         const arr = [];
         const result : any = [];
+        let xData: string[] = [];
         let dataset2: { [key: string]: number[] } = {};
         let keys;
 
@@ -76,8 +77,12 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                 seriesData[exchangeId].push([groupedData[ts][exchangeId],moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss')]);
             });
         });
-
-        arr.push(seriesData)
+        
+        const dailyAverageAggregrationData = aggregrationCalculation(seriesData);
+        arr.push(dailyAverageAggregrationData)
+        const filteredDates = xData.map(dateString => dateString.slice(0, 10));
+        const uniqueDates = Array.from(new Set(filteredDates)).map((obj: any)=>{return obj+" 00:00:00"});
+        xData = uniqueDates;
 
         if(arr.length > 0){
             for (const time of xData) {
@@ -102,26 +107,14 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                 dataset2[key] = result.map((obj: any) => obj[key]);
             });
         }
-         
 
-        if(Object.keys(dataset2).length !== 0){
-            dataset2 = {
-                Binance: dataset2.Binance.slice(-48),
-                BitCom: dataset2.BitCom.slice(-48),
-                ByBit: dataset2.ByBit.slice(-48),
-                Deribit: dataset2.Deribit.slice(-48),
-                OKEX: dataset2.OKEX.slice(-48)
-            }   
-        }
-      
-
-        return [dataset2 ? dataset2 : seriesData, xData.slice(-48)]; 
+        return [dataset2 ? dataset2 : seriesData, xData]; 
     }
     const getDataByCoin = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
         const groupedData : any = {};
         const seriesData : any= {};
-        const xData: string[] = [];
+        let xData: string[] = [];
 
         data.forEach((item: any) => {
             if (!groupedData[item.ts]) {
@@ -140,12 +133,18 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                 if (!seriesData[coinCurrencyId]) {
                     seriesData[coinCurrencyId] = [];
                 }
-                seriesData[coinCurrencyId].push(groupedData[ts][coinCurrencyId]);
+                seriesData[coinCurrencyId].push([groupedData[ts][coinCurrencyId],moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss')]);
             });
         });
+        const dailyAverageAggregrationData = aggregrationCalculation(seriesData)
+        for (const key in dailyAverageAggregrationData) {
+            dailyAverageAggregrationData[key] = dailyAverageAggregrationData[key].map((entry :any) => entry[0]);
+        }
+        const filteredDates = xData.map(dateString => dateString.slice(0, 10));
+        const uniqueDates = Array.from(new Set(filteredDates)).map((obj: any)=>{return obj+" 00:00:00"});
+        xData = uniqueDates;
 
-
-        return [seriesData, xData.slice(-48)]; 
+        return [dailyAverageAggregrationData, xData]; 
     }
     const handleFilterChange = (value: number) => {
         setFilter(value); 
@@ -167,6 +166,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
             case 0: 
             seriesData = getDataByExchange()[0];
             xData = getDataByExchange()[1];  
+            console.log(seriesData)
             break; 
             case 1: 
             seriesData = getDataByCoin()[0];
@@ -192,10 +192,14 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                   for (let i = 0; i < params.length; i++) {
                       if (params[i].seriesName !== "") {
                           let value = params[i].value
+                          if (value >= 1000000000){
+                            value = Number(value / 1000000000).toFixed(2) + 'B';
+                          }
                           if (value >= 1000000) {
                             value = Number(value / 1000000).toFixed(2) + 'M';
                           }
-                          strike = 'Time: '+ params[0].name + "<br/>";
+                      
+                          strike = 'Date: '+ params[0].name.slice(0,10) + "<br/>";
                           str +=  
                               params[i].marker +
                               params[i].seriesName +
@@ -226,7 +230,13 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                 }
             },
             xAxis: {
-                data: xData
+                data: xData,
+                axisLabel:{
+                    formatter: function (value: any) {
+                        const formatDate = value.slice(0,10)
+                        return formatDate;
+                    }
+                }
             },
             yAxis: {
                 name: "Options Volume",
@@ -234,7 +244,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                     formatter: function (value: any) {
                         if (value >= 1000000) {
                             value = value / 1000000 + 'M';
-                        }
+                        } 
                         return value;
                     }
                   }

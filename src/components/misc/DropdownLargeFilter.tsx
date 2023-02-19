@@ -58,6 +58,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange} : any) => {
         const dates : any = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[1]))).sort((a: any, b: any) => a.localeCompare(b));
         const strike : any = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[2]))).sort((a: any, b: any) => Number(a) - Number(b));
 
+        strike.unshift('All Strike Price')
         setFilterDate(dates);
         setFilterStrike(strike)
     }, [options]);
@@ -144,11 +145,11 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange} : any) => {
                                     <div className="flex px-2 py-2">
                                         <div className="flex flex-wrap items-center justify-center w-full">
                                             <select 
+                                            defaultValue={'All Strike Price'}
                                             onChange={handleStrikePriceChange}
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                                <option selected>All Strike Price</option>
-                                                {filterStrike.map((obj)=> (
-                                                    <option>{obj}</option>
+                                                {filterStrike.map((obj, index)=> (
+                                                    <option key={index}>{obj}</option>
                                                 ))}
                                             </select>
                                         </div>

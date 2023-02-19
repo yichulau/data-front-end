@@ -12,12 +12,13 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
     
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
-    const min = Number(-indexPrice*amount*2);
-    const max = Number(indexPrice*amount*2);
+    const min = Number(-indexPrice);
+    const max = Number(indexPrice*2);
     const currentDate = moment(new Date()).format('DD-MM-YYYY')
     const lateDate = moment(latestDate).format('DD-MM-YYYY')
     let chart: any;
 
+    // console.log(data)
     const clearChart = () =>{
       resetChart()
     }
@@ -47,7 +48,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
                       str +=  
                           `Index Price Change` +
                           ' : '+
-                          params[i].value[0] + ` (%)` +
+                          Number(indexPrice + params[i].value[0]).toFixed(2)+ ` (USD)` +
                           "<br/>" +
                           `Expiry PnL` +
                           ' : $'+
@@ -93,11 +94,11 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
         },
         xAxis: {
           type: 'value',
-          data: [0, 20, 40, 60, 80, 100],
-          min: -100,
-          max: 200,
+          data: [],
+          min: min,
+          max: max,
           axisLabel: {
-            formatter: "{value} %",
+            formatter: "{value}",
             textStyle: {
               color: isDarkTheme  ? '#ffffff' : '#000000'   ,
             }
@@ -128,7 +129,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
         }],
         yAxis: {
           min: min,
-       
+          max: max,
           position: 'right',
           bottom: 0,
           name: 'PnL (USD)',
@@ -148,23 +149,52 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             }
           },
         },
+        
         dataZoom: [
           {
             type: 'inside',
             xAxisIndex: [0],
-            yAxisIndex: [0],
-            start: 0,
-            end: 70,
+            filterMode: 'empty',
             moveOnMouseMove: true,
-            moveOnMouseWheel: true
+            startValue: min,
+            endValue: max,
+            start:31,
+            end: 38,
           },
           {
             type: 'slider',
             xAxisIndex: [0],
-            yAxisIndex: [0],
             show: false,
-            start: 0,
-            end: 70,
+            filterMode: 'empty',
+            startValue: min,
+            endValue: max,
+            start:31,
+            end: 38,
+          },
+          {
+            type: 'inside',
+            yAxisIndex: [0],
+            orient: 'vertical',
+            filterMode: 'empty',
+            moveOnMouseMove: true,
+            startValue: min,
+            endValue: max,
+            start:30,
+            end: 50,
+
+          },
+          {
+            type: 'slider',
+            yAxisIndex: [0],
+            orient: 'vertical',
+            show: false,
+            filterMode: 'empty',
+            startValue: min,
+            endValue: max,
+            start:30,
+            end: 50,
+            moveOnMouseMove: true,
+
           }
         ],
         series: [{

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment } from 'react'
+import React, { useState, useRef, useEffect, Fragment, useMemo } from 'react'
 import listenForOutsideClicks from '../../utils/listen-for-outside-clicks';
 
 const DropdownLargeFilter = ({title , options, onChange} : any) => {
@@ -8,7 +8,9 @@ const DropdownLargeFilter = ({title , options, onChange} : any) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredOptions, setFilteredOptions] = useState(options);
     const [filterDate, setFilterDate] = useState([]);
-    const [selectedDate, setSelectedDate] = useState('')
+    const [selectedDate, setSelectedDate] = useState('');
+    const [filterStrike, setFilterStrike] = useState([]);
+    const [selectedStrike, setSelectedStrike] = useState('');
 
     const toggleOptions = () => {
       setIsOpen(!isOpen);
@@ -28,27 +30,49 @@ const DropdownLargeFilter = ({title , options, onChange} : any) => {
         );
     };
 
+    const handleStrikePriceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedStrikePrice = event.target.value;
+        setSelectedStrike(selectedStrikePrice);
+      
+        if (selectedStrikePrice === 'All Strike Price') {
+          setFilteredOptions(options);
+        } else {
+          const filteredByStrike = options.filter((option: any) =>
+            option.value.includes(selectedStrikePrice)
+          );
+          setFilteredOptions(filteredByStrike);
+        }
+      };
+
 
     useEffect(listenForOutsideClicks(listening, setListening, menuRef, setIsOpen));
 
     useEffect(() => {
         const dates : any = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[1]))).sort((a: any, b: any) => a.localeCompare(b));
+        const strike : any = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[2]))).sort((a: any, b: any) => Number(a) - Number(b));
+
         setFilterDate(dates);
+        setFilterStrike(strike)
     }, [options]);
   
-    useEffect(() => {
-    const filteredByDate = filterDate.reduce((filtered: any) => {
-        const dateOptions = options.filter((option: any) => option.value.includes(selectedDate));
-        const filteredOptions = dateOptions.filter((option: any) =>
-            option.value.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        return filteredOptions.length > 0 ? [ ...filteredOptions] : filtered;
-    }, []);
+    useMemo(() => {
+        const filteredByDate = filterDate.reduce((filtered: any) => {
+            const dateOptions = options.filter((option: any) => option.value.includes(selectedDate));
+            let filteredOptions = dateOptions.filter((option: any) =>
+                option.value.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            if (selectedStrike && selectedStrike !== 'All Strike Price') {
+                filteredOptions = dateOptions.filter((option: any) =>
+                    option.value.includes(selectedStrike)
+                );
+            }
+            return filteredOptions.length > 0 ? [ ...filteredOptions] : filtered;
+        }, []);
 
-    setFilteredOptions(filteredByDate);
-    }, [options, filterDate, searchQuery]);
+        setFilteredOptions(filteredByDate);
+    }, [options, filterDate, searchQuery, filterStrike, selectedStrike, selectedDate]);
 
-    
+
   
 
   return (
@@ -64,6 +88,15 @@ const DropdownLargeFilter = ({title , options, onChange} : any) => {
                         className={  `block z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-auto md:w-[28rem] dark:bg-gray-700 absolute max-h-96`}>
                             {filteredOptions.length > 0 ? (
                                 <>
+                                    <div className='flex px-2 py-2'>
+                                        <label htmlFor="simple-search" className="sr-only">Search</label>
+                                        <div className="relative w-full">
+                                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                                <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path></svg>
+                                                </div>
+                                            <input type="text" id="simple-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" onChange={(e) => setSearchQuery(e.target.value)} />
+                                        </div>
+                                    </div>
                                     <div className="flex px-2 py-2">
                                         <div className="flex flex-wrap items-center justify-center">
                                             <div
@@ -101,15 +134,18 @@ const DropdownLargeFilter = ({title , options, onChange} : any) => {
                                             })}
                                         </div>
                                     </div>
-                                    <div className='flex px-2 py-2'>
-                                        <label htmlFor="simple-search" className="sr-only">Search</label>
-                                        <div className="relative w-full">
-                                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path></svg>
-                                                </div>
-                                            <input type="text" id="simple-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" onChange={(e) => setSearchQuery(e.target.value)} />
+                                    <div className="flex px-2 py-2">
+                                        <div className="flex flex-wrap items-center justify-center w-full">
+                                            <select 
+                                            onChange={handleStrikePriceChange}
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                                <option selected>All Strike Price</option>
+                                                {filterStrike.map((obj)=> (
+                                                    <option>{obj}</option>
+                                                ))}
+                                            </select>
                                         </div>
-                                    </div>
+                                    </div>        
                                     <ul className="py-2 text-sm text-gray-700 dark:text-white max-h-48  overflow-y-auto" aria-labelledby="dropdownDelayButton">
                                         {filteredOptions.map((item : any)=>{ 
                                             return ( 

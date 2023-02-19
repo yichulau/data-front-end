@@ -30,11 +30,12 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [currentPrice, setCurrentPrice] = useState(0)
   const [amount, setAmount] = useState(0)
   const [finalData, setFinalData] = useState(dataSet)
-  const [tempData, setTempData] = useState('');
+  const [tempData, setTempData] = useState([]);
   const [store, setStore] = useState({});
   const [latestDate, setLatestDate] = useState('');
   const [error ,setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
 
   const url = exchange !== '' && currency !== '' && currency !== 'Currency' ? `https://data-ribbon-collector.com/api/v1.0/${currency}/${exchange}/instrument/` : ''
   const { data } = useFetchSingleData(url)
@@ -63,6 +64,10 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const storeDataArray : any = Object.values(storeData)
     const expiryData = storeDataArray.map((item : any) => {return item.expiry})
     const latestDate : any = expiryData.length > 0 ? getLatestDate(expiryData) : new Date()
+    const btcSpotPrice = Number(localStorage.getItem("btc"))
+    const ethSpotPrice = Number(localStorage.getItem("eth"))
+    const solSpotPrice = Number(localStorage.getItem("sol"))
+  
     setLatestDate(latestDate)
 
     let sums : any = {};
@@ -76,27 +81,30 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         const amount = item.amount;
         const currentPrice = Number(item.indexPrice);
         const optionPrice = Number(item.lastPrice);
+        const thetaVal = Number(item.theta)
         const strikePrice = instrumentStrikePrice;
         const type = instrumentType;
-        
+        const currencyType = item.instrumentName.substring(0,3)
+        const currencySpotValPrice : number = currencyType === 'BTC' ? btcSpotPrice : currencyType === 'ETH' ? ethSpotPrice : currencyType === 'SOL' ? solSpotPrice : 0;
+
         if(item.position === 'Long' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([i, optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+            dataSet.push([((i/100)*currencySpotValPrice), optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice , exchange,thetaVal)]);
           }
         }
         if(item.position === 'Short' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([i, optionsCalculation.sellCallOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+            dataSet.push([(i/100)*currencySpotValPrice, optionsCalculation.sellCallOption(i,amount, currentPrice,strikePrice, optionPrice, exchange,thetaVal)]);
           }
         }
         if(item.position  === 'Long' && type === 'P'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([i, optionsCalculation.buyPutOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+            dataSet.push([(i/100)*currencySpotValPrice, optionsCalculation.buyPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchange,thetaVal)]);
           }
         }
         if(item.position  === 'Short' && type === 'P'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([i, optionsCalculation.sellPutOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+            dataSet.push([(i/100)*currencySpotValPrice, optionsCalculation.sellPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchange,thetaVal)]);
           }
         }
       })
@@ -118,7 +126,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
     }
 
-
+    console.log(result)
     setFinalData(result)    
   }
 
@@ -134,12 +142,16 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     return data
   }
 
+
+
  
 
   const handleExchangeChange = (value : string) => {
     setExchange(value)
     setCurrency('')
-    setTempData('')
+    setTempData([])
+    setError(false)
+    setErrorMessage('')
   }
   
   const handleSymbolChange = async (value:string) =>{
@@ -152,14 +164,14 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   }
 
   const handleLongShort = (triggerType :string) =>{
-
     if(amount < 0){
       setError(true)
-      setErrorMessage('Please Select All fields Before Running Calculation')
+      setErrorMessage('Please Amount cannot be less 0!')
+      
       return ;
     } 
 
-    if(triggerType && currency && exchange){
+    if(triggerType && currency && exchange && tempData){
       storeToLocalStorage(tempData, triggerType)
       calculation()
       notifySuccess(tempData)
@@ -167,7 +179,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       setErrorMessage('')
     } else {
       setError(true)
-      setErrorMessage('Please Amount cannot be less 0!')
+      setErrorMessage('Please Select All fields Before Running Calculation')
     }
 
   }
@@ -261,7 +273,10 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     setStore(JSON.parse(localStorage.getItem('positions') || '{}'))
     calculation();
   },[])
-  
+
+
+
+
 
   
   return (

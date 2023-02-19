@@ -155,6 +155,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   
   const handleSymbolChange = async (value:string) =>{
     const data  = await fetchInstrumentData(value)
+    setTempData(data)
   }
 
   const handleAmountChange = (value: number) =>{
@@ -168,7 +169,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       
       return ;
     } 
-
+    console.log(triggerType,currency,exchange,tempData)
     if(triggerType && currency && exchange && tempData){
       storeToLocalStorage(tempData, triggerType)
       calculation()

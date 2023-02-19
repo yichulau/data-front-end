@@ -10,6 +10,7 @@ import PositionBuilderExpandable from "../../components/charting/analysis/Positi
 import { v4 as uuidv4 } from 'uuid';
 import { Toaster, ToastIcon, toast, resolveValue } from "react-hot-toast";
 import getLatestDate from "../../utils/getLatestDate";
+import { optionsCalculation } from "../../utils/optionsCalculation";
 import moment from "moment";
 
 interface PositionProps {
@@ -20,13 +21,11 @@ interface PositionProps {
   indexPrice: number,
   result: number
 }
-let positionArray :any=  [];
-
 
 const PositionBuilder : React.FC<PositionProps> = () => {
   
   const dataSet: number[][] = []
-  const [currency, setCurrency] = useState('BTC')
+  const [currency, setCurrency] = useState('')
   const [exchange, setExchange] = useState('')
   const [currentPrice, setCurrentPrice] = useState(0)
   const [amount, setAmount] = useState(0)
@@ -35,7 +34,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [store, setStore] = useState({});
   const [latestDate, setLatestDate] = useState('');
 
-  const url = `https://data-ribbon-collector.com/api/v1.0/${currency}/${exchange}/instrument/`
+  const url = exchange !== '' && currency !== '' && currency !== 'Currency' ? `https://data-ribbon-collector.com/api/v1.0/${currency}/${exchange}/instrument/` : ''
   const { data } = useFetchSingleData(url)
 
 
@@ -54,60 +53,6 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     localStorage.setItem("positions", JSON.stringify(obj));
     const localData = (JSON.parse(localStorage.getItem('positions') || '{}'));
     setStore(localData)
-  }
-  // ITM: (diffStrikeExpiration  * amountBought)- (optionPrice * amountBought * currentPrice) 
-	// OTM: -( optionPrice * amountBought  * currentPrice)
-  function buyCallOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number ) {
-
-    const amountBought = Number(amount)
-    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
-    const diffStrikeExpiration = expiryPrice - strikePrice;
-    const profit = expiryPrice > strikePrice ? (diffStrikeExpiration  * amountBought)- (optionPrice * amountBought * currentPrice) : -( optionPrice * amountBought  * currentPrice)
-
-    return profit;
-  }
-    // ITM: (optionPrice * amountBought * currentPrice) - (diffStrikeExpiration  * amountBought) 
-	// OTM: ( optionPrice * amountBought  * currentPrice)
-
-
-  function sellCallOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number ){
-
-    const amountBought = Number(amount)
-    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
-    const diffStrikeExpiration = expiryPrice - strikePrice;
-
-    const profit = expiryPrice > strikePrice ? (optionPrice * amountBought * currentPrice) - (diffStrikeExpiration  * amountBought) : ( optionPrice * amountBought  * currentPrice)
-
-
-    return profit;
-  }
-  
-  // ITM: (diffStrikeExpiration  * amountBought) -(optionPrice * amountBought * currentPrice) 
-  // OTM: -( optionPrice * amountBought  * currentPrice)
-  function buyPutOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number){
-    const amountBought = Number(amount)
-    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
-    const diffStrikeExpiration = expiryPrice - strikePrice;
-
-    const profit = expiryPrice < strikePrice ? -(diffStrikeExpiration  * amountBought) - (optionPrice * amountBought * currentPrice) : -( optionPrice * amountBought  * currentPrice)
-
-
-    return profit;
-  }
-
-  // ITM:(diffStrikeExpiration  * amountBought)+ (optionPrice * amountBought * currentPrice) 
-	// OTM: ( optionPrice * amountBought  * currentPrice)
-	
-  function sellPutOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number){
-    const amountBought = Number(amount)
-    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
-    const diffStrikeExpiration = expiryPrice - strikePrice;
-
-    const profit = expiryPrice < strikePrice ? (diffStrikeExpiration  * amountBought) + (optionPrice * amountBought * currentPrice) : ( optionPrice * amountBought  * currentPrice)
-
-
-
-    return profit;
   }
 
   function calculation(){
@@ -134,22 +79,22 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         
         if(item.position === 'Long' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([i, buyCallOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+            dataSet.push([i, optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice)]);
           }
         }
         if(item.position === 'Short' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([i, sellCallOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+            dataSet.push([i, optionsCalculation.sellCallOption(i,amount, currentPrice,strikePrice, optionPrice)]);
           }
         }
         if(item.position  === 'Long' && type === 'P'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([i, buyPutOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+            dataSet.push([i, optionsCalculation.buyPutOption(i,amount, currentPrice,strikePrice, optionPrice)]);
           }
         }
         if(item.position  === 'Short' && type === 'P'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([i, sellPutOption(i,amount, currentPrice,strikePrice, optionPrice)]);
+            dataSet.push([i, optionsCalculation.sellPutOption(i,amount, currentPrice,strikePrice, optionPrice)]);
           }
         }
       })
@@ -294,6 +239,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     { id: "unique-notification", position: "top-center" }
 );
 
+
   useEffect(()=>{
     setStore(JSON.parse(localStorage.getItem('positions') || '{}'))
     calculation();
@@ -302,19 +248,21 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
   
   return (
+    
     <div className="container py-1 mx-auto">
       <div className="flex flex-wrap">
           <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
               <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
                   <div className='md:w-full mt-2'>
                       {data ?
-                       (
-                       <PositionBuilderSearch data={data}
+                      (
+                      <PositionBuilderSearch data={data}
                         handleExchangeChange={handleExchangeChange}
                         handleSymbolChange={handleSymbolChange}
                         handleAmountChange={handleAmountChange}
                         handleLongShort={handleLongShort}
                         handleCurrencyChange={handleCurrencyChange}
+                        exchange={exchange}
                         
                       />) : (
                         <PositionBuilderSearch data={[]}
@@ -323,7 +271,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                           handleAmountChange={handleAmountChange}
                           handleLongShort={handleLongShort}
                           handleCurrencyChange={handleCurrencyChange}
-                        
+                          exchange={exchange}
                         />
 
                       ) }
@@ -333,7 +281,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
           <div className="px-2 py-2 w-full md:w-3/4 flex flex-col items-start">
               <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
                   <div className='md:w-full mt-2'>
-                   <Toaster />
+                  <Toaster />
                     {finalData ? (
                       <PositionBuilderCharts 
                         data={finalData} 

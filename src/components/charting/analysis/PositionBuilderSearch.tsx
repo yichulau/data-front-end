@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import DropdownLong from '../../misc/DropdownLong'
 import DropdownLargeFilter from '../../misc/DropdownLargeFilter';
 
-const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange, handleSymbolChange, handleAmountChange, handleLongShort } : any) => {
+const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange, handleSymbolChange, handleAmountChange, handleLongShort, exchange } : any) => {
   const fetchData = data;
 
   const filteredInstrumentData = fetchData.map((item : any, index : any) => ({id: index, value: item}));
@@ -17,6 +17,8 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
   const handleButtonClick = (event : any)=>{
     handleLongShort(event.target.name)
   }
+
+
 
   const option = [
     {id: 0, value: 'Bit.com'},
@@ -49,6 +51,7 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
             <div className='w-full my-1'>
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
               <input type="number"
+                min="0"
                 onChange={(event: any) => handleAmountChange(event.target.value)}  
                 className="bg-[#EFF2F5] border border-[#EFF2F5] font-medium text-[#58667E] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:text-bg-gray-700 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-800 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-700" placeholder="Enter Amount" />
             </div>

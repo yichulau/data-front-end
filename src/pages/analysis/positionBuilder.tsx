@@ -30,7 +30,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [currentPrice, setCurrentPrice] = useState(0)
   const [amount, setAmount] = useState(0)
   const [finalData, setFinalData] = useState(dataSet)
-  const [tempData, setTempData] = useState([]);
+  const [tempData, setTempData] = useState('');
   const [store, setStore] = useState({});
   const [latestDate, setLatestDate] = useState('');
   const [error ,setError] = useState(false);
@@ -146,17 +146,15 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
  
 
-  const handleExchangeChange = (value : string) => {
-    setExchange(value)
+  const handleExchangeChange = (value: string) => {
+    setExchange(value)  
     setCurrency('')
-    setTempData([])
-    setError(false)
-    setErrorMessage('')
+    setTempData('')
+    setAmount(0)
   }
   
   const handleSymbolChange = async (value:string) =>{
     const data  = await fetchInstrumentData(value)
-    setTempData(data)
   }
 
   const handleAmountChange = (value: number) =>{
@@ -286,7 +284,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
           <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
               <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
                   <div className='md:w-full mt-2'>
-                      {data ?
+                      { data ?
                       (
                       <PositionBuilderSearch data={data}
                         handleExchangeChange={handleExchangeChange}

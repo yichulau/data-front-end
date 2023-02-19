@@ -8,7 +8,7 @@ const DropdownLargeFilter = ({title , options, onChange} : any) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredOptions, setFilteredOptions] = useState(options);
     const [filterDate, setFilterDate] = useState([]);
-
+    const [selectedDate, setSelectedDate] = useState('')
 
     const toggleOptions = () => {
       setIsOpen(!isOpen);
@@ -22,6 +22,7 @@ const DropdownLargeFilter = ({title , options, onChange} : any) => {
     };
     
     const getOptionsByDate = (date: string) => {
+        setSelectedDate(date)
         setFilteredOptions(
           options.filter((option : any) => option.value.includes(date))
         );
@@ -29,16 +30,23 @@ const DropdownLargeFilter = ({title , options, onChange} : any) => {
 
 
     useEffect(listenForOutsideClicks(listening, setListening, menuRef, setIsOpen));
+
+    useEffect(() => {
+        const dates : any = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[1]))).sort((a: any, b: any) => a.localeCompare(b));
+        setFilterDate(dates);
+    }, [options]);
   
     useEffect(() => {
-        const result : any = Array.from(new Set(options.map((obj : any) => obj.value.split("-")[1].substring(0, 5)))).sort((a : any, b: any) => a.localeCompare(b));
-        setFilteredOptions(
-            options.filter((option : any) =>
+    const filteredByDate = filterDate.reduce((filtered: any) => {
+        const dateOptions = options.filter((option: any) => option.value.includes(selectedDate));
+        const filteredOptions = dateOptions.filter((option: any) =>
             option.value.toLowerCase().includes(searchQuery.toLowerCase())
-            )
         );
-        setFilterDate(result)
-    }, [options, searchQuery]);
+        return filteredOptions.length > 0 ? [ ...filteredOptions] : filtered;
+    }, []);
+
+    setFilteredOptions(filteredByDate);
+    }, [options, filterDate, searchQuery]);
 
     
   
@@ -60,7 +68,10 @@ const DropdownLargeFilter = ({title , options, onChange} : any) => {
                                         <div className="flex flex-wrap items-center justify-center">
                                             <div
                                                 className="text-center items-center font-medium text-gray-900 dark:text-white dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-800  p-1 border border-white dark:border-gray-700  rounded-lg shadow-sm text-md py-3 px-2 cursor-pointer"
-                                                onClick={() => setFilteredOptions(options)}
+                                                onClick={() => {
+                                                    setSelectedDate('')
+                                                    setFilteredOptions(options)
+                                                }}
                                                 >
                                                 All
                                             </div>

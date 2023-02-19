@@ -33,6 +33,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [tempData, setTempData] = useState('');
   const [store, setStore] = useState({});
   const [latestDate, setLatestDate] = useState('');
+  const [error ,setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const url = exchange !== '' && currency !== '' && currency !== 'Currency' ? `https://data-ribbon-collector.com/api/v1.0/${currency}/${exchange}/instrument/` : ''
   const { data } = useFetchSingleData(url)
@@ -150,9 +152,24 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   }
 
   const handleLongShort = (triggerType :string) =>{
-    storeToLocalStorage(tempData, triggerType)
-    calculation()
-    notifySuccess(tempData)
+
+    if(amount < 0){
+      setError(true)
+      setErrorMessage('Please Select All fields Before Running Calculation')
+      return ;
+    } 
+
+    if(triggerType && currency && exchange){
+      storeToLocalStorage(tempData, triggerType)
+      calculation()
+      notifySuccess(tempData)
+      setError(false)
+      setErrorMessage('')
+    } else {
+      setError(true)
+      setErrorMessage('Please Amount cannot be less 0!')
+    }
+
   }
 
   const handleCurrencyChange = (value: string ) =>{
@@ -263,6 +280,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                         handleLongShort={handleLongShort}
                         handleCurrencyChange={handleCurrencyChange}
                         exchange={exchange}
+                        error={error}
+                        errorMessage={errorMessage}
                         
                       />) : (
                         <PositionBuilderSearch data={[]}
@@ -272,6 +291,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                           handleLongShort={handleLongShort}
                           handleCurrencyChange={handleCurrencyChange}
                           exchange={exchange}
+                          error={error}
+                          errorMessage={errorMessage}
                         />
 
                       ) }

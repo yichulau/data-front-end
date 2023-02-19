@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react'
 import listenForOutsideClicks from '../../utils/listen-for-outside-clicks';
 
-const DropdownLargeFilter = ({title , options, onChange} : any) => {
+const DropdownLargeFilter = ({title, resetFlag, options, onChange} : any) => {
     let initialTitle = title;
     const [selectedOption, setSelectedOption] = useState(initialTitle);
     const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +28,13 @@ const DropdownLargeFilter = ({title , options, onChange} : any) => {
         );
     };
 
+    // to handle scenarios to clear the field
+    useEffect(
+        () => {
+          setSelectedOption(initialTitle); 
+        },
+        [resetFlag]
+    );
 
     useEffect(listenForOutsideClicks(listening, setListening, menuRef, setIsOpen));
 

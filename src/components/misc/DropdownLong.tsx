@@ -1,18 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
 import listenForOutsideClicks from '../../utils/listen-for-outside-clicks';
 
-const DropdownLong = ({title , options, onChange} : any) => {
-    let initialTitle = title;
-    if(initialTitle === 'Exchange'){
-        initialTitle = 'Choose Exchange'
-    } else if (initialTitle === 'Instruments'){
-        initialTitle = 'Instruments'
-    } else if (initialTitle === 'Currency'){
-        initialTitle = 'Choose Currency'
-    }
-   
-    const [selectedOption, setSelectedOption] = useState(initialTitle);
-    const [isOpen, setIsOpen] = useState(false)
+const DropdownLong = ({title, resetFlag, options, onChange} : any) => {
+    let defaultTitle = title; 
+    const [selectedOption, setSelectedOption] = useState(title);
+    const [isOpen, setIsOpen] = useState(false);
 
     const toggleOptions = () => {
         setIsOpen(!isOpen);
@@ -22,10 +14,18 @@ const DropdownLong = ({title , options, onChange} : any) => {
     const selectOption = (option: any) => {
         setSelectedOption(option);
         setIsOpen(false);
-        onChange(option)
+        onChange(option);
     };
 
     useEffect(listenForOutsideClicks(listening, setListening, menuRef, setIsOpen))
+
+    // to handle scenarios to revert dropdown title to default value
+    useEffect(
+        () => {
+          setSelectedOption(defaultTitle); 
+        },
+        [resetFlag]
+    );
 
   return (
     <>

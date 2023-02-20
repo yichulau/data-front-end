@@ -37,12 +37,6 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [errorMessage, setErrorMessage] = useState(''); 
   const [apiData, setApiData] = useState([])
 
-
-  // const url = exchange !== '' && currency !== '' && currency !== 'Currency' ? `https://data-ribbon-collector.com/api/v1.0/${currency}/${exchange}/instrument/` : ''
-  // const { data } = useFetchSingleData(url)
-  // const newData = data !== null ? data : []
-
-
   const min : number = -99;
   const max : number = 300;
 
@@ -146,10 +140,6 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const data = response.json()
     return data
   }
-
-
-
- 
 
   const handleExchangeChange = (value: string) => {
     setExchange(value)  
@@ -299,7 +289,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         console.error(error);
       });
     } else {
-      fetchData = []
+      setApiData([]); 
     } 
 
 

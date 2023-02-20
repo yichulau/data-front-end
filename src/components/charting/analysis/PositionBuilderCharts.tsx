@@ -156,7 +156,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           {
             type: 'inside',
             xAxisIndex: 0,
-            filterMode: 'none',
+            filterMode: 'filter',
             moveOnMouseMove: true,
             zoomOnMouseWheel: true,
             start:10,
@@ -166,7 +166,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             type: 'slider',
             xAxisIndex: 0,
             show: false,
-            filterMode: 'none',
+            filterMode: 'filter',
             moveOnMouseMove: true,
             zoomOnMouseWheel: true,
             start:10,

@@ -34,11 +34,13 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [store, setStore] = useState({});
   const [latestDate, setLatestDate] = useState('');
   const [error ,setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); 
+  const [apiData, setApiData] = useState([])
 
 
-  const url = exchange !== '' && currency !== '' && currency !== 'Currency' ? `https://data-ribbon-collector.com/api/v1.0/${currency}/${exchange}/instrument/` : ''
-  const { data } = useFetchSingleData(url)
+  // const url = exchange !== '' && currency !== '' && currency !== 'Currency' ? `https://data-ribbon-collector.com/api/v1.0/${currency}/${exchange}/instrument/` : ''
+  // const { data } = useFetchSingleData(url)
+  // const newData = data !== null ? data : []
 
 
   const min : number = -99;
@@ -86,10 +88,12 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         const type = instrumentType;
         const currencyType = item.instrumentName.substring(0,3)
         const currencySpotValPrice : number = currencyType === 'BTC' ? btcSpotPrice : currencyType === 'ETH' ? ethSpotPrice : currencyType === 'SOL' ? solSpotPrice : 0;
+        const expiryData = item.expiry
+        const markIv = item.markIv
 
         if(item.position === 'Long' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([((i/100)*currencySpotValPrice), optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice , exchange,thetaVal)]);
+            dataSet.push([((i/100)*currencySpotValPrice), optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice , exchange,thetaVal, type, expiryData, markIv)]);
           }
         }
         if(item.position === 'Short' && type === 'C'){
@@ -169,7 +173,6 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       
       return ;
     } 
-    console.log(triggerType,currency,exchange,tempData)
     if(triggerType && currency && exchange && tempData){
       storeToLocalStorage(tempData, triggerType)
       calculation()
@@ -273,8 +276,33 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     calculation();
   },[])
 
+  useEffect(()=>{
+    let fetchData : any = [];
+    async function fetchSingletData() {
+      const url = `https://data-ribbon-collector.com/api/v1.0/${currency}/${exchange}/instrument/`
+      const response = await fetch(url)
+      if (!response.ok) {
+        const message = `An error has occured: ${response.status}`;
+        throw new Error(message);
+      }
+  
+      const data = response.json()
+      return data
+    }
+
+    if(exchange !== '' && currency !== ''){
+      fetchData = fetchSingletData()
+      fetchData.then((data: any) => {
+        setApiData(data || [])
+      }).catch((error: any) => {
+        console.error(error);
+      });
+    } else {
+      fetchData = []
+    } 
 
 
+  },[exchange,currency])
 
 
   
@@ -285,9 +313,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
           <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
               <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
                   <div className='md:w-full mt-2'>
-                      { data ?
-                      (
-                      <PositionBuilderSearch data={data}
+                    <PositionBuilderSearch data={apiData}
                         handleExchangeChange={handleExchangeChange}
                         handleSymbolChange={handleSymbolChange}
                         handleAmountChange={handleAmountChange}
@@ -297,19 +323,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                         error={error}
                         errorMessage={errorMessage}
                         
-                      />) : (
-                        <PositionBuilderSearch data={[]}
-                          handleExchangeChange={handleExchangeChange}
-                          handleSymbolChange={handleSymbolChange}
-                          handleAmountChange={handleAmountChange}
-                          handleLongShort={handleLongShort}
-                          handleCurrencyChange={handleCurrencyChange}
-                          exchange={exchange}
-                          error={error}
-                          errorMessage={errorMessage}
-                        />
-
-                      ) }
+                      />
                   </div>
               </div>
           </div>

@@ -71,7 +71,7 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
               <DropdownLong title={`Choose Currency`} resetFlag={currencyDropdownReset} options={coinCurrencyOption} onChange={(value: any) => handleCurrencyChange(value)}/>
             </div>
             <div className='w-full my-1'>
-              <DropdownLargeFilter title={`Instruments`} resetFlag={instrumentReset} options={filteredInstrumentData} onChange={(value: any) => handleSymbolChange(value)}  />            
+              <DropdownLargeFilter title={`Instruments`} resetFlag={instrumentReset} options={filteredInstrumentData} onChange={(value: any) => handleSymbolChange(value)}  exchange={exchange}  />            
             </div>
             <div className='w-full my-1'>
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>

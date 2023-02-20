@@ -12,8 +12,9 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
     
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
-    const min = Number(-indexPrice);
-    const max = Number(indexPrice*2);
+    const xMin = Number(-indexPrice)
+    const min = Number(-indexPrice*4);
+    const max = Number(indexPrice*4);
     const currentDate = moment(new Date()).format('DD-MM-YYYY')
     const lateDate = moment(latestDate).format('DD-MM-YYYY')
     let chart: any;
@@ -95,7 +96,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
         xAxis: {
           type: 'value',
           data: [],
-          min: min,
+          min: xMin,
           max: max,
           axisLabel: {
             formatter: "{value}",
@@ -156,20 +157,16 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             xAxisIndex: [0],
             filterMode: 'empty',
             moveOnMouseMove: true,
-            startValue: min,
-            endValue: max,
-            start:31,
-            end: 38,
+            start:0,
+            end: 70,
           },
           {
             type: 'slider',
             xAxisIndex: [0],
             show: false,
             filterMode: 'empty',
-            startValue: min,
-            endValue: max,
-            start:31,
-            end: 38,
+            start:0,
+            end: 70,
           },
           {
             type: 'inside',
@@ -177,22 +174,18 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             orient: 'vertical',
             filterMode: 'empty',
             moveOnMouseMove: true,
-            startValue: min,
-            endValue: max,
             start:30,
-            end: 50,
+            end: 80,
 
           },
           {
             type: 'slider',
             yAxisIndex: [0],
             orient: 'vertical',
-            show: false,
+             show: false,
             filterMode: 'empty',
-            startValue: min,
-            endValue: max,
             start:30,
-            end: 50,
+            end: 80,
             moveOnMouseMove: true,
 
           }

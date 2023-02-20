@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, Fragment, useMemo } from 'react'
 import listenForOutsideClicks from '../../utils/listen-for-outside-clicks';
+import moment from 'moment';
 
-const DropdownLargeFilter = ({title, resetFlag, options, onChange} : any) => {
+const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange} : any) => {
     let initialTitle = title;
     const [selectedOption, setSelectedOption] = useState(initialTitle);
     const [isOpen, setIsOpen] = useState(false);
@@ -24,9 +25,17 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange} : any) => {
     };
     
     const getOptionsByDate = (date: string) => {
-        setSelectedDate(date)
+        let dates : any;
+
+        if(exchange ==='OKEX' || exchange === 'Binance'){
+            dates = moment(date, 'DDMMMYY').format('YYMMDD')
+        }  else {
+            dates = date
+        }
+
+        setSelectedDate(dates)
         setFilteredOptions(
-          options.filter((option : any) => option.value.includes(date))
+          options.filter((option : any) => option.value.includes(dates))
         );
     };
 
@@ -47,23 +56,36 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange} : any) => {
     // to handle scenarios to clear the field
     useEffect(
         () => {
-          setSelectedOption(initialTitle); 
+            console.log(filterStrike, filterDate)
+            setSelectedOption(initialTitle); 
         },
-        [resetFlag]
+        [resetFlag ]
     );
+
 
     useEffect(listenForOutsideClicks(listening, setListening, menuRef, setIsOpen));
 
     useEffect(() => {
-        const dates : any = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[1]))).sort((a: any, b: any) => a.localeCompare(b));
-        const strike : any = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[2]))).sort((a: any, b: any) => Number(a) - Number(b));
+        let dates : any;
+        let strike : any;
+
+        if(exchange ==='OKEX'){
+            dates = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[2]))).sort((a: any, b: any) => a.localeCompare(b)).map((date:any) => moment(date, 'YYMMDD').format('DDMMMYY').toUpperCase());
+            strike = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[3]))).sort((a: any, b: any) => Number(a) - Number(b));
+        } else if (exchange === 'Binance'){
+            dates = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[1]))).sort((a: any, b: any) => a.localeCompare(b)).map((date:any) => moment(date, 'YYMMDD').format('DDMMMYY').toUpperCase());
+            strike = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[2]))).sort((a: any, b: any) => Number(a) - Number(b));
+        } else {
+            dates = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[1]))).sort((a: any, b: any) => a.localeCompare(b));
+            strike = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[2]))).sort((a: any, b: any) => Number(a) - Number(b));
+        }   
 
         strike.unshift('All Strike Price')
         setFilterDate(dates);
         setFilterStrike(strike)
     }, [options]);
   
-    useMemo(() => {
+    useEffect(() => {
         const filteredByDate = filterDate.reduce((filtered: any) => {
             const dateOptions = options.filter((option: any) => option.value.includes(selectedDate));
             let filteredOptions = dateOptions.filter((option: any) =>
@@ -80,8 +102,6 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange} : any) => {
         setFilteredOptions(filteredByDate);
     }, [options, filterDate, searchQuery, filterStrike, selectedStrike, selectedDate]);
 
-
-  
 
   return (
     <>
@@ -111,6 +131,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange} : any) => {
                                                 className="text-center items-center font-medium text-gray-900 dark:text-white dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-800  p-1 border border-white dark:border-gray-700  rounded-lg shadow-sm text-md py-3 px-2 cursor-pointer"
                                                 onClick={() => {
                                                     setSelectedDate('')
+                                                    setSelectedStrike('')
                                                     setFilteredOptions(options)
                                                 }}
                                                 >
@@ -121,7 +142,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange} : any) => {
                                                 const match = date.match(regex);
                                                 const dayOfMonth =  (match !== null) ? match[1] : ''; 
                                                 const month = (match !== null) ? match[2]: '';
-
+                                       
                                                 
                                                 return (
                                                     <div

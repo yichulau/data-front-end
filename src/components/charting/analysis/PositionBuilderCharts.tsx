@@ -12,7 +12,8 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
     
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
-    const xMin = Number(-indexPrice)
+    const xMin = 0
+    const xMax = Number(indexPrice*4)
     const min = Number(-indexPrice*4);
     const max = Number(indexPrice*4);
     const currentDate = moment(new Date()).format('DD-MM-YYYY')
@@ -49,7 +50,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
                       str +=  
                           `Index Price Change` +
                           ' : '+
-                          Number(indexPrice + params[i].value[0]).toFixed(2)+ ` (USD)` +
+                          Number(params[i].value[0]).toFixed(2)+ ` (USD)` +
                           "<br/>" +
                           `Expiry PnL` +
                           ' : $'+
@@ -97,7 +98,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           type: 'value',
           data: [],
           min: xMin,
-          max: max,
+          max: xMax,
           axisLabel: {
             formatter: "{value}",
             textStyle: {
@@ -154,40 +155,44 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
         dataZoom: [
           {
             type: 'inside',
-            xAxisIndex: [0],
-            filterMode: 'empty',
+            xAxisIndex: 0,
+            filterMode: 'none',
             moveOnMouseMove: true,
-            start:0,
-            end: 70,
+            zoomOnMouseWheel: true,
+            start:10,
+            end: 35,
           },
           {
             type: 'slider',
-            xAxisIndex: [0],
+            xAxisIndex: 0,
             show: false,
-            filterMode: 'empty',
-            start:0,
-            end: 70,
+            filterMode: 'none',
+            moveOnMouseMove: true,
+            zoomOnMouseWheel: true,
+            start:10,
+            end: 35,
           },
           {
             type: 'inside',
             yAxisIndex: [0],
             orient: 'vertical',
-            filterMode: 'empty',
+            filterMode: 'none',
             moveOnMouseMove: true,
-            start:30,
-            end: 80,
+            zoomOnMouseWheel: true,
+            start:45,
+            end: 55,
 
           },
           {
             type: 'slider',
             yAxisIndex: [0],
             orient: 'vertical',
-             show: false,
-            filterMode: 'empty',
-            start:30,
-            end: 80,
+            show: false,
+            filterMode: 'none',
+            start:45,
+            end: 55,
             moveOnMouseMove: true,
-
+            zoomOnMouseWheel: true,
           }
         ],
         series: [{
@@ -196,6 +201,27 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           areaStyle:{},
           data: data,
           showSymbol: false,
+          markLine: {
+            silent: true,
+            label: {
+              normal: {
+               show: true,
+               formatter: function (params : any) {
+                return 'Index Price: $' + params.value
+              },
+              }
+            },
+            data: [{
+                name: 'verticalLine',
+                xAxis: indexPrice, // specify the x-axis value at which to draw the line
+            }],
+            lineStyle: {
+              normal: {
+                type:'dashed',
+                color: 'green',
+              }
+            },
+          },
           itemStyle: {
             normal:{
               lineStyle:{

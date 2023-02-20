@@ -19,7 +19,7 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
     const optionPricing = calculateOptionPrice(optionData);
     const optionPriced = exchange === 'Bybit' || exchange === 'Binance' ? optionPrice / currentPrice : optionPrice;
 
-    console.log(optionPriced, exchange)
+
     const amountBought = Number(amount)
     const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
     const diffStrikeExpiration = expiryPrice - strikePrice;

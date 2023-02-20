@@ -90,25 +90,26 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         const currencySpotValPrice : number = currencyType === 'BTC' ? btcSpotPrice : currencyType === 'ETH' ? ethSpotPrice : currencyType === 'SOL' ? solSpotPrice : 0;
         const expiryData = item.expiry
         const markIv = item.markIv
+        const exchangeField = item.exchange
 
         if(item.position === 'Long' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([((i/100)*currencySpotValPrice), optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice , exchange,thetaVal, type, expiryData, markIv)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv)]);
           }
         }
         if(item.position === 'Short' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(i/100)*currencySpotValPrice, optionsCalculation.sellCallOption(i,amount, currentPrice,strikePrice, optionPrice, exchange,thetaVal)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellCallOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField,thetaVal)]);
           }
         }
         if(item.position  === 'Long' && type === 'P'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(i/100)*currencySpotValPrice, optionsCalculation.buyPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchange,thetaVal)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField,thetaVal)]);
           }
         }
         if(item.position  === 'Short' && type === 'P'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(i/100)*currencySpotValPrice, optionsCalculation.sellPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchange,thetaVal)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField,thetaVal)]);
           }
         }
       })

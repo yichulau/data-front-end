@@ -298,7 +298,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         console.error(error);
       });
     } else {
-      fetchData = []
+      setApiData([]); 
     } 
 
 

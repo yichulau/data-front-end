@@ -44,7 +44,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
     const storedPositions = localStorage.getItem("positions");
     const positionArray = storedPositions ? Object.values(JSON.parse(storedPositions)) : [];
-    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPriceUSD: value.lastPrice, symbol: value.instrumentName.substring(0,3) });
+    const lastAvgUSD = exchange === 'Binance' || exchange === 'Bybit' ? value.lastPrice : value.lastPrice* value.indexPrice;
+    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPriceUSD: lastAvgUSD, symbol: value.instrumentName.substring(0,3) });
     let obj = positionArray.reduce(function(acc : any, cur : any, i : any) {
       acc[i] = cur;
       return acc;
@@ -85,47 +86,48 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         const expiryData = item.expiry
         const markIv = item.markIv
         const exchangeField = item.exchange
+        const underlyingPrice = item.underlyingPrice
 
         if(item.position === 'Long' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField), optionsCalculation.buyCallTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
         if(item.position === 'Short' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellCallOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField,thetaVal)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellCallOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.sellCallTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
         if(item.position  === 'Long' && type === 'P'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField,thetaVal)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.buyPutTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
         if(item.position  === 'Short' && type === 'P'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField,thetaVal)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField),optionsCalculation.sellPutTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
       })
-  
       for (let i = 0; i < dataSet.length; i++) {
           if (!sums[dataSet[i][0]]) {
-              sums[dataSet[i][0]] = 0;
+              sums[dataSet[i][0]] = [0, 0];
           }
-          sums[dataSet[i][0]] += dataSet[i][1];
+          sums[dataSet[i][0]][0] += dataSet[i][1];
+          sums[dataSet[i][0]][1] += dataSet[i][2];
       }
   
       for (let key in sums) {
-        result.push([Number(key), sums[key]]);
+        result.push([Number(key), sums[key][0], sums[key][1]]);
       }
+
       result.sort(function(a: any,b: any){
         return a[0] - b[0];
       })
 
-
     }
 
-    console.log(result)
+    // console.log(result)
     setFinalData(result)    
   }
 

@@ -44,7 +44,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
     const storedPositions = localStorage.getItem("positions");
     const positionArray = storedPositions ? Object.values(JSON.parse(storedPositions)) : [];
-    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPriceUSD: value.lastPrice, symbol: value.underlyingName.substring(0,3) });
+    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPriceUSD: value.lastPrice, symbol: value.instrumentName.substring(0,3) });
     let obj = positionArray.reduce(function(acc : any, cur : any, i : any) {
       acc[i] = cur;
       return acc;
@@ -160,10 +160,9 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const handleLongShort = (triggerType :string) =>{
     const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
     const storeDataArray : any = Object.values(storeData)
-    const uniqueSymbolsString = [...new Set(storeDataArray.map((item : any) => item.symbol))].join(',');
-
-    console.log(currency, uniqueSymbolsString)
-    if(currency !== uniqueSymbolsString){
+    const uniqueSymbolsString = storeDataArray.length !== 0 ?  [...new Set(storeDataArray.map((item : any) => item.symbol))].join(',') : "";
+ 
+    if(currency !== uniqueSymbolsString && storeDataArray.length > 0){
       setError(true)
       setErrorMessage(`Please Do not Select Other Currency other than ${uniqueSymbolsString} into the Calculation`)
       return ;

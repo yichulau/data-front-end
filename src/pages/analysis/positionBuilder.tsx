@@ -44,7 +44,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
     const storedPositions = localStorage.getItem("positions");
     const positionArray = storedPositions ? Object.values(JSON.parse(storedPositions)) : [];
-    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPriceUSD: value.lastPrice* value.indexPrice});
+    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPriceUSD: value.lastPrice, symbol: value.underlyingName.substring(0,3) });
     let obj = positionArray.reduce(function(acc : any, cur : any, i : any) {
       acc[i] = cur;
       return acc;
@@ -158,6 +158,17 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   }
 
   const handleLongShort = (triggerType :string) =>{
+    const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
+    const storeDataArray : any = Object.values(storeData)
+    const uniqueSymbolsString = [...new Set(storeDataArray.map((item : any) => item.symbol))].join(',');
+
+    console.log(currency, uniqueSymbolsString)
+    if(currency !== uniqueSymbolsString){
+      setError(true)
+      setErrorMessage(`Please Do not Select Other Currency other than ${uniqueSymbolsString} into the Calculation`)
+      return ;
+    }
+
     if(amount < 0){
       setError(true)
       setErrorMessage('Please Amount cannot be less 0!')
@@ -244,7 +255,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         <div className="flex-1 w-0 p-4">
           <div className="flex items-start">
             <div className="flex-shrink-0 pt-0.5 inline-flex items-center justify-center w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200 ">
-            <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
+            <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
             </div>
             <div className="ml-3 flex-1">
               <p className="text-sm font-medium text-gray-900 dark:text-white">

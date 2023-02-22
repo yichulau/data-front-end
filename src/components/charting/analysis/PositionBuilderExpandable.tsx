@@ -3,7 +3,7 @@ import moment from 'moment';
 import PositionTable from './PositionTable';
 import { FaTrashAlt} from 'react-icons/fa';
 
-const PositionBuilderExpandable = ({dataSet, onDelete} : any) => {
+const PositionBuilderExpandable = ({dataSet, onDelete, handleCheckBoxChanges} : any) => {
     const objToArr :object [] = Object.values(dataSet)
     const data = useMemo(() => objToArr ,[dataSet]);
     const columns = useMemo(
@@ -203,11 +203,15 @@ const PositionBuilderExpandable = ({dataSet, onDelete} : any) => {
     function handleBtnClick(value : any){
        onDelete(value)
     }
+
+    function handleCheckBoxChange(value : any){
+      handleCheckBoxChanges(value) // to the function in position builder
+    }
             
 
   return (
     <>
-        {objToArr ? (<PositionTable columns={columns}  data={data} />) : null }
+        {objToArr ? (<PositionTable columns={columns}  data={data} handleCheckBoxChange={handleCheckBoxChange}/>) : null }
     </>
    
   )

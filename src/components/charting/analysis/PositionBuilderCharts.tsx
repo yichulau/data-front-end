@@ -22,7 +22,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
     const secondArray = data.map((item : any) => [item[0], item[2]]);
     let chart: any;
 
-  console.log(data)
+  // console.log(data)
     const clearChart = () =>{
       resetChart()
     }

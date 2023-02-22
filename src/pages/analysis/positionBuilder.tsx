@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { echartsResize } from '../../utils/resize';
@@ -35,7 +35,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [latestDate, setLatestDate] = useState('');
   const [error ,setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(''); 
-  const [apiData, setApiData] = useState([])
+  const [apiData, setApiData] = useState([]);
+  const [positionTableData, setPositionTableData] = useState([]);
 
   const min : number = -99;
   const max : number = 300;
@@ -64,7 +65,10 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const btcSpotPrice = Number(localStorage.getItem("btc"))
     const ethSpotPrice = Number(localStorage.getItem("eth"))
     const solSpotPrice = Number(localStorage.getItem("sol"))
-  
+
+    console.log(positionTableData,"ellooo")
+    console.log(storeDataArray,"store")
+
     setLatestDate(latestDate)
 
     let sums : any = {};
@@ -159,34 +163,32 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     setAmount(value)
   }
 
-  const handleLongShort = (triggerType :string) =>{
+  const handleLongShort = (triggerType :string, currencies : string, symbols: string, exchanges : string, amounts: number) =>{
     const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
     const storeDataArray : any = Object.values(storeData)
     const uniqueSymbolsString = storeDataArray.length !== 0 ?  [...new Set(storeDataArray.map((item : any) => item.symbol))].join(',') : "";
- 
-    if(currency !== uniqueSymbolsString && storeDataArray.length > 0){
+
+    if(currencies === null || exchanges === null  || symbols === null){
+      setError(true)
+      setErrorMessage('Please Select All fields Before Running Calculation')
+      return ;
+    }
+    if(currencies !== uniqueSymbolsString && storeDataArray.length > 0){
       setError(true)
       setErrorMessage(`Please Do not Select Other Currency other than ${uniqueSymbolsString} into the Calculation`)
       return ;
     }
-
-    if(amount < 0){
+    if(amounts <= 0){
       setError(true)
-      setErrorMessage('Please Amount cannot be less 0!')
-      
+      setErrorMessage('Please Amount cannot be 0 or less 0!')
       return ;
     } 
-    if(triggerType && currency && exchange && tempData){
-      storeToLocalStorage(tempData, triggerType)
-      calculation()
-      notifySuccess(tempData)
-      setError(false)
-      setErrorMessage('')
-    } else {
-      setError(true)
-      setErrorMessage('Please Select All fields Before Running Calculation')
-    }
-
+    
+    storeToLocalStorage(tempData, triggerType)
+    calculation()
+    notifySuccess(tempData)
+    setError(false)
+    setErrorMessage('')
   }
 
   const handleCurrencyChange = (value: string ) =>{
@@ -271,7 +273,12 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     </div>
     ),
     { id: "unique-notification", position: "top-center" }
-);
+  );
+
+  const handleCheckBoxChanges = (value : any) => {
+    setPositionTableData(value.selectedFlatRowsOriginal)
+  }
+
 
 
   useEffect(()=>{
@@ -308,7 +315,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   },[exchange,currency])
 
 
-  
+
   return (
     
     <div className="container py-1 mx-auto">
@@ -325,7 +332,6 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                         exchange={exchange}
                         error={error}
                         errorMessage={errorMessage}
-                        
                       />
                   </div>
               </div>
@@ -358,7 +364,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       <div className="flex flex-wrap">
         <div className="flex flex-col items-start py-2 px-2 w-full">
           <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
-              <PositionBuilderExpandable dataSet={store} onDelete={handleDelete}/>
+              <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
           </div>
         </div>
       </div>

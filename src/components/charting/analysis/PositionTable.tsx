@@ -210,16 +210,19 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
                             const { original } : any = row 
                           
                             return (
-                                <tr {...row.getRowProps()} className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    {row.cells.map(cell => {
-                                        return (
-                                            <>
-                                                <td {...cell.getCellProps()}className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center" >{cell.render('Cell')}</td>
-                                            </>
-                                        )
-                                    })}
-                                
-                                </tr>
+                                <>
+                                    <tr {...row.getRowProps()} className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        {row.cells.map(cell => {
+                                            return (
+                                                <>
+                                                    <td {...cell.getCellProps()}className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center" >{cell.render('Cell')}</td>
+                                                </>
+                                            )
+                                        })}
+                                    
+                                    </tr>
+                                </>
+
                             )
                         })}
                   </tbody>

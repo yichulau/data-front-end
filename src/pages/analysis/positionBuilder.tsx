@@ -164,7 +164,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
     const storeDataArray : any = Object.values(storeData)
     const uniqueSymbolsString = storeDataArray.length !== 0 ?  [...new Set(storeDataArray.map((item : any) => item.symbol))].join(',') : "";
-
+    
     if(currencies === null || exchanges === null  || symbols === null){
       setError(true)
       setErrorMessage('Please Select All fields Before Running Calculation')

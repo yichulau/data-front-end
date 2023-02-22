@@ -222,6 +222,34 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const checkedBoxData = value.selectedFlatRowsOriginal
     calculation(checkedBoxData)
   }
+
+  async function fetchSpotData(currencies : any) {
+    const url = `https://api4.binance.com/api/v3/ticker/price?symbol=${currencies}USDT`
+    const response = await fetch(url)
+    if (!response.ok) {
+      const message = `An error has occured: ${response.status}`;
+      throw new Error(message);
+    }
+
+    const data = response.json()
+    return data
+  }
+
+
+  useEffect(()=>{
+    const fetchAllSpotData = async () =>{
+      const {price: btcSpotVal }= await fetchSpotData('BTC');
+      const {price: ethSpotVal } = await fetchSpotData('ETH');
+      const {price: solSpotVal }= await fetchSpotData('SOL');
+
+      localStorage.setItem("btc", btcSpotVal)
+      localStorage.setItem("eth", ethSpotVal)
+      localStorage.setItem("sol", solSpotVal)
+    }
+
+    fetchAllSpotData()
+
+  },[])
   
 
   useEffect(()=>{

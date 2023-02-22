@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import ReactTable, { useTable, useExpanded, useGroupBy, useRowSelect, usePagination}  from 'react-table';
+import IndeterminateCheckbox from './IndeterminateCheckbox';
 import { useRowSelectColumn } from '@lineup-lite/hooks';
 import { useDownloadExcel } from 'react-export-table-to-excel';
 
@@ -15,23 +16,7 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
         sheet: 'Reporting'
     })
 
-    
-    const IndeterminateCheckbox = React.forwardRef(
-        ({ indeterminate, ...rest } : any, ref) => {
-        const defaultRef = React.useRef();
-        const resolvedRef : any = ref || defaultRef;
-    
-        React.useEffect(() => {
-            resolvedRef.current.indeterminate = indeterminate;
-        }, [resolvedRef, indeterminate]);
-    
-        return (
-            <>
-            <input type="checkbox" ref={resolvedRef} {...rest} />
-            </>
-        );
-        }
-    );
+ 
 
     const initialState = {
         pageIndex: 0,

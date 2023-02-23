@@ -2,8 +2,17 @@ import React, { useEffect, useState } from 'react'
 import DropdownLong from '../../misc/DropdownLong'
 import DropdownLargeFilter from '../../misc/DropdownLargeFilter';
 
+const PositionBuilderSearch = ({
+  data, 
+  handleExchangeChange, 
+  handleCurrencyChange, 
+  handleSymbolChange, 
+  handleAmountChange, 
+  handleLongShort, 
+  exchange, 
+  error, 
+  errorMessage } : any) => {
 
-const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange, handleSymbolChange, handleAmountChange, handleLongShort, exchange, error, errorMessage } : any) => {
   const instrumentData = data;
   const filteredInstrumentData = instrumentData.map((item : any, index : any) => ({id: index, value: item}));
   filteredInstrumentData.sort(function(a: any,b: any){
@@ -13,11 +22,6 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
     const bStrike = Number(bValue[2])
     return aStrike - bStrike;
   })
-
-  const handleButtonClick = (event : any)=>{
-    const {currency, symbol, exchange, amount} = state
-    handleLongShort(event.target.name, currency, symbol, exchange, amount)
-  }
 
   const exchangeOption = [
     {id: 0, value: 'Bit.com'},
@@ -34,6 +38,8 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
   ]
 
   let defaultCurrencyTitle = 'Choose Currency';
+  let defaultExchangeTitle = 'Choose Exchange'; 
+  const [exchangeDropdownReset, setExchangeDropdownReset] = useState(defaultExchangeTitle); 
   const [currencyDropdownReset, setCurrencyDropdownReset] = useState(defaultCurrencyTitle);
   const [instrumentReset, setInstrumentReset] = useState('');
   const [currentExchange, setCurrentExchange] = useState('');  
@@ -65,6 +71,20 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
     handleAmountChange(value); 
   } 
 
+  const handleButtonClick = (event : any)=>{
+    handleLongShort(event.target.name)
+  }
+
+  const handleResetButtonClick = (event : any)=>{
+    var resetCode = (Math.random() * 10).toString();
+    handleExchangeChange(''); // set exchange value to empty string 
+
+    setExchangeDropdownReset(resetCode);
+    setCurrencyDropdownReset(resetCode);
+    setInstrumentReset(resetCode); 
+    setAmount(0);
+  }
+
   return (
     <>
       <div className='mt-2 mb-2'>
@@ -72,7 +92,9 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
             <h2 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>Add Simulated Position Builder</h2>
             <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"/>
             <div className='w-full my-1'>
-              <DropdownLong title={`Choose Exchange`} options={exchangeOption} 
+              <DropdownLong title={`Choose Exchange`} 
+                resetFlag={exchangeDropdownReset}
+                options={exchangeOption} 
                 onChange={(value: any) => {
                   processExchangeChange(value)
                   setState(prevState => ({ ...prevState, exchange: value }));
@@ -109,18 +131,26 @@ const PositionBuilderSearch = ({data, handleExchangeChange, handleCurrencyChange
                 className="bg-[#EFF2F5] border border-[#EFF2F5] font-medium text-[#58667E] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:text-bg-gray-700 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-800 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-700" placeholder="Enter Amount" />
             </div>
             <div className='flex flex-row w-full my-4 '>
-            <button type="button"
-              name='Long' 
-              className="w-full md:w-1/2 focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-              onClick={handleButtonClick}
-            >
-              Long</button>
-            <button type="button" 
-              name='Short' 
-              className="w-full md:w-1/2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-              onClick={handleButtonClick}
-            >
-              Short</button>
+              <button type="button"
+                name='Long' 
+                className="w-full md:w-1/2 focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                onClick={handleButtonClick}
+              >
+                Long</button>
+              <button type="button" 
+                name='Short' 
+                className="w-full md:w-1/2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                onClick={handleButtonClick}
+              >
+                Short</button>
+            </div>
+            <div className='w-full my-1'>
+                <button type="button" 
+                  className="text-gray-900 bg-[#EFF2F5] border focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-2.5 py-2.5  mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  onClick={handleResetButtonClick}
+                >
+                  Reset Fields
+                </button>
             </div>
             {error === true ? (
               <div className="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50  dark:text-red-400" role="alert">

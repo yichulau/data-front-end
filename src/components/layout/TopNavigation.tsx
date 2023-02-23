@@ -4,18 +4,12 @@ import { useRouter } from "next/router";
 import MyThemeContext from "../../store/myThemeContext";
 import { FaMoon,FaSun } from 'react-icons/fa';
 import Link from 'next/link'
-import { motion } from "framer-motion";
 
 
 const TopNavigation = () => {
     const themeCtx: { isDarkMode?: boolean; toggleThemeHandler: () => void } =
     useContext(MyThemeContext);
     const [darkMode, setDarkMode] = useState<String | null>(null);
-    const [isHover, toggleHover] = React.useState(false);
-    const toggleHoverMenu = () => {
-      toggleHover(!isHover);
-    };
-
 
     function toggleThemeHandler(): void {
         themeCtx.toggleThemeHandler();
@@ -82,14 +76,10 @@ const TopNavigation = () => {
                         </li>
                         <li>
                        
-                            <motion.div className="peer text-gray-900 dark:text-white hover:underline" onHoverStart={toggleHoverMenu} onHoverEnd={toggleHoverMenu}>Activity</motion.div>
-                            <motion.div className="hidden peer-hover:flex hover:flex
-                                w-[200px]
-                                flex-col bg-white drop-shadow-lg absolute z-50 dark:bg-black" 
-                                initial="exit"
-                                animate={isHover ? "enter" : "exit"}
-                                variants={subMenuAnimate}
-                            >
+                            <div className="peer text-gray-900 dark:text-white hover:underline">Activity</div>
+                            <div className="hidden peer-hover:flex hover:flex
+                            w-[200px]
+                            flex-col bg-white drop-shadow-lg absolute z-50 dark:bg-black">
                                 <Link href="/options/strike">
                                      <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white" >Options OI By Strike</div>
                                 </Link>
@@ -102,7 +92,7 @@ const TopNavigation = () => {
                                 <Link href="/options/expiryVol">
                                     <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white">Options OI Volume By Expiry</div>
                                 </Link>
-                            </motion.div>
+                            </div>
                         </li>
                         <li>
                             <Link href="/analysis/positionBuilder">

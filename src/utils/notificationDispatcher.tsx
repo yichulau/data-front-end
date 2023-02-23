@@ -12,7 +12,7 @@ function notifySuccess(value: any){
         <div
         className={`${
             t.visible ? 'animate-enter' : 'animate-leave'
-        } max-w-md w-full bg-white dark:bg-black  shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        } max-w-48 w-full bg-white dark:bg-black  shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
         >
         <div className="flex-1 w-0 p-4">
             <div className="flex items-start">

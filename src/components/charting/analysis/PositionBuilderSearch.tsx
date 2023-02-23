@@ -11,7 +11,7 @@ const PositionBuilderSearch = ({
   handleLongShort, 
   exchange, 
   error, 
-  errorMessage } : any) => {
+  errorMessage, } : any) => {
 
   const instrumentData = data;
   const filteredInstrumentData = instrumentData.map((item : any, index : any) => ({id: index, value: item}));
@@ -72,7 +72,8 @@ const PositionBuilderSearch = ({
   } 
 
   const handleButtonClick = (event : any)=>{
-    handleLongShort(event.target.name)
+    const {currency, symbol, exchange, amount} = state
+    handleLongShort(event.target.name, currency, symbol, exchange, amount)
   }
 
   const handleResetButtonClick = (event : any)=>{
@@ -146,7 +147,7 @@ const PositionBuilderSearch = ({
             </div>
             <div className='w-full my-1'>
                 <button type="button" 
-                  className="text-gray-900 bg-[#EFF2F5] border focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-2.5 py-2.5  mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  className="text-gray-900 w-full bg-[#EFF2F5] border focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-2.5 py-2.5  mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                   onClick={handleResetButtonClick}
                 >
                   Reset Fields

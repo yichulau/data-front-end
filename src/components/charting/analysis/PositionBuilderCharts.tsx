@@ -36,9 +36,24 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
       const options = {
         darkMode: true,
         backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
+        toolbox: {
+          itemGap: 10,
+          itemSize: 16,
+          right: 70,
+          iconStyle: {
+            borderColor: 'rgb(126,99,255)',
+          },
+          feature: {
+            restore: {},
+            saveAsImage: {
+              name: 'Position Builder'
+            }
+          },
+        },
         tooltip: {
             show: true,
             trigger: 'axis',
+            
             textStyle: {
                 color: '#fff',
                 fontSize: 14
@@ -109,7 +124,6 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             formatter: function(value : any, index: any) {
               return value.toFixed(0); // format value to integer
             },
-            interval: 500,
             textStyle: {
               color: isDarkTheme  ? '#ffffff' : '#000000'   ,
             }
@@ -163,7 +177,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
               return abbreviateNumber(params)
             },
             textStyle: {
-                color: isDarkTheme  ? '#ffffff' : '#000000'   ,
+              color: isDarkTheme  ? '#ffffff' : '#000000',
             }
           },
           axisLine: {
@@ -177,7 +191,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           {
             type: 'inside',
             xAxisIndex: 0,
-            filterMode: 'filter',
+            filterMode: 'none',
             moveOnMouseMove: true,
             zoomOnMouseWheel: true,
             start:10,
@@ -187,7 +201,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             type: 'slider',
             xAxisIndex: 0,
             show: false,
-            filterMode: 'filter',
+            filterMode: 'none',
             moveOnMouseMove: true,
             zoomOnMouseWheel: true,
             start:10,

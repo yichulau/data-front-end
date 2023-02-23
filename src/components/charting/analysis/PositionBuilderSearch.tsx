@@ -14,7 +14,6 @@ const PositionBuilderSearch = ({
   errorMessage } : any) => {
 
   const instrumentData = data;
-
   const filteredInstrumentData = instrumentData.map((item : any, index : any) => ({id: index, value: item}));
   filteredInstrumentData.sort(function(a: any,b: any){
     const aValue = a.value.split('-')
@@ -45,6 +44,12 @@ const PositionBuilderSearch = ({
   const [instrumentReset, setInstrumentReset] = useState('');
   const [currentExchange, setCurrentExchange] = useState('');  
   const [amount, setAmount] = useState(0); 
+  const [state, setState] = useState({
+    currency : null,
+    symbol: null,
+    exchange: null,
+    amount: 0
+  })
   
   // intermediate function to handle changes in exchange value before calling the callback function 
   // set all title back to the default upon detecting change in the exchange value 
@@ -87,20 +92,40 @@ const PositionBuilderSearch = ({
             <h2 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>Add Simulated Position Builder</h2>
             <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"/>
             <div className='w-full my-1'>
-              <DropdownLong title={`Choose Exchange`} resetFlag={exchangeDropdownReset} options={exchangeOption} onChange={(value: any) => processExchangeChange(value)}/>
+              <DropdownLong title={`Choose Exchange`} 
+                resetFlag={exchangeDropdownReset}
+                options={exchangeOption} 
+                onChange={(value: any) => {
+                  processExchangeChange(value)
+                  setState(prevState => ({ ...prevState, exchange: value }));
+                }}
+              />
             </div>
             <div className='w-full my-1'>
-              <DropdownLong title={`Choose Currency`} resetFlag={currencyDropdownReset} options={coinCurrencyOption} onChange={(value: any) => handleCurrencyChange(value)}/>
+              <DropdownLong title={`Choose Currency`} resetFlag={currencyDropdownReset} options={coinCurrencyOption} 
+                onChange={(value: any) => {
+                  handleCurrencyChange(value)
+                  setState(prevState => ({ ...prevState, currency: value }));
+                }}
+              />
             </div>
             <div className='w-full my-1'>
-              <DropdownLargeFilter title={`Instruments`} resetFlag={instrumentReset} options={filteredInstrumentData} onChange={(value: any) => handleSymbolChange(value)}  exchange={exchange}  />            
+              <DropdownLargeFilter title={`Instruments`} resetFlag={instrumentReset} options={filteredInstrumentData} 
+                onChange={(value: any) => {
+                  handleSymbolChange(value)
+                  setState(prevState => ({ ...prevState, symbol: value }));
+                }}  
+                exchange={exchange}  />            
             </div>
             <div className='w-full my-1'>
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
               <input type="number"
                 min="0"
                 value={amount}
-                onChange={(event: any) => processAmountChange(event.target.value)}  
+                onChange={(event: any) => {
+                  processAmountChange(event.target.value)
+                  setState(prevState => ({ ...prevState, amount: event.target.value }));
+                }}  
                 className="bg-[#EFF2F5] border border-[#EFF2F5] font-medium text-[#58667E] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:text-bg-gray-700 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-800 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-700" placeholder="Enter Amount" />
             </div>
             <div className='flex flex-row w-full my-4 '>

@@ -1,28 +1,126 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
-import ReactTable, { useTable, useExpanded, useGroupBy,} from 'react-table';
+import ReactTable, { useTable, useExpanded, useGroupBy, useRowSelect, usePagination}  from 'react-table';
+import IndeterminateCheckbox from './IndeterminateCheckbox';
+import { useRowSelectColumn } from '@lineup-lite/hooks';
+import { useDownloadExcel } from 'react-export-table-to-excel';
 
 
-const PositionTable = ({columns, data} : any) => {
+const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
     
+    const tableRef = useRef(null);
 
+    const { onDownload } = useDownloadExcel({
+        currentTableRef: tableRef.current,
+        filename: 'Reporting',
+        sheet: 'Reporting'
+    })
+
+ 
+
+    const initialState = {
+        pageIndex: 0,
+        pageSize: 10,
+        sortBy: [],
+        selectedRowIds: data.length > 0 ? data.map((d: any) => d.id) : {},
+      };
+
+    
     const {
         getTableProps,
         getTableBodyProps,
-        toggleAllRowsExpanded,
-        isAllRowsExpanded,
         headerGroups,
-        rows,
         prepareRow,
-        state: { expanded },
+        page,
+        canPreviousPage,
+        canNextPage,
+        pageOptions,
+        pageCount,
+        gotoPage,
+        nextPage,
+        previousPage,
+        selectedFlatRows,
+        toggleAllRowsExpanded,
+        rows,
+        state: { expanded, pageIndex, selectedRowIds },
       } = useTable(
         {
           columns: columns,
           data,
+          initialState
         },
          useExpanded,  
+         usePagination,
+         useRowSelect,
+         (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+                {
+                  id: "anyThing",
+                  Header: ({ toggleRowSelected, isAllPageRowsSelected, page }) => {
+                    const modifiedOnChange = (event : any) => {
+                      page.forEach((row : any) => {
+                        //check each row if it is not disabled
+                        !row.original.disabled &&
+                          toggleRowSelected(row.id, event.currentTarget.checked);
+                      });
+                    };
+        
+                    //Count number of selectable and selected rows in the current page
+                    //to determine the state of select all checkbox
+                    let selectableRowsInCurrentPage = 0;
+                    let selectedRowsInCurrentPage = 0;
+                    page.forEach((row : any) => {
+                      row.isSelected && selectedRowsInCurrentPage++;
+                      !row.original.disabled && selectableRowsInCurrentPage++;
+                    });
+        
+                    //If there are no selectable rows in the current page
+                    //select all checkbox will be disabled -> see page 2
+                    const disabled = selectableRowsInCurrentPage === 0;
+                    const checked =
+                      (isAllPageRowsSelected ||
+                        selectableRowsInCurrentPage === selectedRowsInCurrentPage) &&
+                      !disabled;
+        
+                    return (
+                      <div>
+                        <IndeterminateCheckbox
+                          onChange={modifiedOnChange}
+                          checked={checked}
+                          disabled={disabled}
+                        />
+                      </div>
+                    );
+                  },
+                  Cell: ({ row } : any) => (
+                    <div>
+                      <IndeterminateCheckbox
+                        {...row.getToggleRowSelectedProps()}
+                        disabled={row.original.disabled}
+                      />
+                    </div>
+                  )
+                },
+                ...columns
+              ]);
+         }
         )
 
+ 
+
+
+    useEffect(()=>{
+        handleCheckBoxChange(
+            {
+              selectedRowIds: selectedRowIds,
+              "selectedFlatRowsOriginal": selectedFlatRows.map(
+                (d) => d.original
+              )
+            },
+            null,
+            2
+          )
+    }, [selectedRowIds])
         
     useMemo(()=>{
         toggleAllRowsExpanded(true); 
@@ -45,8 +143,8 @@ const PositionTable = ({columns, data} : any) => {
                       <span className="dark:text-white">$88.4k</span>
                   </h5> */}
               </div>
-              {/* <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-                  <button type="button" className="flex items-center justify-center px-4 py-2 text-sm font-medium text-black rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+              <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+                  {/* <button type="button" className="flex items-center justify-center px-4 py-2 text-sm font-medium text-black rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                       <svg className="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                           <path clipRule="evenodd" fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                       </svg>
@@ -57,17 +155,19 @@ const PositionTable = ({columns, data} : any) => {
                           <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                       </svg>
                       Update stocks 1/250
-                  </button>
-                  <button type="button" className="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                  </button> */}
+                  <button type="button" 
+                    onClick={onDownload}
+                  className="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                       </svg>
                       Export
                   </button>
-              </div> */}
+              </div>
           </div>
           <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg">
-              <table  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
+              <table ref={tableRef}  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     {headerGroups.map((headerGroup, index )=> (
                         <>
@@ -85,7 +185,7 @@ const PositionTable = ({columns, data} : any) => {
                     )}
                   </thead>
                   <tbody {...getTableBodyProps()}>
-                        {rows.map((row, index) => {
+                        {page.map((row, index) => {
                             prepareRow(row)
                             const { original } : any = row 
                           
@@ -167,3 +267,5 @@ const PositionTable = ({columns, data} : any) => {
 }
 
 export default PositionTable
+
+

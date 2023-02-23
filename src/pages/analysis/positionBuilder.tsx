@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { echartsResize } from '../../utils/resize';
@@ -35,7 +35,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [latestDate, setLatestDate] = useState('');
   const [error ,setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(''); 
-  const [apiData, setApiData] = useState([])
+  const [apiData, setApiData] = useState([]);
+  const [positionTableData, setPositionTableData] = useState([]);
 
   const min : number = -99;
   const max : number = 300;
@@ -44,7 +45,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
     const storedPositions = localStorage.getItem("positions");
     const positionArray = storedPositions ? Object.values(JSON.parse(storedPositions)) : [];
-    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPriceUSD: value.lastPrice* value.indexPrice});
+    const lastAvgUSD = exchange === 'Binance' || exchange === 'Bybit' ? value.lastPrice : value.lastPrice* value.indexPrice;
+    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPriceUSD: lastAvgUSD, symbol: value.instrumentName.substring(0,3) });
     let obj = positionArray.reduce(function(acc : any, cur : any, i : any) {
       acc[i] = cur;
       return acc;
@@ -63,7 +65,10 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const btcSpotPrice = Number(localStorage.getItem("btc"))
     const ethSpotPrice = Number(localStorage.getItem("eth"))
     const solSpotPrice = Number(localStorage.getItem("sol"))
-  
+
+    console.log(positionTableData,"ellooo")
+    console.log(storeDataArray,"store")
+
     setLatestDate(latestDate)
 
     let sums : any = {};
@@ -85,47 +90,48 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         const expiryData = item.expiry
         const markIv = item.markIv
         const exchangeField = item.exchange
+        const underlyingPrice = item.underlyingPrice
 
         if(item.position === 'Long' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField), optionsCalculation.buyCallTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
         if(item.position === 'Short' && type === 'C'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellCallOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField,thetaVal)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellCallOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.sellCallTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
         if(item.position  === 'Long' && type === 'P'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField,thetaVal)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.buyPutTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
         if(item.position  === 'Short' && type === 'P'){
           for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField,thetaVal)]);
+            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField),optionsCalculation.sellPutTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
       })
-  
       for (let i = 0; i < dataSet.length; i++) {
           if (!sums[dataSet[i][0]]) {
-              sums[dataSet[i][0]] = 0;
+              sums[dataSet[i][0]] = [0, 0];
           }
-          sums[dataSet[i][0]] += dataSet[i][1];
+          sums[dataSet[i][0]][0] += dataSet[i][1];
+          sums[dataSet[i][0]][1] += dataSet[i][2];
       }
   
       for (let key in sums) {
-        result.push([Number(key), sums[key]]);
+        result.push([Number(key), sums[key][0], sums[key][1]]);
       }
+
       result.sort(function(a: any,b: any){
         return a[0] - b[0];
       })
 
-
     }
 
-    console.log(result)
+    // console.log(result)
     setFinalData(result)    
   }
 
@@ -157,24 +163,32 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     setAmount(value)
   }
 
-  const handleLongShort = (triggerType :string) =>{
-    if(amount < 0){
-      setError(true)
-      setErrorMessage('Please Amount cannot be less 0!')
-      
-      return ;
-    } 
-    if(triggerType && currency && exchange && tempData){
-      storeToLocalStorage(tempData, triggerType)
-      calculation()
-      notifySuccess(tempData)
-      setError(false)
-      setErrorMessage('')
-    } else {
+  const handleLongShort = (triggerType :string, currencies : string, symbols: string, exchanges : string, amounts: number) =>{
+    const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
+    const storeDataArray : any = Object.values(storeData)
+    const uniqueSymbolsString = storeDataArray.length !== 0 ?  [...new Set(storeDataArray.map((item : any) => item.symbol))].join(',') : "";
+
+    if(currencies === null || exchanges === null  || symbols === null){
       setError(true)
       setErrorMessage('Please Select All fields Before Running Calculation')
+      return ;
     }
-
+    if(currencies !== uniqueSymbolsString && storeDataArray.length > 0){
+      setError(true)
+      setErrorMessage(`Please Do not Select Other Currency other than ${uniqueSymbolsString} into the Calculation`)
+      return ;
+    }
+    if(amounts <= 0){
+      setError(true)
+      setErrorMessage('Please Amount cannot be 0 or less 0!')
+      return ;
+    } 
+    
+    storeToLocalStorage(tempData, triggerType)
+    calculation()
+    notifySuccess(tempData)
+    setError(false)
+    setErrorMessage('')
   }
 
   const handleCurrencyChange = (value: string ) =>{
@@ -244,7 +258,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         <div className="flex-1 w-0 p-4">
           <div className="flex items-start">
             <div className="flex-shrink-0 pt-0.5 inline-flex items-center justify-center w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200 ">
-            <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
+            <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
             </div>
             <div className="ml-3 flex-1">
               <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -259,7 +273,12 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     </div>
     ),
     { id: "unique-notification", position: "top-center" }
-);
+  );
+
+  const handleCheckBoxChanges = (value : any) => {
+    setPositionTableData(value.selectedFlatRowsOriginal)
+  }
+
 
 
   useEffect(()=>{
@@ -296,7 +315,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   },[exchange,currency])
 
 
-  
+
   return (
     
     <div className="container py-1 mx-auto">
@@ -313,7 +332,6 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                         exchange={exchange}
                         error={error}
                         errorMessage={errorMessage}
-                        
                       />
                   </div>
               </div>
@@ -346,7 +364,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       <div className="flex flex-wrap">
         <div className="flex flex-col items-start py-2 px-2 w-full">
           <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
-              <PositionBuilderExpandable dataSet={store} onDelete={handleDelete}/>
+              <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
           </div>
         </div>
       </div>

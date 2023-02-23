@@ -18,9 +18,11 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
     const max = Number(indexPrice*4);
     const currentDate = moment(new Date()).format('DD-MM-YYYY')
     const lateDate = moment(latestDate).format('DD-MM-YYYY')
+    const firstArray = data.map((item : any) => [item[0], item[1]]);
+    const secondArray = data.map((item : any) => [item[0], item[2]]);
     let chart: any;
 
-    // console.log(data)
+  // console.log(data)
     const clearChart = () =>{
       resetChart()
     }
@@ -44,15 +46,19 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             backgroundColor: 'rgba(18, 57, 60, .8)',
             borderColor: "rgba(18, 57, 60, .8)",
             formatter: function (params : any) {
+
+
               let str = "";
               for (let i = 0; i < params.length; i++) {
+                  let strLabel = params[i].seriesIndex === 0 ? `Expiry PnL` : `Today PnL`
+                  let markerStyle = params[i].seriesIndex === 0 ? '<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:rgb(126,99,255);"></span>' : '<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:rgb(46,189,133);"></span>'
                   if (params[i].seriesName !== "") {
                       str +=  
                           `Index Price Change` +
                           ' : '+
                           Number(params[i].value[0]).toFixed(2)+ ` (USD)` +
                           "<br/>" +
-                          `Expiry PnL` +
+                          markerStyle + strLabel +
                           ' : $'+
                           parseFloat(params[i].value[1]).toFixed(2)  + ` (USD)` +
                           "<br/>";
@@ -199,7 +205,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           type: 'line',
           smooth: true,
           areaStyle:{},
-          data: data,
+          data: firstArray,
           showSymbol: false,
           markLine: {
             silent: true,
@@ -227,6 +233,61 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
               lineStyle:{
                 widtth: 2,
                 color: 'rgb(126,99,255)'
+              }
+            }
+          },
+        },{
+          type: 'line',
+          smooth: true,
+          areaStyle:{
+            normal: {
+              color: new echarts.graphic.LinearGradient(
+                  0,
+                  0,
+                  0,
+                  1,
+                  [
+                      {
+                          offset: 0,
+                          color: 'rgba(107,205,216,0.5)',
+                      },
+                      {
+                          offset: 1,
+                          color: 'rgba(143,192,127,0)',
+                      },
+                  ],
+                  false
+              ),
+          },
+          },
+          data: secondArray,
+          showSymbol: false,
+          markLine: {
+            silent: true,
+            label: {
+              normal: {
+               show: true,
+               formatter: function (params : any) {
+                return 'Index Price: $' + params.value
+              },
+              }
+            },
+            data: [{
+                name: 'verticalLine',
+                xAxis: indexPrice, // specify the x-axis value at which to draw the line
+            }],
+            lineStyle: {
+              normal: {
+                type:'dashed',
+                color: 'green',
+              }
+            },
+          },
+          itemStyle: {
+            normal:{
+              lineStyle:{
+                widtth: 2,
+                color: '#00a8a0'
               }
             }
           },

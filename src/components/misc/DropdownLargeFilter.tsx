@@ -53,20 +53,8 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
           setFilteredOptions(filteredByStrike);
         }
       };
-
-    // to handle scenarios to clear the field
-    useEffect(
-        () => {
-       
-            setSelectedOption(initialTitle); 
-        },
-        [resetFlag ]
-    );
-
-
-    useEffect(listenForOutsideClicks(listening, setListening, menuRef, setIsOpen));
-
-    useEffect(() => {
+    
+    const filterDateFunction = ()=>{
         let dates : any;
         let strike : any;
 
@@ -94,8 +82,24 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
         strike.unshift('All Strike Price')
         setFilterDate(dates);
         setFilterStrike(strike)
-    }, [options]);
-  
+    }
+
+    useEffect(()=>{
+        filterDateFunction()
+        return () => filterDateFunction()
+    },[options])
+
+    // to handle scenarios to clear the field
+    useEffect(
+        () => {
+            setSelectedOption(initialTitle); 
+        },
+        [resetFlag]
+    );
+
+    useEffect(listenForOutsideClicks(listening, setListening, menuRef, setIsOpen));
+
+
     useEffect(() => {
         const filteredByDate = filterDate.reduce((filtered: any) => {
             const dateOptions = options.filter((option: any) => option.value.includes(selectedDate));

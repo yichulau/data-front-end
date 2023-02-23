@@ -88,25 +88,31 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         const markIv = item.markIv
         const exchangeField = item.exchange
         const underlyingPrice = item.underlyingPrice
+        const interval = currencyType === 'BTC' ?  500 : 50;
+        const formattedNumbers : number[] = [];
+
+        for (let i = 0; i <= Math.floor(currentPrice*8 / interval); i++) {
+          formattedNumbers.push(parseFloat((i * interval).toFixed(6)));
+        }
 
         if(item.position === 'Long' && type === 'C'){
-          for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyCallOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField), optionsCalculation.buyCallTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
+          for (let i = 0; i <= formattedNumbers.length; i++) {
+            dataSet.push([formattedNumbers[i], optionsCalculation.buyCallOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField), optionsCalculation.buyCallTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
         if(item.position === 'Short' && type === 'C'){
-          for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellCallOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.sellCallTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
+          for (let i = 0; i <= formattedNumbers.length; i++) {
+            dataSet.push([formattedNumbers[i], optionsCalculation.sellCallOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.sellCallTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
         if(item.position  === 'Long' && type === 'P'){
-          for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.buyPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.buyPutTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
+          for (let i = 0; i <= formattedNumbers.length; i++) {
+            dataSet.push([formattedNumbers[i], optionsCalculation.buyPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.buyPutTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
         if(item.position  === 'Short' && type === 'P'){
-          for (let i = min; i <= max; i++) {
-            dataSet.push([(currencySpotValPrice + ((i/100)*currencySpotValPrice)), optionsCalculation.sellPutOption(i,amount, currentPrice,strikePrice, optionPrice, exchangeField),optionsCalculation.sellPutTimeDecayOption(i,amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
+          for (let i = 0; i <= formattedNumbers.length; i++) {
+            dataSet.push([formattedNumbers[i], optionsCalculation.sellPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField),optionsCalculation.sellPutTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
           }
         }
       })
@@ -128,7 +134,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
     }
 
-    // console.log(result)
+    console.log(result)
     setFinalData(result)    
   }
 

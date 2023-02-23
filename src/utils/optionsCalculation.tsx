@@ -16,7 +16,7 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
 
     const optionPriced = exchange === 'Bybit' || exchange === 'Binance' ? optionPrice / currentPrice : optionPrice;
     const amountBought = Number(amount)
-    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
+    const expiryPrice = stockPricePercent;
     const diffStrikeExpiration = expiryPrice - strikePrice;
     const profit = expiryPrice > strikePrice ? (diffStrikeExpiration  * amountBought)- (optionPriced * amountBought * currentPrice) : -( optionPriced * amountBought  * currentPrice)
 
@@ -31,7 +31,7 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
 
     const optionPriced = exchange === 'Bybit' || exchange === 'Binance' ? optionPrice / currentPrice : optionPrice;
     const amountBought = Number(amount)
-    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
+    const expiryPrice = stockPricePercent;
     const diffStrikeExpiration = expiryPrice - strikePrice;
 
     const profit = expiryPrice > strikePrice ? (optionPriced * amountBought * currentPrice) - (diffStrikeExpiration  * amountBought) : ( optionPriced * amountBought  * currentPrice)
@@ -46,7 +46,7 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
 
     const optionPriced = exchange === 'Bybit' || exchange === 'Binance' ? optionPrice / currentPrice : optionPrice;
     const amountBought = Number(amount)
-    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
+    const expiryPrice = stockPricePercent;
     const diffStrikeExpiration = expiryPrice - strikePrice;
 
     const profit = expiryPrice < strikePrice ? -(diffStrikeExpiration  * amountBought) - (optionPriced * amountBought * currentPrice) : -( optionPriced * amountBought  * currentPrice)
@@ -61,7 +61,7 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
 
     const optionPriced = exchange === 'Bybit' || exchange === 'Binance' ? optionPrice / currentPrice : optionPrice;
     const amountBought = Number(amount)
-    const expiryPrice = currentPrice + (currentPrice * (stockPricePercent / 100));
+    const expiryPrice = stockPricePercent;
     const diffStrikeExpiration = expiryPrice - strikePrice;
 
     const profit = expiryPrice < strikePrice ? (diffStrikeExpiration  * amountBought) + (optionPriced * amountBought * currentPrice) : ( optionPriced * amountBought  * currentPrice)
@@ -221,13 +221,13 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
   }
 
   function calculateCallOptionProfit(S: number, X: number, premium: number, stockPricePercent: number) {
-    const S_expiration = S + (S * (stockPricePercent / 100));
+    const S_expiration = stockPricePercent;
     const profitOrLoss = Math.max(S_expiration - X, 0) - premium;
     return profitOrLoss;
   }
 
   function calculateShortCallOptionProfit(S: number, X: number, premium: number, stockPricePercent: number) {
-    const S_expiration = S + (S * (stockPricePercent / 100));
+    const S_expiration = stockPricePercent;
     const profitOrLoss = premium - Math.max(S_expiration - X, 0);
     return profitOrLoss;
   }

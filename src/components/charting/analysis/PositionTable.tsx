@@ -143,7 +143,7 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
               </div>
 
           </div>
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg">
+          <div className="">
             <div className='flex flex-col md:flex-row px-4 w-full mb-4 p-2'>
                 <div className='flex w-full mb-2 md:mb-auto'>
                     <form className="flex items-center w-full md:w-2/5">
@@ -186,8 +186,8 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
                 </div>
 
             </div>
-      
-              <table ref={tableRef}  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
+            <div className='px-2 md: px-auto overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg'>
+                <table ref={tableRef}  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     {headerGroups.map((headerGroup, index )=> (
                         <>
@@ -226,7 +226,9 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
                             )
                         })}
                   </tbody>
-              </table>
+                </table>
+            </div>
+              
           </div>
           <nav className="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0" aria-label="Table navigation">
                 {/* <div className="py-3 flex items-center text-center justify-center pt-10">

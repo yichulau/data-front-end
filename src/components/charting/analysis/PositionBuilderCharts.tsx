@@ -9,7 +9,7 @@ import moment from "moment";
 import ribbonImg from "../../../../public/assets/ribbon-logo.png";
 
 const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate} : any) => {
-  console.log(data)
+  // console.log(data)
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
     const xMin = 0
@@ -94,9 +94,9 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             },
         },
         grid: {
-          top: '6%',
+          top: '8%',
           left: '2%',
-          right: '2%',
+          right: '4%',
           bottom: '8%',
           containLabel: true
         },
@@ -106,7 +106,10 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           min: xMin,
           max: xMax,
           axisLabel: {
-            formatter: "{value}",
+            formatter: function(value : any, index: any) {
+              return value.toFixed(0); // format value to integer
+            },
+            interval: 500,
             textStyle: {
               color: isDarkTheme  ? '#ffffff' : '#000000'   ,
             }
@@ -114,6 +117,13 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           splitLine: {
             lineStyle: {
                 color: isDarkTheme  ? '#1a1a1a' :  '#f2f2f2',
+            }
+          },
+          axisTick: {
+            length: 6,
+            lineStyle: {
+              type: 'dashed'
+              // ...
             }
           },
           name: 'Index Price',
@@ -155,6 +165,11 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             textStyle: {
                 color: isDarkTheme  ? '#ffffff' : '#000000'   ,
             }
+          },
+          axisLine: {
+            lineStyle: {
+              color: 'transparent', // set the color to transparent
+            },
           },
         },
         
@@ -208,26 +223,35 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           data: firstArray,
           showSymbol: false,
           markLine: {
+            data: [
+                { name: 'index Price',xAxis:indexPrice},
+            ],
             silent: true,
-            label: {
-              normal: {
-               show: true,
-               formatter: function (params : any) {
-                return 'Index Price: $' + params.value
-              },
-              }
+            symbol:'none',//去掉箭头
+            itemStyle: {
+                normal: {
+                    lineStyle: {
+                        color: 'rgb(126,99,255)',
+                        type: 'dotted'
+                    },
+                    label:{
+                        // color: '#FA7F3C',
+                        formatter:'Index Price: {c} (USD)',
+                        show:true,
+                        backgroundColor: 'rgb(126,99,255)',
+                        color: '#ffffff',
+                        fontSize: '100%',
+                        borderColor: '#FFF7F2',
+                        // formatter: function(v){
+                        //     var s = parseInt(v.value / maxxAxis * 100);
+                        //     return s + '%';
+                        // },
+                        padding:[12,7],
+                        borderRadius: 10,
+                    }
+                }
             },
-            data: [{
-                name: 'verticalLine',
-                xAxis: indexPrice, // specify the x-axis value at which to draw the line
-            }],
-            lineStyle: {
-              normal: {
-                type:'dashed',
-                color: 'green',
-              }
-            },
-          },
+        },
           itemStyle: {
             normal:{
               lineStyle:{
@@ -262,27 +286,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           },
           data: secondArray,
           showSymbol: false,
-          markLine: {
-            silent: true,
-            label: {
-              normal: {
-               show: true,
-               formatter: function (params : any) {
-                return 'Index Price: $' + params.value
-              },
-              }
-            },
-            data: [{
-                name: 'verticalLine',
-                xAxis: indexPrice, // specify the x-axis value at which to draw the line
-            }],
-            lineStyle: {
-              normal: {
-                type:'dashed',
-                color: 'green',
-              }
-            },
-          },
+
           itemStyle: {
             normal:{
               lineStyle:{
@@ -308,7 +312,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           ]
         },
       };
-  
+      
       chart.setOption(options);
       echartsResize(chart)
       return () => {

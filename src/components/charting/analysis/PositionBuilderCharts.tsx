@@ -274,42 +274,6 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
               }
             }
           },
-        },{
-          type: 'line',
-          smooth: true,
-          areaStyle:{
-            normal: {
-              color: new echarts.graphic.LinearGradient(
-                  0,
-                  0,
-                  0,
-                  1,
-                  [
-                      {
-                          offset: 0,
-                          color: 'rgba(107,205,216,0.5)',
-                      },
-                      {
-                          offset: 1,
-                          color: 'rgba(143,192,127,0)',
-                      },
-                  ],
-                  false
-              ),
-          },
-          },
-          data: secondArray,
-          showSymbol: false,
-
-          itemStyle: {
-            normal:{
-              lineStyle:{
-                widtth: 2,
-                color: '#00a8a0'
-              }
-            }
-          },
-          
         }],
         visualMap: {
           type: 'piecewise',

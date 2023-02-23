@@ -14,8 +14,8 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
     const chartRef = useRef<HTMLDivElement>(null);
     const xMin = 0
     const xMax = Number(indexPrice*4)
-    const min = Number(-indexPrice*4);
-    const max = Number(indexPrice*4);
+    const min = Number(-indexPrice*4*amount);
+    const max = Number(indexPrice*4*amount);
     const currentDate = moment(new Date()).format('DD-MM-YYYY')
     const lateDate = moment(latestDate).format('DD-MM-YYYY')
     const firstArray = data.map((item : any) => [item[0], item[1]]);

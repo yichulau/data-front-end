@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import * as echarts from 'echarts';
-import ReactECharts from 'echarts-for-react';
-import { echartsResize } from '../../utils/resize';
 import PositionBuilderCharts from "../../components/charting/analysis/PositionBuilderCharts";
 import PositionBuilderSearch from "../../components/charting/analysis/PositionBuilderSearch";
-import useFetchSingleData from "../../hooks/useFetchSingleData";
-import PositionTable from "../../components/charting/analysis/PositionTable";
 import PositionBuilderExpandable from "../../components/charting/analysis/PositionBuilderExpandable";
 import { v4 as uuidv4 } from 'uuid';
 import { Toaster, ToastIcon, toast, resolveValue } from "react-hot-toast";
 import getLatestDate from "../../utils/getLatestDate";
 import { optionsCalculation } from "../../utils/optionsCalculation";
+import { notificationDispatcher } from '../../utils/notificationDispatcher'
+import Draggable from "react-draggable";
 import moment from "moment";
 
 interface PositionProps {
@@ -36,17 +33,19 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [error ,setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(''); 
   const [apiData, setApiData] = useState([]);
-  const [positionTableData, setPositionTableData] = useState([]);
+
 
   const min : number = -99;
   const max : number = 300;
 
   function storeToLocalStorage(value: any, triggerType :any){
+    if(value.lastPrice === null ) {notificationDispatcher.notifyError(value); return};
 
     const storedPositions = localStorage.getItem("positions");
     const positionArray = storedPositions ? Object.values(JSON.parse(storedPositions)) : [];
     const lastAvgUSD = exchange === 'Binance' || exchange === 'Bybit' ? value.lastPrice : value.lastPrice* value.indexPrice;
-    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPriceUSD: lastAvgUSD, symbol: value.instrumentName.substring(0,3) });
+    const lastPrice = exchange === 'Binance' || exchange === 'Bybit' ? value.lastPrice/value.indexPrice : value.lastPrice;
+    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPrice: lastPrice.toFixed(4), lastPriceUSD: lastAvgUSD.toFixed(4), symbol: value.instrumentName.substring(0,3), theta: value.theta !== null ? value.theta.toFixed(5) : 0, vega: value.vega !== null ? value.vega.toFixed(5) : 0, gamma: value.gamma !== null ? value.gamma.toFixed(5) : 0 });
     let obj = positionArray.reduce(function(acc : any, cur : any, i : any) {
       acc[i] = cur;
       return acc;
@@ -56,7 +55,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     setStore(localData)
   }
 
-  function calculation(){
+  function calculation(checkedBoxData? : any){ // checkedBoxData is optional passed
     dataSet.length = 0;
     const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
     const storeDataArray : any = Object.values(storeData)
@@ -66,15 +65,13 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const ethSpotPrice = Number(localStorage.getItem("eth"))
     const solSpotPrice = Number(localStorage.getItem("sol"))
 
-    console.log(positionTableData,"ellooo")
-    console.log(storeDataArray,"store")
-
     setLatestDate(latestDate)
 
     let sums : any = {};
     let result: any= [];
     if(storeDataArray.length > 0){
-      storeDataArray.map((item : any)=>{
+      const dataArray = checkedBoxData !== undefined ? checkedBoxData : storeDataArray;
+      dataArray.map((item : any)=>{
         setCurrentPrice(Number(item.indexPrice))
         setAmount(item.amount)
         const instrumentType = item.callOrPut;
@@ -167,7 +164,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const storeData = JSON.parse(localStorage.getItem('positions') || '{}')
     const storeDataArray : any = Object.values(storeData)
     const uniqueSymbolsString = storeDataArray.length !== 0 ?  [...new Set(storeDataArray.map((item : any) => item.symbol))].join(',') : "";
-
+    
     if(currencies === null || exchanges === null  || symbols === null){
       setError(true)
       setErrorMessage('Please Select All fields Before Running Calculation')
@@ -183,10 +180,10 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       setErrorMessage('Please Amount cannot be 0 or less 0!')
       return ;
     } 
-    
+
     storeToLocalStorage(tempData, triggerType)
     calculation()
-    notifySuccess(tempData)
+    notificationDispatcher.notifySuccess(tempData)
     setError(false)
     setErrorMessage('')
   }
@@ -217,69 +214,43 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const localData = (JSON.parse(localStorage.getItem('positions') || '{}'));
     setStore(localData)
     calculation()
-    notifyDelete(value)
+    notificationDispatcher.notifyDelete(value)
   }
 
-  const notifySuccess = (value: any) =>
-    toast.custom(
-      (t) => (
-        <div
-          className={`${
-            t.visible ? 'animate-enter' : 'animate-leave'
-          } max-w-md w-full bg-white dark:bg-black  shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-        >
-          <div className="flex-1 w-0 p-4">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 pt-0.5 inline-flex items-center justify-center w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200 ">
-                <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-              </div>
-              <div className="ml-3 flex-1">
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  Position Added!
-                </p>
-                <p className="mt-1 text-sm text-gray-500 dark:text-white">
-                  Instrument {value.instrumentName} has been added!
-                </p>
-              </div>
-            </div>
-          </div>
-      </div>
-      ),
-      { id: "unique-notification", position: "top-center" }
-  );
-  const notifyDelete = (value: any) =>
-  toast.custom(
-    (t) => (
-      <div
-        className={`${
-          t.visible ? 'animate-enter' : 'animate-leave'
-        } max-w-md w-full bg-white dark:bg-black  shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-      >
-        <div className="flex-1 w-0 p-4">
-          <div className="flex items-start">
-            <div className="flex-shrink-0 pt-0.5 inline-flex items-center justify-center w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200 ">
-            <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-            </div>
-            <div className="ml-3 flex-1">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                Position Deleted!
-              </p>
-              <p className="mt-1 text-sm text-gray-500 dark:text-white">
-                Instrument {value.instrumentName} has been deleted!
-              </p>
-            </div>
-          </div>
-        </div>
-    </div>
-    ),
-    { id: "unique-notification", position: "top-center" }
-  );
-
+  
   const handleCheckBoxChanges = (value : any) => {
-    setPositionTableData(value.selectedFlatRowsOriginal)
+    const checkedBoxData = value.selectedFlatRowsOriginal
+    calculation(checkedBoxData)
+  }
+
+  async function fetchSpotData(currencies : any) {
+    const url = `https://api4.binance.com/api/v3/ticker/price?symbol=${currencies}USDT`
+    const response = await fetch(url)
+    if (!response.ok) {
+      const message = `An error has occured: ${response.status}`;
+      throw new Error(message);
+    }
+
+    const data = response.json()
+    return data
   }
 
 
+  useEffect(()=>{
+    const fetchAllSpotData = async () =>{
+      const {price: btcSpotVal }= await fetchSpotData('BTC');
+      const {price: ethSpotVal } = await fetchSpotData('ETH');
+      const {price: solSpotVal }= await fetchSpotData('SOL');
+
+      localStorage.setItem("btc", btcSpotVal)
+      localStorage.setItem("eth", ethSpotVal)
+      localStorage.setItem("sol", solSpotVal)
+    }
+
+    fetchAllSpotData()
+
+  },[])
+  
 
   useEffect(()=>{
     setStore(JSON.parse(localStorage.getItem('positions') || '{}'))

@@ -9,7 +9,7 @@ import moment from "moment";
 import ribbonImg from "../../../../public/assets/ribbon-logo.png";
 
 const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate} : any) => {
-    
+  console.log(data)
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
     const xMin = 0
@@ -22,7 +22,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
     const secondArray = data.map((item : any) => [item[0], item[2]]);
     let chart: any;
 
-  // console.log(data)
+   
     const clearChart = () =>{
       resetChart()
     }

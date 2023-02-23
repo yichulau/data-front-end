@@ -115,7 +115,9 @@ const PositionBuilderSearch = ({
                   handleSymbolChange(value)
                   setState(prevState => ({ ...prevState, symbol: value }));
                 }}  
-                exchange={exchange}  />            
+                exchange={exchange}
+                state={state}
+                />            
             </div>
             <div className='w-full my-1'>
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>

@@ -117,50 +117,84 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
   }
 
   function buyPutTimeDecayOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number , exchange: string, thetaVal : number, type: string, expiry: string, markIv: any, underlyingPrice: number) {
-    const optionPriced = exchange === 'Bybit' || exchange === 'Binance' ? optionPrice / currentPrice : optionPrice;
     const S = underlyingPrice;
-    const X = strikePrice;
+    const X = strikePrice * (1 + stockPricePercent / 100);
     const T = moment(expiry).diff(moment(), 'days') / 365;
     const r = 0; // Risk-free interest rate (assumed to be 0)
     const sigma = markIv / 100;
-    const premium = optionPriced;
+    const premium = optionPrice;
     const theta = thetaVal / 365;
   
-    // Calculate the theoretical value of the option
-    const theoreticalValue = calculatePutOptionValue(S, X, T, r, sigma, theta);
+    const pnl = calculateLongPutOptionPnl(S, X, premium, T, r, sigma, theta, stockPricePercent, underlyingPrice);
   
-    // Calculate the profit or loss of the option at expiration
-    const profitOrLoss = calculateShortPutOptionProfit(S, X, premium, stockPricePercent);
+    const totalPnl = pnl * -amount;
   
-    // Calculate the total profit or loss
-    const totalProfit = calculatePutOptionTotalProfit(profitOrLoss, amount);
-  
-    // Return the result
-    return totalProfit;
+    return totalPnl;
   }
 
-  function sellPutTimeDecayOption(stockPricePercent : number, amount: number, currentPrice : number,  strikePrice : number, optionPrice : number , exchange: string, thetaVal : number, type: string, expiry: string, markIv: any, underlyingPrice: number) {
-    const optionPriced = exchange === 'Bybit' || exchange === 'Binance' ? optionPrice / currentPrice : optionPrice;
-    const S = underlyingPrice;
-    const X = strikePrice;
+  function sellPutTimeDecayOption(stockPricePercent: number, amount: number, currentPrice: number, strikePrice: number, optionPrice: number, exchange: string, thetaVal: number, type: string, expiry: string, markIv: any, underlyingPrice: number) {
+    const S = underlyingPrice * (1 + stockPricePercent / 100);
+    const X = strikePrice * (1 + stockPricePercent / 100);
     const T = moment(expiry).diff(moment(), 'days') / 365;
     const r = 0; // Risk-free interest rate (assumed to be 0)
     const sigma = markIv / 100;
-    const premium = optionPriced;
+    const premium = optionPrice;
     const theta = thetaVal / 365;
-    
-    // Calculate the theoretical value of the option
-    const theoreticalValue = calculatePutOptionValue(S, X, T, r, sigma, theta);
   
-    // Calculate the profit or loss of the option at expiration
-    const profitOrLoss = calculatePutOptionProfit(S, X, premium, stockPricePercent);
+    const pnl = calculateShortPutOptionPnl(S, X, premium, T, r, sigma, theta, stockPricePercent);
+    const totalPnl = calculatePutOptionTotalPnl(pnl, amount);
   
-    // Calculate the total profit or loss
-    const totalProfit = calculatePutOptionTotalProfit(profitOrLoss, amount);
-  
-    // Return the result
-    return totalProfit;
+    return totalPnl;
   }
+
+  // Long put option P&L calculation
+  function calculateLongPutOptionPnl(S: number, X: number, premium: number, T: number, r: number, sigma: number, theta: number, stockPricePercent: number, underlyingPrice: number) {
+    const S_expiration = S;
+    const S_adjusted = S * (1 - stockPricePercent / 100);
+    const d1 = (Math.log(S_adjusted / X) + (r + (Math.pow(sigma, 2) / 2)) * T) / (sigma * Math.sqrt(T));
+    const d2 = d1 - sigma * Math.sqrt(T);
+    const Nd1 = normcdf(-d1);
+    const Nd2 = normcdf(-d2);
+    const intrinsicValue = Math.max(X - S_expiration, 0);
+    const timeValue = intrinsicValue - premium ;
+    const pnl = timeValue - (theta * (T * premium) / (1 + r));
+    const pnlWithStockPricePercentChange = pnl + (S - S_adjusted) * Nd1 - (X * Math.exp(-r * T) - S) * Nd2;
+    return pnlWithStockPricePercentChange;
+  }
+
+  
+  
+  
+  
+
+  // Short put option P&L calculation
+  function calculateShortPutOptionPnl(S: number, X: number, premium: number, T: number, r: number, sigma: number, theta: number, stockPricePercent: number) {
+    const S_expiration = S * (1 + stockPricePercent / 100);
+    const d1 = (Math.log(S / X) + (r + (sigma ** 2) / 2) * T) / (sigma * Math.sqrt(T));
+    const d2 = d1 - (sigma * Math.sqrt(T));
+    const n_d1 = normcdf(d1);
+    const n_d2 = normcdf(d2);
+    const pnl = premium - ((X * Math.exp(-r * T) * (1 - n_d2)) - (S * (1 - n_d1)));
+    const pnlWithTimeDecay = pnl - theta * (T / (1 + r)) * premium;
+    return pnlWithTimeDecay;
+  }
+
+
+  function calculatePutOptionTotalPnl(pnl: number, amount: number) {
+    const amountBought = Number(amount);
+    const totalPnl = pnl * amountBought;
+    return totalPnl;
+  }
+  
+  function calculateShortPutOptionTheoreticalValue(S: number, X: number, T: number, r: number, sigma: number, theta: number) {
+    const d1 = (Math.log(S / X) + (r + (sigma ** 2) / 2) * T) / (sigma * Math.sqrt(T));
+    const d2 = d1 - (sigma * Math.sqrt(T));
+    const n_d1 = normcdf(d1);
+    const n_d2 = normcdf(d2);
+    const theoreticalValue = (X * Math.exp(-r * T) * (1 - n_d2)) - (S * (1 - n_d1)) - theta;
+    return theoreticalValue;
+  }
+  
   
 
 

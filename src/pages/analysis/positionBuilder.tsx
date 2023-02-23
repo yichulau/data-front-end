@@ -107,12 +107,12 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         }
         if(item.position  === 'Long' && type === 'P'){
           for (let i = 0; i <= formattedNumbers.length; i++) {
-            dataSet.push([formattedNumbers[i], optionsCalculation.buyPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.buyPutTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
+            dataSet.push([formattedNumbers[i], optionsCalculation.buyPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.buyPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField)]);
           }
         }
         if(item.position  === 'Short' && type === 'P'){
           for (let i = 0; i <= formattedNumbers.length; i++) {
-            dataSet.push([formattedNumbers[i], optionsCalculation.sellPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField),optionsCalculation.sellPutTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
+            dataSet.push([formattedNumbers[i], optionsCalculation.sellPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField),optionsCalculation.sellPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField)]);
           }
         }
       })

@@ -13,7 +13,8 @@ const Home: NextPage = () => {
       <Head>
         <title>Ribbon Dashboard</title>
         <meta name="description" content="Ribbon Dashboard" />
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" /> 
+        <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

@@ -8,7 +8,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredOptions, setFilteredOptions] = useState(options);
-    const [filterDate, setFilterDate] = useState([]);
+    const [filterDate, setFilterDate] = useState<any>([]);
     const [selectedDate, setSelectedDate] = useState('');
     const [filterStrike, setFilterStrike] = useState([]);
     const [selectedStrike, setSelectedStrike] = useState('');
@@ -57,7 +57,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
     // to handle scenarios to clear the field
     useEffect(
         () => {
-            console.log(filterStrike, filterDate)
+       
             setSelectedOption(initialTitle); 
         },
         [resetFlag ]
@@ -80,6 +80,16 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
             dates = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[1]))).sort((a: any, b: any) => a.localeCompare(b));
             strike = Array.from(new Set(options.map((obj: any) => obj.value.split("-")[2]))).sort((a: any, b: any) => Number(a) - Number(b));
         }   
+        dates.sort((a: any, b: any) =>{
+            const momentDateA = moment(a, "DDMMMYY");
+            const formattedDateA = momentDateA.format("DD/MM/YYYY");
+            const momentDateB = moment(b, "DDMMMYY");
+            const formattedDateB = momentDateB.format("DD/MM/YYYY");
+            a = formattedDateA.split('/').reverse().join('');
+            b = formattedDateB.split('/').reverse().join('');
+            return a > b ? 1 : a < b ? -1 : 0;
+
+        });
 
         strike.unshift('All Strike Price')
         setFilterDate(dates);
@@ -97,6 +107,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
                     option.value.includes(selectedStrike)
                 );
             }
+
             return filteredOptions.length > 0 ? [ ...filteredOptions] : filtered;
         }, []);
 
@@ -143,7 +154,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
                                                 const match = date.match(regex);
                                                 const dayOfMonth =  (match !== null) ? match[1] : ''; 
                                                 const month = (match !== null) ? match[2]: '';
-                                       
+                                                
                                                 
                                                 return (
                                                     <button

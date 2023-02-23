@@ -27,7 +27,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [currentPrice, setCurrentPrice] = useState(0)
   const [amount, setAmount] = useState(0)
   const [finalData, setFinalData] = useState(dataSet)
-  const [tempData, setTempData] = useState('');
+  const [tempData, setTempData] = useState<any>('');
   const [store, setStore] = useState({});
   const [latestDate, setLatestDate] = useState('');
   const [error ,setError] = useState(false);
@@ -39,8 +39,6 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const max : number = 300;
 
   function storeToLocalStorage(value: any, triggerType :any){
-    if(value.lastPrice === null ) {notifyError(value); return};
-
     const storedPositions = localStorage.getItem("positions");
     const positionArray = storedPositions ? Object.values(JSON.parse(storedPositions)) : [];
     const lastAvgUSD = exchange === 'Binance' || exchange === 'Bybit' ? value.lastPrice : value.lastPrice* value.indexPrice;
@@ -53,6 +51,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     localStorage.setItem("positions", JSON.stringify(obj));
     const localData = (JSON.parse(localStorage.getItem('positions') || '{}'));
     setStore(localData)
+    calculation()
   }
 
   function calculation(checkedBoxData? : any){ // checkedBoxData is optional passed
@@ -88,7 +87,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         const markIv = item.markIv
         const exchangeField = item.exchange
         const underlyingPrice = item.underlyingPrice
-        const interval = currencyType === 'BTC' ?  500 : 50;
+        const interval = currencyType === 'BTC' ?  500 : 100;
         const formattedNumbers : number[] = [];
 
         for (let i = 0; i <= Math.floor(currentPrice*8 / interval); i++) {
@@ -187,6 +186,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       return ;
     } 
 
+    if(tempData.lastPrice === null ) {notifyError(tempData); return};
     storeToLocalStorage(tempData, triggerType)
     calculation()
     notifySuccess(tempData)

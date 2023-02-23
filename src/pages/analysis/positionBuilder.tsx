@@ -43,7 +43,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     const positionArray = storedPositions ? Object.values(JSON.parse(storedPositions)) : [];
     const lastAvgUSD = exchange === 'Binance' || exchange === 'Bybit' ? value.lastPrice : value.lastPrice* value.indexPrice;
     const lastPrice = exchange === 'Binance' || exchange === 'Bybit' ? value.lastPrice/value.indexPrice : value.lastPrice;
-    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), lastPrice: lastPrice.toFixed(4), lastPriceUSD: lastAvgUSD.toFixed(4), symbol: value.instrumentName.substring(0,3), theta: value.theta !== null ? value.theta.toFixed(5) : 0, vega: value.vega !== null ? value.vega.toFixed(5) : 0, gamma: value.gamma !== null ? value.gamma.toFixed(5) : 0 });
+    const markPriced = exchange === 'Binance' || exchange === 'Bybit' ? value.markPrice/value.indexPrice : value.markPrice;
+    positionArray.push({...value, amount: Number(amount), exchange : exchange, position:  triggerType, id: uuidv4(), markPrice: markPriced !== null ?  markPriced.toFixed(4) : null , lastPrice: lastPrice !== null ? lastPrice.toFixed(4) : null, lastPriceUSD: lastAvgUSD !== null ? lastAvgUSD.toFixed(4) : null, symbol: value.instrumentName.substring(0,3), theta: value.theta !== null ? value.theta.toFixed(5) : 0, vega: value.vega !== null ? value.vega.toFixed(5) : 0, gamma: value.gamma !== null ? value.gamma.toFixed(5) : 0 });
     let obj = positionArray.reduce(function(acc : any, cur : any, i : any) {
       acc[i] = cur;
       return acc;
@@ -77,7 +78,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         const instrumentStrikePrice = Number(item.strike)
         const amount = item.amount;
         const currentPrice = Number(item.indexPrice);
-        const optionPrice = Number(item.lastPrice);
+        // const optionPrice = Number(item.lastPrice);
+        const optionPrice = Number(item.markPrice);
         const thetaVal = Number(item.theta)
         const strikePrice = instrumentStrikePrice;
         const type = instrumentType;
@@ -186,12 +188,13 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       return ;
     } 
 
-    if(tempData.lastPrice === null ) {notifyError(tempData); return};
+    if(tempData.markPrice === null ){ notifyError(tempData); return};
     storeToLocalStorage(tempData, triggerType)
     calculation()
     notifySuccess(tempData)
     setError(false)
     setErrorMessage('')
+    if(tempData.lastPrice === null ){ notifyWarning(tempData); return};
   }
 
   const handleCurrencyChange = (value: string ) =>{
@@ -248,7 +251,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         <div
         className={`${
             t.visible ? 'animate-enter' : 'animate-leave'
-        } max-w-48 w-full bg-white dark:bg-black  shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        } max-w-md w-full bg-white dark:bg-black  shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
         >
         <div className="flex-1 w-0 p-4">
             <div className="flex items-start">
@@ -309,17 +312,48 @@ const PositionBuilder : React.FC<PositionProps> = () => {
             t.visible ? 'animate-enter' : 'animate-leave'
           } max-w-md w-full bg-white dark:bg-black  shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
         >
-          <div className="flex-1 w-0 p-4">
+            <div className="flex-1 w-0 p-4">
             <div className="flex items-start">
               <div className="flex-shrink-0 pt-0.5 inline-flex items-center justify-center w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200 ">
               <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
               </div>
               <div className="ml-3 flex-1">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  Calculation Invalid!
+                  Error!!
                 </p>
                 <p className="mt-1 text-sm text-gray-500 dark:text-white">
-                  Instrument {value.instrumentName} price is not found! Thus, you may not calculated further 
+                  Instrument {value.instrumentName} does not have a Mark Price!!
+                </p>
+              </div>
+            </div>
+          </div>
+      </div>
+      ),
+    { id: "unique-notification", position: "top-center" }
+  );
+
+  }
+
+  function notifyWarning (value: any){
+    toast.custom(
+      (t) => (
+        <div
+          className={`${
+            t.visible ? 'animate-enter' : 'animate-leave'
+          } max-w-md w-full bg-white dark:bg-black  shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        >
+          <div className="flex-1 w-0 p-4">
+            <div className="flex items-start">
+            <div className="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-orange-500 bg-orange-100 rounded-lg dark:bg-orange-700 dark:text-orange-200">
+                <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                
+            </div>
+              <div className="ml-3 flex-1">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  Warning!
+                </p>
+                <p className="mt-1 text-sm text-gray-500 dark:text-white">
+                  Instrument {value.instrumentName} last price is not found! No recent trades for this instrument 
                 </p>
               </div>
             </div>

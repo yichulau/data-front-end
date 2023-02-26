@@ -140,6 +140,11 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
               // ...
             }
           },
+          axisPointer: {
+            handle: {
+              throttle: 500
+            }
+          },
           name: 'Index Price',
           position: 'bottom',
           nameLocation: 'middle',
@@ -233,7 +238,27 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
         series: [{
           type: 'line',
           smooth: true,
-          areaStyle:{},
+          areaStyle:{
+            normal: {
+              color: new echarts.graphic.LinearGradient(
+                  0,
+                  0,
+                  0,
+                  1,
+                  [
+                      {
+                          offset: 0,
+                          color: 'rgba(107,205,216,0.4)',
+                      },
+                      {
+                          offset: 1,
+                          color: 'rgba(143,192,127,0)',
+                      },
+                  ],
+                  false
+              ),
+            },
+          },
           data: firstArray,
           showSymbol: false,
           markLine: {
@@ -274,6 +299,23 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
               }
             }
           },
+        },{
+          type: 'line',
+          smooth: true,
+          areaStyle:{
+          },
+          data: secondArray,
+          showSymbol: false,
+
+          itemStyle: {
+            normal:{
+              lineStyle:{
+                width: 2,
+                color: '#00a8a0'
+              }
+            }
+          },
+          
         }],
         visualMap: {
           type: 'piecewise',

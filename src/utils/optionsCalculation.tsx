@@ -1,4 +1,7 @@
 import moment from "moment";
+import {daysTillExpiry, getCurrentDate} from './date';
+import BlackScholes from "./blackScholes";
+
 
 export const optionsCalculation = {
     buyCallOption,
@@ -8,7 +11,30 @@ export const optionsCalculation = {
     buyCallTimeDecayOption,
     sellCallTimeDecayOption,
     buyPutTimeDecayOption,
-    sellPutTimeDecayOption
+    sellPutTimeDecayOption,
+    getOptionsGraph
+}
+
+interface OptionInputs {
+  instrumentName: string;
+  underlyingPrice: number;
+  vega: number;
+  theta: number;
+  rho: number;
+  gamma: number;
+  delta: number;
+  markPrice: number;
+  type: string;
+  expiry: string;
+  initialPrice: number;
+}
+
+interface OptionParams {
+  numContracts: number;
+  contractMultiplier: number;
+  currentPrice: number;
+  strikePrice: number;
+  cost: number;
 }
 
 
@@ -24,8 +50,6 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
 
     
   }
-
-
 
   function sellCallOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number, exchange: string){
 
@@ -71,217 +95,186 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
     return profit;
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   // time Decay calculation
-  function buyCallTimeDecayOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number , exchange: string, thetaVal : number, type: string, expiry: string, markIv: any, underlyingPrice: number) {
-    const optionPriced = exchange === 'Bybit' || exchange === 'Binance' ? optionPrice / currentPrice : optionPrice;
-    const S = underlyingPrice;
-    const X = strikePrice;
-    const T = moment(expiry).diff(moment(), 'days') / 365;
-    const r = 0; // Risk-free interest rate (assumed to be 0)
-    const sigma = markIv / 100;
-    const premium = optionPriced;
-    const theta = thetaVal / 365;
-  
-    const theoreticalValue = calculateCallOptionValue(S, X, T, r, sigma, theta);
+  function buyCallTimeDecayOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number , exchange: string, type: string, expiry: string, markIv: any, underlyingPrice: number, thetaVal : number,gammaVal : number, vegaVal : number, deltaVal : number, rhoVal : number, optionLastPrice: number, position: any, high24 : any, low24: any ,daysDiff: any, optionType: any, mul: any) {
+    // const vol = iv.getImpliedVolatility(
+    //   optionPrice, stockPricePercent, strikePrice, daysDiff/365, 0.05, optionType
+    // );
+    // const optionPrices = bs.blackScholes(
+    //   stockPricePercent, 
+    //   strikePrice,
+    //   daysDiff/365,
+    //   vol,
+    //   0.05,
+    //   optionType
+    // );
+    //   // let optionPrices = BlackScholes(
+    //   //   optionType,
+    //   //   stockPricePercent,
+    //   //   strikePrice,
+    //   //   daysDiff/365,
+    //   //   0.05,
+    //   //   vol
+    //   // )
+    // let profit = mul * round((optionPrices - optionPrice) * amount)
 
-    const profitOrLoss = calculateCallOptionProfit(S, X, premium, stockPricePercent);
-
-    const totalProfit = calculateCallOptionTotalProfit(profitOrLoss, amount);
-
-    return totalProfit;
-  
+    // return profit;
   }
 
-  function sellCallTimeDecayOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number , exchange: string, thetaVal : number, type: string, expiry: string, markIv: any, underlyingPrice: number) {
-    const optionPriced = exchange === 'Bybit' || exchange === 'Binance' ? optionPrice / currentPrice : optionPrice;
-    const S = underlyingPrice;
-    const X = strikePrice;
-    const T = moment(expiry).diff(moment(), 'days') / 365;
-    const r = 0; // Risk-free interest rate (assumed to be 0)
-    const sigma = markIv / 100;
-    const premium = optionPriced;
-    const theta = thetaVal / 365;
-
-    // Calculate the theoretical value of the option
-    const theoreticalValue = calculateShortCallOptionValue(S, X, T, r, sigma, theta);
-
-    // Calculate the profit or loss of the option at expiration
-    const profitOrLoss = calculateShortCallOptionProfit(S, X, premium, stockPricePercent);
-
-    // Calculate the total profit or loss
-    const totalProfit = calculateCallOptionTotalProfit(profitOrLoss, amount);
-
-    // Return the result
-    return totalProfit;
+  function sellCallTimeDecayOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number , exchange: string, type: string, expiry: string, markIv: any, underlyingPrice: number, thetaVal : number,gammaVal : number, vegaVal : number, deltaVal : number, rhoVal : number, optionLastPrice: number, position: any, high24 : any, low24: any,daysDiff: any, optionType: any, mul: any) {
+    // const vol = iv.getImpliedVolatility(optionPrice, stockPricePercent, strikePrice, daysDiff/365, 0.05, optionType);
+    // const optionPrices = bs.blackScholes(
+    //   stockPricePercent, 
+    //   strikePrice,
+    //   daysDiff/365,
+    //   vol,
+    //   0.05,
+    //   optionType
+    // );
+    // const profit = mul * round((optionPrices - optionPrice) * amount)
+    // return profit;
   
   }
 
-  function buyPutTimeDecayOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number , exchange: string, thetaVal : number, type: string, expiry: string, markIv: any, underlyingPrice: number) {
-    const S = underlyingPrice;
-    const X = strikePrice * (1 + stockPricePercent / 100);
-    const T = moment(expiry).diff(moment(), 'days') / 365;
-    const r = 0; // Risk-free interest rate (assumed to be 0)
-    const sigma = markIv / 100;
-    const premium = optionPrice;
-    const theta = thetaVal / 365;
   
-    const pnl = calculateLongPutOptionPnl(S, X, premium, T, r, sigma, theta, stockPricePercent, underlyingPrice);
-  
-    const totalPnl = pnl * -amount;
-  
-    return totalPnl;
-  }
+  function buyPutTimeDecayOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number , exchange: string, type: string, expiry: string, markIv: any, underlyingPrice: number, thetaVal : number,gammaVal : number, vegaVal : number, deltaVal : number, rhoVal : number, optionLastPrice: number, position: any, high24 : any, low24: any ,daysDiff: any, optionType: any, mul: any) {
 
-  function sellPutTimeDecayOption(stockPricePercent: number, amount: number, currentPrice: number, strikePrice: number, optionPrice: number, exchange: string, thetaVal: number, type: string, expiry: string, markIv: any, underlyingPrice: number) {
-    const S = underlyingPrice * (1 + stockPricePercent / 100);
-    const X = strikePrice * (1 + stockPricePercent / 100);
-    const T = moment(expiry).diff(moment(), 'days') / 365;
-    const r = 0; // Risk-free interest rate (assumed to be 0)
-    const sigma = markIv / 100;
-    const premium = optionPrice;
-    const theta = thetaVal / 365;
-  
-    const pnl = calculateShortPutOptionPnl(S, X, premium, T, r, sigma, theta, stockPricePercent);
-    const totalPnl = calculatePutOptionTotalPnl(pnl, amount);
-  
-    return totalPnl;
-  }
+    // const vol = iv.getImpliedVolatility(optionPrice, stockPricePercent, strikePrice, daysDiff/365, 0.05, optionType);
 
-  // Long put option P&L calculation
-  function calculateLongPutOptionPnl(S: number, X: number, premium: number, T: number, r: number, sigma: number, theta: number, stockPricePercent: number, underlyingPrice: number) {
-    const S_expiration = S;
-    const S_adjusted = S * (1 - stockPricePercent / 100);
-    const d1 = (Math.log(S_adjusted / X) + (r + (Math.pow(sigma, 2) / 2)) * T) / (sigma * Math.sqrt(T));
-    const d2 = d1 - sigma * Math.sqrt(T);
-    const Nd1 = normcdf(-d1);
-    const Nd2 = normcdf(-d2);
-    const intrinsicValue = Math.max(X - S_expiration, 0);
-    const timeValue = intrinsicValue - premium ;
-    const pnl = timeValue - (theta * (T * premium) / (1 + r));
-    const pnlWithStockPricePercentChange = pnl + (S - S_adjusted) * Nd1 - (X * Math.exp(-r * T) - S) * Nd2;
-    return pnlWithStockPricePercentChange;
-  }
+    // const optionPrices = bs.blackScholes(
+    //   stockPricePercent, 
+    //   strikePrice,
+    //   daysDiff/365,
+    //   vol,
+    //   0.05,
+    //   optionType
+    // );
 
-  
-  
-  
-  
+    // const profit = mul * round((optionPrices - optionPrice) * amount)
 
-  // Short put option P&L calculation
-  function calculateShortPutOptionPnl(S: number, X: number, premium: number, T: number, r: number, sigma: number, theta: number, stockPricePercent: number) {
-    const S_expiration = S * (1 + stockPricePercent / 100);
-    const d1 = (Math.log(S / X) + (r + (sigma ** 2) / 2) * T) / (sigma * Math.sqrt(T));
-    const d2 = d1 - (sigma * Math.sqrt(T));
-    const n_d1 = normcdf(d1);
-    const n_d2 = normcdf(d2);
-    const pnl = premium - ((X * Math.exp(-r * T) * (1 - n_d2)) - (S * (1 - n_d1)));
-    const pnlWithTimeDecay = pnl - theta * (T / (1 + r)) * premium;
-    return pnlWithTimeDecay;
+
+    // return profit;
   }
 
 
-  function calculatePutOptionTotalPnl(pnl: number, amount: number) {
-    const amountBought = Number(amount);
-    const totalPnl = pnl * amountBought;
-    return totalPnl;
-  }
-  
-  function calculateShortPutOptionTheoreticalValue(S: number, X: number, T: number, r: number, sigma: number, theta: number) {
-    const d1 = (Math.log(S / X) + (r + (sigma ** 2) / 2) * T) / (sigma * Math.sqrt(T));
-    const d2 = d1 - (sigma * Math.sqrt(T));
-    const n_d1 = normcdf(d1);
-    const n_d2 = normcdf(d2);
-    const theoreticalValue = (X * Math.exp(-r * T) * (1 - n_d2)) - (S * (1 - n_d1)) - theta;
-    return theoreticalValue;
-  }
-  
-  
 
+  function sellPutTimeDecayOption(stockPricePercent : number, amount: number, currentPrice : number, strikePrice : number, optionPrice : number , exchange: string, type: string, expiry: string, markIv: any, underlyingPrice: number, thetaVal : number,gammaVal : number, vegaVal : number, deltaVal : number, rhoVal : number, optionLastPrice: number, position: any, high24 : any, low24: any ,daysDiff: any, optionType: any, mul: any) {
+    // const vol = iv.getImpliedVolatility(optionPrice, stockPricePercent, strikePrice, daysDiff/365, 0.05, optionType);
+    // const optionPrices = bs.blackScholes(
+    //   stockPricePercent, 
+    //   strikePrice,
+    //   daysDiff/365,
+    //   vol,
+    //   0.05,
+    //   optionType
+    // );
 
-
-  // black 76 model calculation
-
-  
-  function calculateCallOptionValue(S: number, X: number, T: number, r: number, sigma: number, theta: number) {
-    const d1 = (Math.log(S / X) + (r + 0.5 * sigma * sigma) * T) / (sigma * Math.sqrt(T));
-    const d2 = d1 - sigma * Math.sqrt(T);
-    const N_d1 = normcdf(d1);
-    const N_d2 = normcdf(d2);
-    const value = S * N_d1 - X * Math.exp(-r * T) * N_d2 - theta * S * N_d1 * Math.sqrt(T);
-    return value;
-  }
-
-  function calculateShortCallOptionValue(S: number, X: number, T: number, r: number, sigma: number, theta: number) {
-    const d1 = (Math.log(S / X) + (r + 0.5 * sigma * sigma) * T) / (sigma * Math.sqrt(T));
-    const d2 = d1 - sigma * Math.sqrt(T);
-    const N_d1 = normcdf(d1);
-    const N_d2 = normcdf(d2);
-    const value = X * Math.exp(-r * T) * N_d2 - S * N_d1 + theta * S * N_d1 * Math.sqrt(T);
-    return value;
-  }
-
-  function calculateCallOptionProfit(S: number, X: number, premium: number, stockPricePercent: number) {
-    const S_expiration = stockPricePercent;
-    const profitOrLoss = Math.max(S_expiration - X, 0) - premium;
-    return profitOrLoss;
-  }
-
-  function calculateShortCallOptionProfit(S: number, X: number, premium: number, stockPricePercent: number) {
-    const S_expiration = stockPricePercent;
-    const profitOrLoss = premium - Math.max(S_expiration - X, 0);
-    return profitOrLoss;
+    // const profit = mul * round((optionPrices - optionPrice) * amount)
+    // return profit;
   }
 
 
-  function calculateCallOptionTotalProfit(profitOrLoss: number, amount: number) {
-    const amountBought = Number(amount);
-    const totalProfit = profitOrLoss * amountBought;
-    return totalProfit;
-  }
-
-  // Calculates the theoretical value of a put option using the Black-Scholes model with time decay
-  function calculatePutOptionValue(S: number, X: number, T: number, r: number, sigma: number, theta: number) {
-    const d1 = (Math.log(S / X) + (r + 0.5 * sigma * sigma) * T) / (sigma * Math.sqrt(T));
-    const d2 = d1 - sigma * Math.sqrt(T);
-    const N_d1 = normcdf(-d1);
-    const N_d2 = normcdf(-d2);
-    const value = X * Math.exp(-r * T) * N_d2 - S * N_d1 + theta * S * N_d1 * Math.sqrt(T);
-    return value;
-  }
-
-  // Calculates the profit or loss of a put option at expiration
-  function calculatePutOptionProfit(S: number, X: number, premium: number, stockPricePercent: number) {
-    const S_expiration = S - (S * (stockPricePercent / 100));
-    const profitOrLoss = Math.max(X - S_expiration, 0) - premium;
-    return profitOrLoss;
-  }
-
-  function calculateShortPutOptionProfit(S: number, X: number, premium: number, stockPricePercent: number) {
-    const S_expiration = S - (S * (stockPricePercent / 100));
-    const profitOrLoss = premium - Math.max(X - S_expiration, 0);
-    return profitOrLoss;
-  }
-
-  // Calculates the total profit or loss of a put option
-  function calculatePutOptionTotalProfit(profitOrLoss: number, amount: number) {
-    const amountBought = Number(amount);
-    const totalProfit = profitOrLoss * amountBought;
-    return totalProfit;
-  }
-
-  function normcdf(x: number) {
-    const a1 = 0.31938153,
-      a2 = -0.356563782,
-      a3 = 1.781477937,
-      a4 = -1.821255978,
-      a5 = 1.330274429;
-    const k = 1 / (1 + 0.2316419 * Math.abs(x));
-    const n = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * x * x);
-    const m = 1 - (a1 * k + a2 * k * k + a3 * k * k * k + a4 * k * k * k * k + a5 * k * k * k * k * k) * n;
-    if (x < 0) {
-      return 1 - m;
-    } else {
-      return m;
+  function getOptionsGraph(data : any){
+    let optionsData : any= {};
+    let stockData : any= {};
+    let optionsDataAtExpiry: any = {};
+    
+    // process range of graph
+    var min = 0;
+    var max = parseFloat(data[0].strike);
+    for(var i = 1; i<Object.keys(data).length; i++){
+      var option = data[i];
+      if(parseFloat(option.stockPrice) < min){
+        min = parseFloat(option.strike);
+      }
+      if(parseFloat(option.stockPrice) > max){
+        max = parseFloat(option.strike);
+      }
     }
+
+    var mid = (min + max)/2;
+    // generate prices for every stock price
+    for(var i = min - 0.001 ; i < max + 4 * mid; i += 50){
+      for(var j = 0; j<Object.keys(data).length; j++){
+
+        var option = data[j];
+
+        let copy = {
+          ...option
+        };
+
+        if(copy.buyOrSell == 'buy'){
+          var buyOrSell = 1;
+        }else{
+          var buyOrSell = -1;
+        }
+
+        // baseline price
+        var originalPrice = (new BlackScholes(copy)).price();
+
+        // find price of option now
+        copy.stockPrice = i;
+        var copyPrice = (new BlackScholes(copy)).price();
+        if(!(i in optionsData)){
+          optionsData[i] = option.quantity * buyOrSell * (copyPrice - originalPrice);
+        }else{
+          optionsData[i] += option.quantity * buyOrSell * (copyPrice - originalPrice);
+        }
+
+        // find price of stock itself
+        if(!(i in stockData)){
+          stockData[i] = option.quantity * buyOrSell * (i - option.stockPrice);
+        }else{
+          stockData[i] += option.quantity * buyOrSell * (i - option.stockPrice);
+        }        
+ 
+        // find price of option in to the future
+        copy.daysToExpiry = 0;
+        var expiryPrice = (new BlackScholes(copy)).price();  
+        if(!(i in optionsDataAtExpiry)){
+          optionsDataAtExpiry[i] = option.quantity * buyOrSell * (expiryPrice - originalPrice);
+        } else {
+          optionsDataAtExpiry[i] += option.quantity * buyOrSell * (expiryPrice - originalPrice);
+        }
+      }
+    }
+
+    // change back to usable format
+    optionsData = organizeData(optionsData);
+    stockData = organizeData(stockData)
+    optionsDataAtExpiry = organizeData(optionsDataAtExpiry);
+    return {optionsData, stockData, optionsDataAtExpiry}
   }
 
+  function organizeData(optionsData : any){
+    var data = []
+    for(const i in optionsData){
+      data.push( { x : parseFloat(i), y : optionsData[i] } );
+    }
+    return data;
+  }
+
+
+
+  // Round a number to 2 decimal points
+const round = (num: any) => {
+  return Math.round((num + Number.EPSILON) * 100)/100;
+}
+
+// Round a number to 1 decimal point
+const roundOne = (num: any) => {
+  return Math.round((num + Number.EPSILON) * 10)/10;
+}
+
+
+  // Set end point of the chart as 30% above the stock price
+  const getHigh = (price: any, high: any) => {
+    return price + price/3;
+  }
+
+  // Set end point of the chart as 30% above the stock price
+  const getLow = (price: any, low: any) => {
+    return price - price/3;
+  }

@@ -6,9 +6,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { Toaster, ToastIcon, toast, resolveValue } from "react-hot-toast";
 import getLatestDate from "../../utils/getLatestDate";
 import { optionsCalculation } from "../../utils/optionsCalculation";
+import {daysTillExpiry, getCurrentDate} from '../../utils/date';
 // import { notificationDispatcher } from '../../utils/notificationDispatcher'
 import Draggable from "react-draggable";
 import moment from "moment";
+import BlackScholes from "../../utils/blackScholes";
 
 interface PositionProps {
   stockPrice : number,
@@ -69,73 +71,126 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
     let sums : any = {};
     let result: any= [];
+    let newResultArr : any = [];
     if(storeDataArray.length > 0){
-      const dataArray = checkedBoxData !== undefined ? checkedBoxData : storeDataArray;
+      const dataArray = checkedBoxData ?? storeDataArray;
       dataArray.map((item : any)=>{
         setCurrentPrice(Number(item.indexPrice))
         setAmount(item.amount)
         const instrumentType = item.callOrPut;
         const instrumentStrikePrice = Number(item.strike)
         const amount = item.amount;
-        const currentPrice = Number(item.indexPrice);
-        // const optionPrice = Number(item.lastPrice);
-        const optionPrice = Number(item.markPrice);
-        const thetaVal = Number(item.theta)
         const strikePrice = instrumentStrikePrice;
         const type = instrumentType;
         const currencyType = item.instrumentName.substring(0,3)
-        const currencySpotValPrice : number = currencyType === 'BTC' ? btcSpotPrice : currencyType === 'ETH' ? ethSpotPrice : currencyType === 'SOL' ? solSpotPrice : 0;
+        const underlyingPrice = item.underlyingPrice
         const expiryData = item.expiry
+        const currentDate  = moment().valueOf();
+        const expiryDate =  moment(expiryData).valueOf();;
+        const diffMs = expiryDate - currentDate
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+
+        const currentPrice = Number(item.indexPrice);
+        const optionLastPrice = Number(item.lastPrice);
+        const optionPrice = Number(item.markPrice);
+        const thetaVal = Number(item.theta);
+        const gammaVal = Number(item.gamma);
+        const vegaVal = Number(item.vega);
+        const deltaVal = Number(item.delta);
+        const rhoVal = Number(item.rho);
+        // const currencySpotValPrice : number = currencyType === 'BTC' ? btcSpotPrice : currencyType === 'ETH' ? ethSpotPrice : currencyType === 'SOL' ? solSpotPrice : 0;
         const markIv = item.markIv
         const exchangeField = item.exchange
-        const underlyingPrice = item.underlyingPrice
         const interval = currencyType === 'BTC' ?  500 : 100;
         const formattedNumbers : number[] = [];
 
-        for (let i = 0; i <= Math.floor(currentPrice*8 / interval); i++) {
-          formattedNumbers.push(parseFloat((i * interval).toFixed(6)));
+
+
+
+        const buyOrSellVal = item.position === 'Long' ? 1 : -1
+        let optionPriceObject = {
+          stockPrice: underlyingPrice,
+          interestRate: 0.02,
+          buyOrSell: item.position === 'Long' ? "buy" : "sell",
+          quantity: amount,
+          type: type === 'C' ? "call" : "put",
+          strike: strikePrice,
+          daysToExpiry: diffDays >= 0 ? diffDays : 0,
+          volatility: 0.64,
+          credit: 0
         }
 
-        if(item.position === 'Long' && type === 'C'){
-          for (let i = 0; i <= formattedNumbers.length; i++) {
-            dataSet.push([formattedNumbers[i], optionsCalculation.buyCallOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField), optionsCalculation.buyCallTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
-          }
-        }
-        if(item.position === 'Short' && type === 'C'){
-          for (let i = 0; i <= formattedNumbers.length; i++) {
-            dataSet.push([formattedNumbers[i], optionsCalculation.sellCallOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.sellCallTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField,thetaVal, type, expiryData, markIv,underlyingPrice)]);
-          }
-        }
-        if(item.position  === 'Long' && type === 'P'){
-          for (let i = 0; i <= formattedNumbers.length; i++) {
-            dataSet.push([formattedNumbers[i], optionsCalculation.buyPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField), optionsCalculation.buyPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField)]);
-          }
-        }
-        if(item.position  === 'Short' && type === 'P'){
-          for (let i = 0; i <= formattedNumbers.length; i++) {
-            dataSet.push([formattedNumbers[i], optionsCalculation.sellPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField),optionsCalculation.sellPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField)]);
-          }
-        }
+        let blackScholes = new BlackScholes(optionPriceObject)
+        let price = blackScholes.price()
+        optionPriceObject.credit = buyOrSellVal * price * parseInt(amount)
+        newResultArr.push(optionPriceObject)
+
+
+        // for (let i = 0; i <= Math.floor(currentPrice*8 / interval); i++) {
+        //   formattedNumbers.push(parseFloat((i * interval).toFixed(6)));
+        // }
+
+        // if(item.position === 'Long' && type === 'C'){
+        //   for (let i = 0; i <= formattedNumbers.length - 1; i++) {
+        //     dataSet.push([
+        //       formattedNumbers[i], 
+        //       optionsCalculation.buyCallOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField), 
+        //       optionsCalculation.buyCallTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField, type, expiryData, markIv,underlyingPrice, thetaVal,gammaVal, vegaVal, deltaVal, rhoVal, optionLastPrice, item.position,  item.high24h , item.low24h,daysDiff, optionType, mul  )
+        //     ]);
+        //   }
+        // }
+        // if(item.position === 'Short' && type === 'C'){
+        //   for (let i = 0; i <= formattedNumbers.length; i++) {
+        //     dataSet.push([formattedNumbers[i], 
+        //       optionsCalculation.sellCallOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField), 
+        //       optionsCalculation.sellCallTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField, type, expiryData, markIv,underlyingPrice, thetaVal,gammaVal, vegaVal, deltaVal, rhoVal, optionLastPrice, item.position,  item.high24h , item.low24h,daysDiff, optionType, mul )]);
+        //   }
+        // }
+        // if(item.position  === 'Long' && type === 'P'){
+        //   for (let i = 0; i <= formattedNumbers.length; i++) {
+        //     dataSet.push([formattedNumbers[i], 
+        //       optionsCalculation.buyPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField),
+        //        optionsCalculation.buyPutTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField, type, expiryData, markIv,underlyingPrice, thetaVal,gammaVal, vegaVal, deltaVal, rhoVal, optionLastPrice, item.position,  item.high24h , item.low24h ,daysDiff, optionType, mul)]);
+        //   }
+        // }
+        // if(item.position  === 'Short' && type === 'P'){
+        //   for (let i = 0; i <= formattedNumbers.length; i++) {
+        //     dataSet.push([formattedNumbers[i], 
+        //       optionsCalculation.sellPutOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice, exchangeField),
+        //       optionsCalculation.sellPutTimeDecayOption(formattedNumbers[i],amount, currentPrice,strikePrice, optionPrice , exchangeField, type, expiryData, markIv,underlyingPrice, thetaVal,gammaVal, vegaVal, deltaVal, rhoVal, optionLastPrice, item.position,  item.high24h , item.low24h,daysDiff, optionType, mul )]);
+        //   }
+        // }
       })
-      for (let i = 0; i < dataSet.length; i++) {
-          if (!sums[dataSet[i][0]]) {
-              sums[dataSet[i][0]] = [0, 0];
-          }
-          sums[dataSet[i][0]][0] += dataSet[i][1];
-          sums[dataSet[i][0]][1] += dataSet[i][2];
-      }
+
+      const data : any = newResultArr.length > 0 ? optionsCalculation.getOptionsGraph(newResultArr) : []
+      const output = newResultArr.length > 0 ? data.optionsData.map((option : any) => {
+        const x = option.x;
+        const optionsDataY = option.y;
+        const optionsDataAtExpiryY = data.optionsDataAtExpiry.find((optionAtExpiry : any) => optionAtExpiry.x === x)?.y;
+        return [x,  optionsDataAtExpiryY, optionsDataY,];
+      }).filter((option : any) => option[2] !== undefined) : [];
+      result = output
+     
+      // for (let i = 0; i < dataSet.length; i++) {
+      //     if (!sums[dataSet[i][0]]) {
+      //         sums[dataSet[i][0]] = [0, 0];
+      //     }
+      //     sums[dataSet[i][0]][0] += dataSet[i][1];
+      //     sums[dataSet[i][0]][1] += dataSet[i][2];
+      // }
   
-      for (let key in sums) {
-        result.push([Number(key), sums[key][0], sums[key][1]]);
-      }
+      // for (let key in sums) {
+      //   result.push([Number(key), sums[key][0], sums[key][1]]);
+      // }
 
-      result.sort(function(a: any,b: any){
-        return a[0] - b[0];
-      })
+      // result.sort(function(a: any,b: any){
+      //   return a[0] - b[0];
+      // })
 
     }
 
-    console.log(result)
+
     setFinalData(result)    
   }
 

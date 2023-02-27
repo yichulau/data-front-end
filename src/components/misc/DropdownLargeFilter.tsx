@@ -191,7 +191,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
                                             </select>
                                         </div>
                                     </div>        
-                                    <ul className="py-2 text-sm text-gray-700 dark:text-white max-h-48  overflow-y-auto" aria-labelledby="dropdownDelayButton">
+                                    <ul className="py-2 text-sm text-gray-700 dark:text-white max-h-64  overflow-y-auto" aria-labelledby="dropdownDelayButton">
                                         {filteredOptions.map((item : any)=>{ 
                                             return ( 
                                                 <li key={item.id} onClick={() => selectOption(item.value)}>

@@ -485,7 +485,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     {
       label: "Add Position",
       component: (
-        <div className='md:w-full mt-2 '>
+        <div className='md:w-full mt-2'>
           <PositionBuilderSearch data={apiData}
             handleExchangeChange={handleExchangeChange}
             handleSymbolChange={handleSymbolChange}
@@ -527,7 +527,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     {
       label: "Table",
       component: (
-        <div className="bg-white w-full shadow-sm rounded-lg py-2  dark:bg-black h-[600px] md:h-auto">
+        <div className="bg-white w-full shadow-sm rounded-lg py-2  dark:bg-black h-[650px] md:h-auto">
           <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
         </div>
       ),

@@ -88,7 +88,7 @@ const PositionBuilderSearch = ({
 
   return (
     <>
-      <div className='mt-2 mb-2'>
+      <div className='mt-2 mb-2 h-[650px] md:h-auto'>
           <div className='flex flex-col'>
             <h2 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>Add Simulated Position Builder</h2>
             <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"/>

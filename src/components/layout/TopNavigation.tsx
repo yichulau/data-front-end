@@ -1,6 +1,6 @@
 import React,  { useContext, useEffect, useState } from 'react'
 import Image from "next/image";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import MyThemeContext from "../../store/myThemeContext";
 import { FaMoon,FaSun } from 'react-icons/fa';
 import Link from 'next/link'
@@ -68,7 +68,7 @@ const TopNavigation = () => {
             <div className="max-w-screen-xl px-4 py-3 mx-auto md:px-6">
                 <div className="flex items-center">
                     <ul className="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
-                        <li>
+                        <li className={router.pathname == "/" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow px-4 rounded-lg py-2" : "py-2 px-4"}>
                             <Link href="/">
                                 <div className="text-gray-900 dark:text-white hover:underline" aria-current="page">Dashboard</div>
                             </Link>
@@ -76,7 +76,7 @@ const TopNavigation = () => {
                         </li>
                         <li>
                        
-                            <div className="peer text-gray-900 dark:text-white hover:underline">Activity</div>
+                            <div className="peer text-gray-900 dark:text-white hover:underline p-2">Activity</div>
                             <div className="hidden peer-hover:flex hover:flex
                             w-[200px]
                             flex-col bg-white drop-shadow-lg absolute z-50 dark:bg-black">
@@ -94,9 +94,9 @@ const TopNavigation = () => {
                                 </Link>
                             </div>
                         </li>
-                        <li>
+                        <li className={router.pathname == "/analysis/positionBuilder" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow px-4 rounded-lg py-2" : "py-2 px-4"}>
                             <Link href="/analysis/positionBuilder">
-                                <div className="text-gray-900 dark:text-white hover:underline">Payoff Calculator</div>
+                                <div className={`text-gray-900 dark:text-white hover:underline ${router.pathname === "/analysis/positionBuilder" ? `` : `` }`}>Payoff Calculator</div>
                             </Link>
                         </li>
                     </ul>

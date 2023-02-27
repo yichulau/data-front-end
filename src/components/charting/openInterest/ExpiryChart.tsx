@@ -11,7 +11,8 @@ const ExpiryChart = ({data ,error, loading, ccyOption, exchangeOption} : any) =>
   const responseData = useMemo(()=> data, [data]);
   const callOITotal  = (sumCalculation(responseData.callOIList)).toFixed(2)
   const putOITotal  = (sumCalculation(responseData.putOIList)).toFixed(2)
-  let chart: any;
+  const [chartInstance, setChartInstance] = useState<any>(null);
+
 
   function sumCalculation(data : any) :number {
     let sum = 0;
@@ -23,7 +24,13 @@ const ExpiryChart = ({data ,error, loading, ccyOption, exchangeOption} : any) =>
   }
 
   useEffect(()=>{
-    chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
+    if (!chartRef.current) {
+      return;
+    }
+    if (!chartInstance) {
+      setChartInstance(isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current));
+    }
+    
     const option = {
       backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
       tooltip: {
@@ -169,12 +176,11 @@ const ExpiryChart = ({data ,error, loading, ccyOption, exchangeOption} : any) =>
           },
         },
       ],
-  };
-    chart.setOption(option);
-    echartsResize(chart)
-    return () => {
-      chart.dispose();
     };
+    if (chartInstance) {
+      chartInstance.setOption(option);
+      echartsResize(chartInstance)
+    }
   },[data,isDarkTheme])
 
   

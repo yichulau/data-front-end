@@ -24,7 +24,7 @@ interface PositionProps {
 const PositionBuilder : React.FC<PositionProps> = () => {
   
   const dataSet: number[][] = []
-  const windowSize = useRef([window.innerWidth, window.innerHeight]);
+  const [width, setWidth] = useState<number>(0);
   const [currency, setCurrency] = useState('')
   const [exchange, setExchange] = useState('')
   const [currentPrice, setCurrentPrice] = useState(0)
@@ -36,10 +36,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [error ,setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(''); 
   const [apiData, setApiData] = useState([]);
-
-
-  const min : number = -99;
-  const max : number = 300;
+  const [activeTab, setActiveTab] = useState(0);
+  const windowWidth = useRef<number>(0);
 
   function storeToLocalStorage(value: any, triggerType :any){
     const storedPositions = localStorage.getItem("positions");
@@ -423,6 +421,11 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
   }
 
+  function handleTabClick(index : any){
+    setActiveTab(index);
+  };
+
+
 
   useEffect(()=>{
     const fetchAllSpotData = async () =>{
@@ -441,6 +444,10 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   
 
   useEffect(()=>{
+    if (typeof window !== 'undefined') {
+      windowWidth.current = window.innerWidth;
+      setWidth(windowWidth.current);
+    }
     setStore(JSON.parse(localStorage.getItem('positions') || '{}'))
     calculation();
   },[])
@@ -473,76 +480,150 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
   },[exchange,currency])
 
+  const tabItems = [
+    {
+      label: "Search Position",
+      component: (
+        <div className='md:w-full mt-2'>
+          <PositionBuilderSearch data={apiData}
+            handleExchangeChange={handleExchangeChange}
+            handleSymbolChange={handleSymbolChange}
+            handleAmountChange={handleAmountChange}
+            handleLongShort={handleLongShort}
+            handleCurrencyChange={handleCurrencyChange}
+            exchange={exchange}
+            error={error}
+            errorMessage={errorMessage}
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Charts",
+      component: (
+        <div className='md:w-full mt-2 '>
+          <Toaster />
+          {finalData ? (
+            <PositionBuilderCharts 
+              data={finalData} 
+              amount={amount} 
+              indexPrice={currentPrice} 
+              resetChart={clearChart}
+              latestDate={latestDate}
+            />
+          ) : (
+            <PositionBuilderCharts 
+              data={[]} 
+              amount={amount} 
+              indexPrice={currentPrice} 
+              resetChart={clearChart}
+              latestDate={latestDate}
+            />
+          ) }
+        </div>
+      ),
+    },
+    {
+      label: "Expandable",
+      component: (
+        <div className="bg-white w-full shadow-sm rounded-lg py-2  dark:bg-black">
+          <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    
-    <div className="container py-1 mx-auto">
-      {windowSize.current[0] > 764 ? (
+    <>
+      {width > 764 ? (
          <>
-          <div className="flex flex-wrap">
-              <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
-                  <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
-                      <div className='md:w-full mt-2'>
-                        <PositionBuilderSearch data={apiData}
-                            handleExchangeChange={handleExchangeChange}
-                            handleSymbolChange={handleSymbolChange}
-                            handleAmountChange={handleAmountChange}
-                            handleLongShort={handleLongShort}
-                            handleCurrencyChange={handleCurrencyChange}
-                            exchange={exchange}
-                            error={error}
-                            errorMessage={errorMessage}
-                          />
-                      </div>
-                  </div>
-              </div>
-              <div className="px-2 py-2 w-full md:w-3/4 flex flex-col items-start">
-                  <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
-                      <div className='md:w-full mt-2'>
-                      <Toaster />
-                        {finalData ? (
-                          <PositionBuilderCharts 
-                            data={finalData} 
-                            amount={amount} 
-                            indexPrice={currentPrice} 
-                            resetChart={clearChart}
-                            latestDate={latestDate}
-                          />
-                        ) : (
-                          <PositionBuilderCharts 
-                            data={[]} 
-                            amount={amount} 
-                            indexPrice={currentPrice} 
-                            resetChart={clearChart}
-                            latestDate={latestDate}
-                          />
-                        ) }
-                      </div>
-                  </div>
-              </div>
-          </div>
-          <div className="flex flex-wrap">
-            <div className="flex flex-col items-start py-2 px-2 w-full">
-              <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
-                  <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+          <div className="container py-1 mx-auto">
+            <div className="flex flex-wrap">
+                <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
+                    <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
+                        <div className='md:w-full mt-2'>
+                          <PositionBuilderSearch data={apiData}
+                              handleExchangeChange={handleExchangeChange}
+                              handleSymbolChange={handleSymbolChange}
+                              handleAmountChange={handleAmountChange}
+                              handleLongShort={handleLongShort}
+                              handleCurrencyChange={handleCurrencyChange}
+                              exchange={exchange}
+                              error={error}
+                              errorMessage={errorMessage}
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="px-2 py-2 w-full md:w-3/4 flex flex-col items-start">
+                    <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
+                        <div className='md:w-full mt-2'>
+                        <Toaster />
+                          {finalData ? (
+                            <PositionBuilderCharts 
+                              data={finalData} 
+                              amount={amount} 
+                              indexPrice={currentPrice} 
+                              resetChart={clearChart}
+                              latestDate={latestDate}
+                            />
+                          ) : (
+                            <PositionBuilderCharts 
+                              data={[]} 
+                              amount={amount} 
+                              indexPrice={currentPrice} 
+                              resetChart={clearChart}
+                              latestDate={latestDate}
+                            />
+                          ) }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="flex flex-wrap">
+              <div className="flex flex-col items-start py-2 px-2 w-full">
+                <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
+                    <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+                </div>
               </div>
             </div>
-          </div>
-         </>
-
+          </div> 
+        </>
       ) : (
         <>
+        <div className="container py-1 mx-auto">
           <div className="flex flex-wrap">
-            <div className="flex flex-col items-start py-2 px-2 w-full">
-              <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
-                  <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+            <div className="px-2 py-2 w-full flex flex-col items-start">
+              <div className='bg-white w-full shadow-sm rounded-t-lg p-4 dark:bg-black h-full'>
+                <div className='md:w-full mt-2'>
+                  {tabItems[activeTab].component}
+                </div>
+              </div>
+
+            </div>
+
+            <div className="bg-white flex dark:bg-black w-full justify-center">
+              <div className="border-gray-200 dark:border-gray-700">
+                <div className="flex w-full -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
+                  {tabItems.map((item, index) => (
+                    <div className="mx-2" key={index} onClick={() => handleTabClick(index)}>
+                      <div className={`inline-flex p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group ${activeTab === index ? "bg-blue-200" : ""}`}>
+                        <svg aria-hidden="true" className="w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>{item.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+            
           </div>
+        </div>
+
+          
         </>
       )}
-
-    </div>  
+    </>
+  
   )
 }
 

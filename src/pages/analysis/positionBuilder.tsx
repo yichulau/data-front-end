@@ -609,7 +609,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                 {tabItems.map((item, index) => (
                     <li className="flex-1"  key={index} onClick={() => handleTabClick(index)}>
                       <div
-                        className={`flex items-center justify-center gap-2 rounded-lg  px-3 py-2  hover:bg-white hover:text-gray-700 ${activeTab === index ? "bg-white dark:bg-gray-800 text-gra dark:text-white relative shadow" : ""}`}
+                        className={`flex items-center justify-center gap-2 rounded-lg  px-3 py-2  hover:bg-blue-800 hover:text-white ${activeTab === index ? "bg-white dark:bg-gray-800 text-gra dark:text-white relative shadow" : ""}`}
                       >
                         {index === 0 && <FaPlus />}
                         {index === 1 && <FaChartPie />}

@@ -108,23 +108,23 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
 
 
-        const buyOrSellVal = item.position === 'Long' ? 1 : -1
-        let optionPriceObject = {
-          stockPrice: underlyingPrice,
-          interestRate: 0.02,
-          buyOrSell: item.position === 'Long' ? "buy" : "sell",
-          quantity: amount,
-          type: type === 'C' ? "call" : "put",
-          strike: strikePrice,
-          daysToExpiry: diffDays >= 0 ? diffDays : 0,
-          volatility: 0.64,
-          credit: 0
-        }
+        // const buyOrSellVal = item.position === 'Long' ? 1 : -1
+        // let optionPriceObject = {
+        //   stockPrice: underlyingPrice,
+        //   interestRate: 0.02,
+        //   buyOrSell: item.position === 'Long' ? "buy" : "sell",
+        //   quantity: amount,
+        //   type: type === 'C' ? "call" : "put",
+        //   strike: strikePrice,
+        //   daysToExpiry: diffDays >= 0 ? diffDays : 0,
+        //   volatility: 0.64,
+        //   credit: 0
+        // }
 
-        let blackScholes = new BlackScholes(optionPriceObject)
-        let price = blackScholes.price()
-        optionPriceObject.credit = buyOrSellVal * price * parseInt(amount)
-        newResultArr.push(optionPriceObject)
+        // let blackScholes = new BlackScholes(optionPriceObject)
+        // let price = blackScholes.price()
+        // optionPriceObject.credit = buyOrSellVal * price * parseInt(amount)
+        // newResultArr.push(optionPriceObject)
 
 
         // for (let i = 0; i <= Math.floor(currentPrice*8 / interval); i++) {
@@ -163,14 +163,14 @@ const PositionBuilder : React.FC<PositionProps> = () => {
         // }
       })
 
-      const data : any = newResultArr.length > 0 ? optionsCalculation.getOptionsGraph(newResultArr) : []
-      const output = newResultArr.length > 0 ? data.optionsData.map((option : any) => {
-        const x = option.x;
-        const optionsDataY = option.y;
-        const optionsDataAtExpiryY = data.optionsDataAtExpiry.find((optionAtExpiry : any) => optionAtExpiry.x === x)?.y;
-        return [x,  optionsDataAtExpiryY, optionsDataY,];
-      }).filter((option : any) => option[2] !== undefined) : [];
-      result = output
+      // const data : any = newResultArr.length > 0 ? optionsCalculation.getOptionsGraph(newResultArr) : []
+      // const output = newResultArr.length > 0 ? data.optionsData.map((option : any) => {
+      //   const x = option.x;
+      //   const optionsDataY = option.y;
+      //   const optionsDataAtExpiryY = data.optionsDataAtExpiry.find((optionAtExpiry : any) => optionAtExpiry.x === x)?.y;
+      //   return [x,  optionsDataAtExpiryY, optionsDataY,];
+      // }).filter((option : any) => option[2] !== undefined) : [];
+      // result = output
      
       // for (let i = 0; i < dataSet.length; i++) {
       //     if (!sums[dataSet[i][0]]) {
@@ -187,6 +187,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       // result.sort(function(a: any,b: any){
       //   return a[0] - b[0];
       // })
+
+      result = dataArray
 
     }
 
@@ -208,9 +210,9 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
   const handleExchangeChange = (value: string) => {
     setExchange(value)  
-    setCurrency('')
-    setTempData('')
-    setAmount(0)
+    // setCurrency('')
+    // setTempData('')
+    // setAmount(0)
   }
   
   const handleSymbolChange = async (value:string) =>{

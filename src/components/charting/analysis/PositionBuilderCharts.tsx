@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext, useMemo } from "react";
 import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { echartsResize } from '../../../utils/resize';
@@ -7,32 +7,68 @@ import abbreviateNumber from "../../../utils/numberFormatter";
 import { FaCalendarPlus,FaCalendarMinus } from 'react-icons/fa';
 import moment from "moment";
 import ribbonImg from "../../../../public/assets/ribbon-logo.png";
+import BlackScholes from "../../../utils/blackScholes";
+import { optionsCalculation } from "../../../utils/optionsCalculation";
+import { chartDataHelper, optionsGenerateDataHelper } from "../../../utils/chartDataHelper";
 
 const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate} : any) => {
   // console.log(data)
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
+    const dataArray = useMemo(() => data, [data]);
+    const [sliderValue, setSliderValue] = useState(0);
+    const [chartData, setChartData] = useState([]);
+    const [chartInstance, setChartInstance] = useState<any>(null);
+
     const xMin = 0
     const xMax = Number(indexPrice*4)
     const min = Number(-indexPrice*4*amount);
     const max = Number(indexPrice*4*amount);
-    const currentDate = moment(new Date()).format('DD-MM-YYYY')
-    const lateDate = moment(latestDate).format('DD-MM-YYYY')
-    const firstArray = data.map((item : any) => [item[0], item[1]]);
-    const secondArray = data.map((item : any) => [item[0], item[2]]);
-    let chart: any;
 
+    const currentDated  = moment(new Date());
+    const expiryDate =  moment(latestDate);
+    const diffTime = expiryDate.diff(currentDated, 'days');
+
+
+    const handleChangeDate = (event: React.ChangeEvent<HTMLInputElement>)=>{
+      const currentDated  = moment(new Date());
+      const expiryDate =  moment(latestDate);
+      const diffTime = expiryDate.diff(currentDated, 'days');
+      const sliderValue = Number(event.target.value)
+      const diffValue = diffTime - sliderValue
+      const newResultArr : any = chartDataHelper(dataArray, diffValue);
+      const dataSet : any = newResultArr.length > 0 ? optionsCalculation.getOptionsGraph(newResultArr) : []
+      const output = newResultArr.length > 0 ? optionsGenerateDataHelper(dataSet) : []
+      setChartData(output)
+      setSliderValue(sliderValue)
+    }
+    
    
     const clearChart = () =>{
       resetChart()
     }
 
+
+    useMemo(()=>{
+      const currentDated  = moment(new Date());
+      const expiryDate =  moment(latestDate);
+      const diffTime = expiryDate.diff(currentDated, 'days');
+      const newResultArr : any = chartDataHelper(dataArray, diffTime);
+      const dataSet : any = newResultArr.length > 0 ? optionsCalculation.getOptionsGraph(newResultArr) : []
+      const output = newResultArr.length > 0 ? optionsGenerateDataHelper(dataSet) : []
+      setChartData(output);
+    },[data])
+
+
+
     useEffect(() => {
       if (!chartRef.current) {
         return;
       }
-      chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
-
+      if (!chartInstance) {
+        setChartInstance(isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current));
+      }
+  
       const options = {
         darkMode: true,
         backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
@@ -61,8 +97,8 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             backgroundColor: 'rgba(18, 57, 60, .8)',
             borderColor: "rgba(18, 57, 60, .8)",
             formatter: function (params : any) {
-
-
+  
+  
               let str = "";
               for (let i = 0; i < params.length; i++) {
                   let strLabel = params[i].seriesIndex === 0 ? `Expiry PnL` : `Today PnL`
@@ -117,7 +153,6 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
         },
         xAxis: {
           type: 'value',
-          data: [],
           min: xMin,
           max: xMax,
           axisLabel: {
@@ -221,7 +256,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
             zoomOnMouseWheel: true,
             start:45,
             end: 55,
-
+  
           },
           {
             type: 'slider',
@@ -259,7 +294,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
               ),
             },
           },
-          data: firstArray,
+          data: chartData.map((data:any) => [data.x,data.optionsDataAtExpiry]),
           showSymbol: false,
           markLine: {
             data: [
@@ -304,9 +339,9 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
           smooth: true,
           areaStyle:{
           },
-          data: secondArray,
+          data: chartData.map((data:any) => [data.x,data.optionsData]),
           showSymbol: false,
-
+  
           itemStyle: {
             normal:{
               lineStyle:{
@@ -333,12 +368,12 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
         },
       };
       
-      chart.setOption(options);
-      echartsResize(chart)
-      return () => {
-        chart.dispose();
-      };
-    }, [data,isDarkTheme]);
+      if (chartInstance) {
+        chartInstance.setOption(options);
+        echartsResize(chartInstance)
+      }
+    }, [data,isDarkTheme,chartData,chartInstance]);
+
     return (
     <>
         <div className='mt-2 mb-2'>
@@ -356,31 +391,36 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
               </div>
             </div>
             <div className="flex flex-row justify-between items-center">
-              <div className="flex justify-between space-between border items-center  border-indigo-500 w-72 md:w-44  px-2.5 py-2.5 rounded-lg shadow-sm">
+              <div className="flex flex-row justify-between space-between border items-center text-center md:text-left border-indigo-500 w-40 md:w-44  px-1 py-1  md:px-2.5 md:py-2.5 rounded-lg shadow-sm">
                 <span className="text-indigo-500 font-medium text-xs sm:text-sm" >
-                  {currentDate}
+                  {moment().add(sliderValue, 'days').format('DD-MM-YYYY')}
                 </span>
                 <span
-                  className="flex ml-2 text-indigo-500 font-medium text-lg"
+                  className="flex ml-2 text-indigo-500 font-medium text-xs md:text-lg"
                 ><FaCalendarMinus /></span>
               </div>
-              <div className="w-full px-8">
-                {/* <input id="default-range" type="range" value="50" className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"/> */}
+              <div className="w-full px-4 md:px-8 text-center pt-2">
+                <input 
+                  id="small-range"
+                  type="range"
+                  min="0"
+                  max={diffTime}
+                  value={sliderValue}
+                  onChange={handleChangeDate}
+                className="w-full h-1 mb-6 bg-gray-200 rounded-lg appearance-none cursor-pointer range-sm dark:bg-gray-700"/>
               </div>
-              <div className="flex justify-between space-between border items-center  border-teal-500 w-72 md:w-44  px-2.5 py-2.5 rounded-lg shadow-sm">
+              <div className="flex flex-row justify-between space-between border items-center text-center md:text-left  border-teal-500  w-40 md:w-44  px-1 py-1  md:px-2.5 md:py-2.5 rounded-lg shadow-sm">
                 <span className="text-teal-500 font-medium text-xs sm:text-sm" >
-                {lateDate ? lateDate : latestDate}
+                {moment(latestDate).format('DD-MM-YYYY')}
                 </span>
                 <span
-                  className="flex ml-2 text-teal-500 font-medium text-lg"
+                  className="flex ml-2 text-teal-500 font-medium text-xs md:text-lg"
                 >
                   <FaCalendarPlus />
                 </span>
               </div>
             </div>
           </div>
-          
-            
             <div ref={chartRef}  style={{ width: "100%", height: "500px" }} />
         </div>
     

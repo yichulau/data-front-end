@@ -31,13 +31,15 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
 
 
     const handleChangeDate = (event: React.ChangeEvent<HTMLInputElement>)=>{
+      const currencyType = dataArray[0].symbol
+      const interval = currencyType === 'BTC' ?  500 : 50;
       const currentDated  = moment(new Date());
       const expiryDate =  moment(latestDate);
       const diffTime = expiryDate.diff(currentDated, 'days');
       const sliderValue = Number(event.target.value)
       const diffValue = diffTime - sliderValue
       const newResultArr : any = chartDataHelper(dataArray, diffValue);
-      const dataSet : any = newResultArr.length > 0 ? optionsCalculation.getOptionsGraph(newResultArr) : []
+      const dataSet : any = newResultArr.length > 0 ? optionsCalculation.getOptionsGraph(newResultArr, interval) : []
       const output = newResultArr.length > 0 ? optionsGenerateDataHelper(dataSet) : []
       setChartData(output)
       setSliderValue(sliderValue)
@@ -50,11 +52,13 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
 
 
     useMemo(()=>{
+      const currencyType =  dataArray.length> 0 ? dataArray[0].symbol : ''
+      const interval = currencyType === 'BTC' ?  500 : 50;
       const currentDated  = moment(new Date());
       const expiryDate =  moment(latestDate);
       const diffTime = expiryDate.diff(currentDated, 'days');
       const newResultArr : any = chartDataHelper(dataArray, diffTime);
-      const dataSet : any = newResultArr.length > 0 ? optionsCalculation.getOptionsGraph(newResultArr) : []
+      const dataSet : any = newResultArr.length > 0 ? optionsCalculation.getOptionsGraph(newResultArr,interval) : []
       const output = newResultArr.length > 0 ? optionsGenerateDataHelper(dataSet) : []
       setChartData(output);
     },[data])

@@ -10,6 +10,7 @@ export const chartDataHelper = (dataArray: any[], dateChange: any) =>{
         const strikePrice = instrumentStrikePrice;
         const type = instrumentType;
         const currencyType = item.instrumentName.substring(0,3)
+        const interval = currencyType === 'BTC' ?  500 : 100;
         const underlyingPrice = item.underlyingPrice
         const expiryData = item.expiry
         const currentDate  = moment().valueOf();
@@ -25,14 +26,15 @@ export const chartDataHelper = (dataArray: any[], dateChange: any) =>{
           type: type === 'C' ? "call" : "put",
           strike: strikePrice,
           daysToExpiry: diffDays >= 0 ? diffDays : 0,
-          volatility: 0.64,
-          credit: 0
+          volatility: 0.56,
+          credit: 0,
         }
         let blackScholes = new BlackScholes(optionPriceObject)
         let price = blackScholes.price()
         optionPriceObject.credit = buyOrSellVal * price * parseInt(amount)
         newResultArr.push(optionPriceObject)
     })
+
     return newResultArr;
 }
 

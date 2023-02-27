@@ -176,14 +176,14 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
   }
 
 
-  function getOptionsGraph(data : any){
+  function getOptionsGraph(data : any, interval:any){
     let optionsData : any= {};
     let stockData : any= {};
     let optionsDataAtExpiry: any = {};
     
     // process range of graph
     var min = 0;
-    var max = parseFloat(data[0].strike);
+    var max = interval === 50? parseFloat(data[0].strike)*4 : parseFloat(data[0].strike)*2 ;
     for(var i = 1; i<Object.keys(data).length; i++){
       var option = data[i];
       if(parseFloat(option.stockPrice) < min){
@@ -196,7 +196,7 @@ function buyCallOption(stockPricePercent : number, amount: number, currentPrice 
 
     var mid = (min + max)/2;
     // generate prices for every stock price
-    for(var i = min - 0.001 ; i < max + 4 * mid; i += 50){
+    for(var i = min - 0.001 ; i < max + 4 * mid; i += interval){
       for(var j = 0; j<Object.keys(data).length; j++){
 
         var option = data[j];

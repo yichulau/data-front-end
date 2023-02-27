@@ -1,12 +1,13 @@
 import React,  { useContext, useEffect, useState } from 'react'
 import Image from "next/image";
-import router, { useRouter } from "next/router";
+import {useRouter} from 'next/router'
 import MyThemeContext from "../../store/myThemeContext";
 import { FaMoon,FaSun } from 'react-icons/fa';
 import Link from 'next/link'
 
 
 const TopNavigation = () => {
+    const router = useRouter()
     const themeCtx: { isDarkMode?: boolean; toggleThemeHandler: () => void } =
     useContext(MyThemeContext);
     const [darkMode, setDarkMode] = useState<String | null>(null);

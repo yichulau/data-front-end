@@ -18,7 +18,7 @@ export const chartDataHelper = (dataArray: any[], dateChange: any) =>{
         const diffDays = dateChange;
         const buyOrSellVal = item.position === 'Long' ? 1 : -1
         let optionPriceObject = {
-          stockPrice: underlyingPrice,
+          stockPrice: underlyingPrice === null ? item.indexPrice : underlyingPrice,
           interestRate: 0.02,
           buyOrSell: item.position === 'Long' ? "buy" : "sell",
           quantity: amount,

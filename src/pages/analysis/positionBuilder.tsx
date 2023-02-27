@@ -24,6 +24,7 @@ interface PositionProps {
 const PositionBuilder : React.FC<PositionProps> = () => {
   
   const dataSet: number[][] = []
+  const windowSize = useRef([window.innerWidth, window.innerHeight]);
   const [currency, setCurrency] = useState('')
   const [exchange, setExchange] = useState('')
   const [currentPrice, setCurrentPrice] = useState(0)
@@ -473,59 +474,74 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   },[exchange,currency])
 
 
-
   return (
     
     <div className="container py-1 mx-auto">
-      <div className="flex flex-wrap">
-          <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
-              <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
-                  <div className='md:w-full mt-2'>
-                    <PositionBuilderSearch data={apiData}
-                        handleExchangeChange={handleExchangeChange}
-                        handleSymbolChange={handleSymbolChange}
-                        handleAmountChange={handleAmountChange}
-                        handleLongShort={handleLongShort}
-                        handleCurrencyChange={handleCurrencyChange}
-                        exchange={exchange}
-                        error={error}
-                        errorMessage={errorMessage}
-                      />
+      {windowSize.current[0] > 764 ? (
+         <>
+          <div className="flex flex-wrap">
+              <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
+                  <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
+                      <div className='md:w-full mt-2'>
+                        <PositionBuilderSearch data={apiData}
+                            handleExchangeChange={handleExchangeChange}
+                            handleSymbolChange={handleSymbolChange}
+                            handleAmountChange={handleAmountChange}
+                            handleLongShort={handleLongShort}
+                            handleCurrencyChange={handleCurrencyChange}
+                            exchange={exchange}
+                            error={error}
+                            errorMessage={errorMessage}
+                          />
+                      </div>
+                  </div>
+              </div>
+              <div className="px-2 py-2 w-full md:w-3/4 flex flex-col items-start">
+                  <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
+                      <div className='md:w-full mt-2'>
+                      <Toaster />
+                        {finalData ? (
+                          <PositionBuilderCharts 
+                            data={finalData} 
+                            amount={amount} 
+                            indexPrice={currentPrice} 
+                            resetChart={clearChart}
+                            latestDate={latestDate}
+                          />
+                        ) : (
+                          <PositionBuilderCharts 
+                            data={[]} 
+                            amount={amount} 
+                            indexPrice={currentPrice} 
+                            resetChart={clearChart}
+                            latestDate={latestDate}
+                          />
+                        ) }
+                      </div>
                   </div>
               </div>
           </div>
-          <div className="px-2 py-2 w-full md:w-3/4 flex flex-col items-start">
-              <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
-                  <div className='md:w-full mt-2'>
-                  <Toaster />
-                    {finalData ? (
-                      <PositionBuilderCharts 
-                        data={finalData} 
-                        amount={amount} 
-                        indexPrice={currentPrice} 
-                        resetChart={clearChart}
-                        latestDate={latestDate}
-                      />
-                    ) : (
-                      <PositionBuilderCharts 
-                        data={[]} 
-                        amount={amount} 
-                        indexPrice={currentPrice} 
-                        resetChart={clearChart}
-                        latestDate={latestDate}
-                      />
-                    ) }
-                  </div>
+          <div className="flex flex-wrap">
+            <div className="flex flex-col items-start py-2 px-2 w-full">
+              <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
+                  <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
               </div>
+            </div>
           </div>
-      </div>
-      <div className="flex flex-wrap">
-        <div className="flex flex-col items-start py-2 px-2 w-full">
-          <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
-              <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+         </>
+
+      ) : (
+        <>
+          <div className="flex flex-wrap">
+            <div className="flex flex-col items-start py-2 px-2 w-full">
+              <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
+                  <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
+
     </div>  
   )
 }

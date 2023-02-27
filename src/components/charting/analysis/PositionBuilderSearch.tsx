@@ -129,7 +129,7 @@ const PositionBuilderSearch = ({
                   processAmountChange(event.target.value)
                   setState(prevState => ({ ...prevState, amount: event.target.value }));
                 }}  
-                className="bg-[#EFF2F5] border border-[#EFF2F5] font-medium text-[#58667E] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:text-bg-gray-700 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-800 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-700" placeholder="Enter Amount" />
+                className="bg-[#EFF2F5] border border-[#EFF2F5] font-medium text-[#58667E] text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:text-bg-gray-700 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-800 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-700" placeholder="Enter Amount" />
             </div>
             <div className='flex flex-row w-full my-4 '>
               <button type="button"

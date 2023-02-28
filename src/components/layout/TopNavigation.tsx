@@ -77,7 +77,7 @@ const TopNavigation = () => {
                         </li>
                         <li>
                        
-                            <div className="peer text-gray-900 dark:text-white md:hover:underline p-2">Activity</div>
+                            <div className="peer text-gray-900 dark:text-white md:hover:underline px-1 md:px-2">Activity</div>
                             <div className="hidden peer-hover:flex hover:flex
                             w-[200px]
                             flex-col bg-white drop-shadow-lg absolute z-50 dark:bg-black">

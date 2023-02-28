@@ -11,7 +11,7 @@ const StrikeChart = ({data ,error, loading, ccyOption} : any) => {
   const responseData = useMemo(()=> data, [data]);
   const callOITotal  = (sumCalculation(responseData.callOIList)).toFixed(2)
   const putOITotal  = (sumCalculation(responseData.putOIList)).toFixed(2)
-  const [chartInstance, setChartInstance] = useState<any>(null);
+  let chart: any;
 
   function sumCalculation(data : any) :number {
     let sum = 0;
@@ -23,13 +23,7 @@ const StrikeChart = ({data ,error, loading, ccyOption} : any) => {
   }
 
   useEffect(()=>{
-    if (!chartRef.current) {
-      return;
-    }
-    if (!chartInstance) {
-      setChartInstance(isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current));
-    }
-
+    chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
     const option = {
       backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
       tooltip: {
@@ -172,11 +166,12 @@ const StrikeChart = ({data ,error, loading, ccyOption} : any) => {
           },
         },
       ],
+  };
+    chart.setOption(option);
+    echartsResize(chart)
+    return () => {
+      chart.dispose();
     };
-    if (chartInstance) {
-      chartInstance.setOption(option);
-      echartsResize(chartInstance)
-    }
   },[data,isDarkTheme])
 
   

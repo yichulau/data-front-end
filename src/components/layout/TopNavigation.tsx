@@ -71,13 +71,13 @@ const TopNavigation = () => {
                     <ul className="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
                         <li className={router.pathname == "/" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow px-4 rounded-lg py-2" : "py-2 px-4"}>
                             <Link href="/">
-                                <div className="text-gray-900 dark:text-white hover:underline" aria-current="page">Dashboard</div>
+                                <div className="text-gray-900 dark:text-white md:hover:underline" aria-current="page">Dashboard</div>
                             </Link>
                            
                         </li>
                         <li>
                        
-                            <div className="peer text-gray-900 dark:text-white hover:underline p-2">Activity</div>
+                            <div className="peer text-gray-900 dark:text-white md:hover:underline p-2">Activity</div>
                             <div className="hidden peer-hover:flex hover:flex
                             w-[200px]
                             flex-col bg-white drop-shadow-lg absolute z-50 dark:bg-black">
@@ -97,7 +97,7 @@ const TopNavigation = () => {
                         </li>
                         <li className={router.pathname == "/analysis/positionBuilder" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow px-2 md:px-4 rounded-lg py-2" : "py-2 px-2 md:px-4"}>
                             <Link href="/analysis/positionBuilder">
-                                <div className={`text-gray-900 dark:text-white hover:underline ${router.pathname === "/analysis/positionBuilder" ? `` : `` }`}>Payoff Calculator</div>
+                                <div className={`text-gray-900 dark:text-white md:hover:underline ${router.pathname === "/analysis/positionBuilder" ? `` : `` }`}>Payoff Calculator</div>
                             </Link>
                         </li>
                     </ul>

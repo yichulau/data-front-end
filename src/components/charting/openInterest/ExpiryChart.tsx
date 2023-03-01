@@ -180,7 +180,7 @@ const ExpiryChart = ({data ,error, loading, ccyOption, exchangeOption} : any) =>
   
   return (
     <>
-        <div className='mt-2 mb-2' style={{maxWidth: "100%",height: '400px'}}>
+        <div className='mt-2 mb-2' style={{maxWidth: "100%",maxHeight: "400px"}}>
           <div ref={chartRef} style={{height: "310px"}}></div>
             <div className='flex flex-row items-center justify-center mt-6'>
                 <div className="py-4 px-4 text-center">

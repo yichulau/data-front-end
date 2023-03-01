@@ -11,7 +11,7 @@ import {daysTillExpiry, getCurrentDate} from '../../utils/date';
 import moment from "moment";
 import BlackScholes from "../../utils/blackScholes";
 import { FaPlus, FaChartPie, FaTable } from 'react-icons/fa'
-
+import {MdOutlineDragIndicator} from 'react-icons/md';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 
@@ -47,7 +47,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [instrumentLoading, setInstrumentLoading] = useState(false)
   const windowWidth = useRef<number>(0);
   const [layout, setLayout] = useState<any>([
-    { i: 'positionCreator', x: 0, y: 0, w: 3, h: 11, minW: 2, maxW: 12 , minH: 9},
+    { i: 'positionCreator', x: 0, y: 0, w: 3, h: 11, minW: 2, maxW: 12 , minH: 9, },
     { i: 'chartContainer', x: 5, y: 0, w: 9, h: 11, minW: 9, maxW: 12 , minH: 11, maxH: 13 },
     { i: 'positionsTable', x: 0, y: 1, w: 12, h: 8 , minW: 6, maxW: 12 , minH: 6, maxH: 13 },
   ]);
@@ -568,7 +568,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
        
           <div className="container py-1 mx-auto">
 
-          {/* <ResponsiveGridLayout
+          <ResponsiveGridLayout
             className="layout"
             layouts={{ lg: layout }}
             breakpoints={{ lg: 1200 }}
@@ -576,10 +576,12 @@ const PositionBuilder : React.FC<PositionProps> = () => {
             rowHeight={55}
             draggableHandle=".drag-handle"
             onLayoutChange={newLayout => setLayout(newLayout)}
+            useCSSTransforms={false} 
           >
             <div key="positionCreator" className="grid-item">
-              <div className="drag-handle bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
+              <div className=" bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
                     <div className='md:w-full mt-2'>
+                      <div className="cursor-grab right-4 drag-handle absolute "><MdOutlineDragIndicator /></div>
                       <PositionBuilderSearch data={apiData}
                           handleExchangeChange={handleExchangeChange}
                           handleSymbolChange={handleSymbolChange}
@@ -595,8 +597,9 @@ const PositionBuilder : React.FC<PositionProps> = () => {
               </div>
             </div>
             <div key="chartContainer" className="grid-item">
-              <div className="drag-handle bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
+              <div className="bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
                 <div className='md:w-full mt-2'>
+                <div className="cursor-grab float-right drag-handle "><MdOutlineDragIndicator /></div>
                 <Toaster />
                   {finalData ? (
                     <PositionBuilderCharts 
@@ -619,15 +622,16 @@ const PositionBuilder : React.FC<PositionProps> = () => {
               </div>
             </div>
             <div key="positionsTable" className="grid-item">
-              <div className="drag-handle bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
-                    <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+              <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
+                  <div className="cursor-grab float-right drag-handle pr-4 pt-4"><MdOutlineDragIndicator /></div>
+                  <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
               </div>
             </div>
-          </ResponsiveGridLayout> */}
+          </ResponsiveGridLayout>
 
 
 
-            <div className="flex flex-wrap">
+            {/* <div className="flex flex-wrap">
                 <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
                     <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
                         <div className='md:w-full mt-2'>
@@ -676,7 +680,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                     <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
                 </div>
               </div>
-            </div>
+            </div> */}
             
           </div> 
         </>

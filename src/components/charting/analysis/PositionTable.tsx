@@ -197,22 +197,22 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
             </div>
             <div className='px-2 md: px-auto overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg'>
                 <table ref={tableRef}  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    {headerGroups.map((headerGroup, index) => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map((column, columnIndex) => (
-                        <th
-                            key={columnIndex}
-                            scope="col"
-                            className={`px-4 py-3  bg-white dark:bg-gray-700 dark:text-gray-400  ${columnIndex < 2 ? "sticky left-0 z-10" : ""}`}
-                            style={{ zIndex: 1 }}
-                        >
-                            {column.render("Header")}
-                        </th>
-                        ))}
-                    </tr>
-                    ))}
-                </thead>
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        {headerGroups.map((headerGroup, index )=> (
+                            <>
+                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                    {headerGroup.headers.map(column => (
+                                        <>
+                                            <th scope="col" className="px-4 py-3">
+                                                {column.render('Header')}
+                                            </th>
+                                        </>
+                                    ))}
+                                </tr>
+                            </>
+                        )
+                        )}
+                    </thead>
                   <tbody {...getTableBodyProps()}>
                         {page.map((row, index) => {
                             prepareRow(row)

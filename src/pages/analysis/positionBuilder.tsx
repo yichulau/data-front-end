@@ -568,7 +568,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
        
           <div className="container py-1 mx-auto">
 
-          <ResponsiveGridLayout
+          {/* <ResponsiveGridLayout
             className="layout"
             layouts={{ lg: layout }}
             breakpoints={{ lg: 1200 }}
@@ -623,11 +623,11 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                     <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
               </div>
             </div>
-          </ResponsiveGridLayout>
+          </ResponsiveGridLayout> */}
 
 
 
-            {/* <div className="flex flex-wrap">
+            <div className="flex flex-wrap">
                 <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
                     <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
                         <div className='md:w-full mt-2'>
@@ -676,7 +676,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                     <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
                 </div>
               </div>
-            </div> */}
+            </div>
             
           </div> 
         </>

@@ -8,11 +8,17 @@ import getLatestDate from "../../utils/getLatestDate";
 import { optionsCalculation } from "../../utils/optionsCalculation";
 import {daysTillExpiry, getCurrentDate} from '../../utils/date';
 // import { notificationDispatcher } from '../../utils/notificationDispatcher'
-import Draggable from "react-draggable";
 import moment from "moment";
 import BlackScholes from "../../utils/blackScholes";
 import { FaPlus, FaChartPie, FaTable } from 'react-icons/fa'
 
+import { Responsive, WidthProvider } from 'react-grid-layout';
+
+
+import '/node_modules/react-grid-layout/css/styles.css';
+import '/node_modules/react-resizable/css/styles.css';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 interface PositionProps {
   stockPrice : number,
   strikePrice: number,
@@ -40,6 +46,11 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [instrumentLoading, setInstrumentLoading] = useState(false)
   const windowWidth = useRef<number>(0);
+  const [layout, setLayout] = useState<any>([
+    { i: 'positionCreator', x: 0, y: 0, w: 3, h: 11, minW: 2, maxW: 12 , minH: 9},
+    { i: 'chartContainer', x: 5, y: 0, w: 9, h: 11, minW: 9, maxW: 12 , minH: 11, maxH: 13 },
+    { i: 'positionsTable', x: 0, y: 1, w: 12, h: 8 , minW: 6, maxW: 12 , minH: 6, maxH: 13 },
+  ]);
 
   function storeToLocalStorage(value: any, triggerType :any){
     const storedPositions = localStorage.getItem("positions");
@@ -431,6 +442,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
 
 
+
   useEffect(()=>{
     const fetchAllSpotData = async () =>{
       const {price: btcSpotVal }= await fetchSpotData('BTC');
@@ -489,6 +501,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       label: "Add Position",
       component: (
         <div className='md:w-full mt-2'>
+          <Toaster />
           <PositionBuilderSearch data={apiData}
             handleExchangeChange={handleExchangeChange}
             handleSymbolChange={handleSymbolChange}
@@ -507,7 +520,6 @@ const PositionBuilder : React.FC<PositionProps> = () => {
       label: "Charts",
       component: (
         <div className='md:w-full mt-2 '>
-          <Toaster />
           {finalData ? (
             <PositionBuilderCharts 
               data={finalData} 
@@ -538,12 +550,84 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     },
   ];
 
+
+  const onPositionsTableDragStart = (layout: any, oldItem: any, newItem: any) => {
+    const positionCreatorItem = layout.find((item: any) => item.i === 'positionCreator');
+    if (newItem.y < positionCreatorItem.y + positionCreatorItem.h) {
+      // Don't allow the positionsTable component to overlap with the positionCreator component
+      newItem.y = positionCreatorItem.y + positionCreatorItem.h;
+    }
+    setLayout(layout.map((item: any) => item.i === newItem.i ? newItem : item));
+  }
+
+  
   return (
     <>
       {width > 764 ? (
          <>
+       
           <div className="container py-1 mx-auto">
-            <div className="flex flex-wrap">
+
+          <ResponsiveGridLayout
+            className="layout"
+            layouts={{ lg: layout }}
+            breakpoints={{ lg: 1200 }}
+            cols={{ lg: 12 }}
+            rowHeight={55}
+            draggableHandle=".drag-handle"
+            onLayoutChange={newLayout => setLayout(newLayout)}
+          >
+            <div key="positionCreator" className="grid-item">
+              <div className="drag-handle bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
+                    <div className='md:w-full mt-2'>
+                      <PositionBuilderSearch data={apiData}
+                          handleExchangeChange={handleExchangeChange}
+                          handleSymbolChange={handleSymbolChange}
+                          handleAmountChange={handleAmountChange}
+                          handleLongShort={handleLongShort}
+                          handleCurrencyChange={handleCurrencyChange}
+                          exchange={exchange}
+                          error={error}
+                          errorMessage={errorMessage}
+                          instrumentLoading={instrumentLoading}
+                        />
+                    </div>
+              </div>
+            </div>
+            <div key="chartContainer" className="grid-item">
+              <div className="drag-handle bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
+                <div className='md:w-full mt-2'>
+                <Toaster />
+                  {finalData ? (
+                    <PositionBuilderCharts 
+                      data={finalData} 
+                      amount={amount} 
+                      indexPrice={currentPrice} 
+                      resetChart={clearChart}
+                      latestDate={latestDate}
+                    />
+                  ) : (
+                    <PositionBuilderCharts 
+                      data={[]} 
+                      amount={amount} 
+                      indexPrice={currentPrice} 
+                      resetChart={clearChart}
+                      latestDate={latestDate}
+                    />
+                  ) }
+                </div>
+              </div>
+            </div>
+            <div key="positionsTable" className="grid-item">
+              <div className="drag-handle bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
+                    <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+              </div>
+            </div>
+          </ResponsiveGridLayout>
+
+
+
+            {/* <div className="flex flex-wrap">
                 <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
                     <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
                         <div className='md:w-full mt-2'>
@@ -592,7 +676,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                     <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
                 </div>
               </div>
-            </div>
+            </div> */}
+            
           </div> 
         </>
       ) : (
@@ -640,16 +725,3 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 export default PositionBuilder
 
 
-// <div className="bg-white flex dark:bg-black w-full ">
-// <div className="border-gray-200 dark:border-gray-700">
-//   <div className="flex w-full -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
-//     {tabItems.map((item, index) => (
-//       <div className="mx-2" key={index} onClick={() => handleTabClick(index)}>
-//         <div className={`inline-flex p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group ${activeTab === index ? "bg-blue-200" : ""}`}>
-//           <svg aria-hidden="true" className="w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>{item.label}
-//         </div>
-//       </div>
-//     ))}
-//   </div>
-// </div>
-// </div>

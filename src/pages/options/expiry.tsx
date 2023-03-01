@@ -80,7 +80,7 @@ const Expiry = () => {
     <>
     <div className="container py-1 mx-auto">
         <div className="flex flex-wrap">
-            <div className="px-6 py-2 md:w-full flex flex-col items-start">
+            <div className="px-6 py-2 w-full h-full flex flex-col items-start">
                 <div className='bg-white w-full shadow-sm rounded-lg p-4 dark:bg-black'>
                     <h2 className="ml-1 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Options Open Interest By Expiry</h2>
                     <div className='flex flex-row justify-between'>
@@ -122,16 +122,18 @@ const Expiry = () => {
                             </>
         
                         ) : (
-                            <div className="flex items-center justify-center min-h-[300px] p-5 bg-gray-100 w-full rounded-log dark:bg-black">
+                            <div className="flex items-center justify-center min-h-[300px] h-full p-5 bg-gray-100 w-full rounded-log dark:bg-black">
 
                                 <div className="flex space-x-2 animate-pulse">
                                     <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
                                     <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
                                     <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
                                 </div>
-                        
+
                             </div>
                         )}
+
+
 
                     </div>
                 </div>

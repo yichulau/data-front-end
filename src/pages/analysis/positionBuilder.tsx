@@ -565,162 +565,150 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     <>
       {width > 764 ? (
          <>
-       
           <div className="container py-1 mx-auto">
-
-          <ResponsiveGridLayout
-            className="layout"
-            layouts={{ lg: layout }}
-            breakpoints={{ lg: 1200 }}
-            cols={{ lg: 12 }}
-            rowHeight={55}
-            draggableHandle=".drag-handle"
-            onLayoutChange={newLayout => setLayout(newLayout)}
-            useCSSTransforms={false} 
-          >
-            <div key="positionCreator" className="grid-item">
-              <div className=" bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
-                    <div className='md:w-full mt-2'>
-                      <div className="cursor-grab right-4 drag-handle absolute "><MdOutlineDragIndicator /></div>
-                      <PositionBuilderSearch data={apiData}
-                          handleExchangeChange={handleExchangeChange}
-                          handleSymbolChange={handleSymbolChange}
-                          handleAmountChange={handleAmountChange}
-                          handleLongShort={handleLongShort}
-                          handleCurrencyChange={handleCurrencyChange}
-                          exchange={exchange}
-                          error={error}
-                          errorMessage={errorMessage}
-                          instrumentLoading={instrumentLoading}
-                        />
-                    </div>
-              </div>
-            </div>
-            <div key="chartContainer" className="grid-item">
-              <div className="bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
-                <div className='md:w-full mt-2'>
-                <div className="cursor-grab float-right drag-handle "><MdOutlineDragIndicator /></div>
-                <Toaster />
-                  {finalData ? (
-                    <PositionBuilderCharts 
-                      data={finalData} 
-                      amount={amount} 
-                      indexPrice={currentPrice} 
-                      resetChart={clearChart}
-                      latestDate={latestDate}
-                    />
-                  ) : (
-                    <PositionBuilderCharts 
-                      data={[]} 
-                      amount={amount} 
-                      indexPrice={currentPrice} 
-                      resetChart={clearChart}
-                      latestDate={latestDate}
-                    />
-                  ) }
+            <ResponsiveGridLayout
+              className="layout"
+              layouts={{ lg: layout }}
+              breakpoints={{ lg: 1200 }}
+              cols={{ lg: 12 }}
+              rowHeight={55}
+              draggableHandle=".drag-handle"
+              onLayoutChange={newLayout => setLayout(newLayout)}
+              useCSSTransforms={false} 
+            >
+              <div key="positionCreator" className="grid-item">
+                <div className=" bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
+                      <div className='md:w-full mt-2'>
+                        <div className="cursor-grab right-4 drag-handle absolute "><MdOutlineDragIndicator /></div>
+                        <PositionBuilderSearch data={apiData}
+                            handleExchangeChange={handleExchangeChange}
+                            handleSymbolChange={handleSymbolChange}
+                            handleAmountChange={handleAmountChange}
+                            handleLongShort={handleLongShort}
+                            handleCurrencyChange={handleCurrencyChange}
+                            exchange={exchange}
+                            error={error}
+                            errorMessage={errorMessage}
+                            instrumentLoading={instrumentLoading}
+                          />
+                      </div>
                 </div>
               </div>
-            </div>
-            <div key="positionsTable" className="grid-item">
-              <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
-                  <div className="cursor-grab float-right drag-handle pr-4 pt-4"><MdOutlineDragIndicator /></div>
-                  <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+              <div key="chartContainer" className="grid-item">
+                <div className="bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
+                  <div className='md:w-full mt-2'>
+                  <div className="cursor-grab float-right drag-handle "><MdOutlineDragIndicator /></div>
+                  <Toaster />
+                    {finalData ? (
+                      <PositionBuilderCharts 
+                        data={finalData} 
+                        amount={amount} 
+                        indexPrice={currentPrice} 
+                        resetChart={clearChart}
+                        latestDate={latestDate}
+                      />
+                    ) : (
+                      <PositionBuilderCharts 
+                        data={[]} 
+                        amount={amount} 
+                        indexPrice={currentPrice} 
+                        resetChart={clearChart}
+                        latestDate={latestDate}
+                      />
+                    ) }
+                  </div>
+                </div>
               </div>
-            </div>
-          </ResponsiveGridLayout>
-
-
-
-            {/* <div className="flex flex-wrap">
-                <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
-                    <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
-                        <div className='md:w-full mt-2'>
-                          <PositionBuilderSearch data={apiData}
-                              handleExchangeChange={handleExchangeChange}
-                              handleSymbolChange={handleSymbolChange}
-                              handleAmountChange={handleAmountChange}
-                              handleLongShort={handleLongShort}
-                              handleCurrencyChange={handleCurrencyChange}
-                              exchange={exchange}
-                              error={error}
-                              errorMessage={errorMessage}
-                              instrumentLoading={instrumentLoading}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="px-2 py-2 w-full md:w-3/4 flex flex-col items-start">
-                    <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
-                        <div className='md:w-full mt-2'>
-                        <Toaster />
-                          {finalData ? (
-                            <PositionBuilderCharts 
-                              data={finalData} 
-                              amount={amount} 
-                              indexPrice={currentPrice} 
-                              resetChart={clearChart}
-                              latestDate={latestDate}
-                            />
-                          ) : (
-                            <PositionBuilderCharts 
-                              data={[]} 
-                              amount={amount} 
-                              indexPrice={currentPrice} 
-                              resetChart={clearChart}
-                              latestDate={latestDate}
-                            />
-                          ) }
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="flex flex-wrap">
-              <div className="flex flex-col items-start py-2 px-2 w-full">
+              <div key="positionsTable" className="grid-item">
                 <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
+                    <div className="cursor-grab float-right drag-handle pr-4 pt-4"><MdOutlineDragIndicator /></div>
                     <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
                 </div>
               </div>
-            </div> */}
-            
+            </ResponsiveGridLayout>
+              {/* <div className="flex flex-wrap">
+                  <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">
+                      <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
+                          <div className='md:w-full mt-2'>
+                            <PositionBuilderSearch data={apiData}
+                                handleExchangeChange={handleExchangeChange}
+                                handleSymbolChange={handleSymbolChange}
+                                handleAmountChange={handleAmountChange}
+                                handleLongShort={handleLongShort}
+                                handleCurrencyChange={handleCurrencyChange}
+                                exchange={exchange}
+                                error={error}
+                                errorMessage={errorMessage}
+                                instrumentLoading={instrumentLoading}
+                              />
+                          </div>
+                      </div>
+                  </div>
+                  <div className="px-2 py-2 w-full md:w-3/4 flex flex-col items-start">
+                      <div className='bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black'>
+                          <div className='md:w-full mt-2'>
+                          <Toaster />
+                            {finalData ? (
+                              <PositionBuilderCharts 
+                                data={finalData} 
+                                amount={amount} 
+                                indexPrice={currentPrice} 
+                                resetChart={clearChart}
+                                latestDate={latestDate}
+                              />
+                            ) : (
+                              <PositionBuilderCharts 
+                                data={[]} 
+                                amount={amount} 
+                                indexPrice={currentPrice} 
+                                resetChart={clearChart}
+                                latestDate={latestDate}
+                              />
+                            ) }
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div className="flex flex-wrap">
+                <div className="flex flex-col items-start py-2 px-2 w-full">
+                  <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
+                      <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+                  </div>
+                </div>
+              </div> */}
           </div> 
         </>
-      ) : (
+      ) : null}
+      {width <= 764 ? (
         <>
-        <div className="container py-1 mx-auto">
-          <div className="flex flex-wrap">
-            <div className="px-2 py-2 w-full flex flex-col items-start">
-              <div className='bg-white w-full shadow-sm rounded-t-lg p-4 dark:bg-black'>
-                <div className='md:w-full mt-2'>
-                  {tabItems[activeTab].component}
+          <div className="container py-1 mx-auto">
+            <div className="flex flex-wrap">
+              <div className="px-2 py-2 w-full flex flex-col items-start">
+                <div className='bg-white w-full shadow-sm rounded-t-lg p-4 dark:bg-black'>
+                  <div className='md:w-full mt-2'>
+                    {tabItems[activeTab].component}
+                  </div>
                 </div>
               </div>
-
+                <div className="overflow-hidden border border-gray-100 dark:border-black bg-gray-50 dark:bg-black p-1 w-full">
+                  <ul className="flex items-center gap-2 text-sm font-medium">
+                  {tabItems.map((item, index) => (
+                      <li className="flex-1"  key={index} onClick={() => handleTabClick(index)}>
+                        <div
+                          className={`flex items-center justify-center gap-2 rounded-lg  px-3 py-2 cursor-pointer  ${activeTab === index ? "bg-white dark:bg-gray-800 text-gra dark:text-white relative shadow" : ""}`}
+                        >
+                          {index === 0 && <FaPlus />}
+                          {index === 1 && <FaChartPie />}
+                          {index === 2 && <FaTable />}
+                          {item.label}</div>
+                      </li>
+                  ))}
+                  </ul>
+                </div>
             </div>
-
-            
-              <div className="overflow-hidden border border-gray-100 dark:border-black bg-gray-50 dark:bg-black p-1 w-full">
-                <ul className="flex items-center gap-2 text-sm font-medium">
-                {tabItems.map((item, index) => (
-                    <li className="flex-1"  key={index} onClick={() => handleTabClick(index)}>
-                      <div
-                        className={`flex items-center justify-center gap-2 rounded-lg  px-3 py-2 cursor-pointer  ${activeTab === index ? "bg-white dark:bg-gray-800 text-gra dark:text-white relative shadow" : ""}`}
-                      >
-                        {index === 0 && <FaPlus />}
-                        {index === 1 && <FaChartPie />}
-                        {index === 2 && <FaTable />}
-                        {item.label}</div>
-                    </li>
-                    
-
-                ))}
-                </ul>
-              </div>
-            
           </div>
-        </div>
-          
         </>
-      )}
+      ) : null}
     </>
   
   )

@@ -38,6 +38,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [errorMessage, setErrorMessage] = useState(''); 
   const [apiData, setApiData] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [instrumentLoading, setInstrumentLoading] = useState(false)
   const windowWidth = useRef<number>(0);
 
   function storeToLocalStorage(value: any, triggerType :any){
@@ -216,7 +217,9 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   }
   
   const handleSymbolChange = async (value:string) =>{
+    setInstrumentLoading(true)
     const data  = await fetchInstrumentData(value)
+    setInstrumentLoading(false)
     setTempData(data)
   }
 
@@ -495,6 +498,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
             exchange={exchange}
             error={error}
             errorMessage={errorMessage}
+            instrumentLoading={instrumentLoading}
           />
         </div>
       ),
@@ -552,6 +556,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                               exchange={exchange}
                               error={error}
                               errorMessage={errorMessage}
+                              instrumentLoading={instrumentLoading}
                             />
                         </div>
                     </div>

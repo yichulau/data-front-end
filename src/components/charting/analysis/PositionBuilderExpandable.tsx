@@ -36,10 +36,12 @@ const PositionBuilderExpandable = ({dataSet, onDelete, handleCheckBoxChanges} : 
           {
             Header: 'Instrument',
             accessor: 'instrumentName', // accessor is the "key" in the data
+
           },
           {
             Header: 'Exchange',
             accessor: 'exchange', // accessor is the "key" in the data
+
           },
           {
             Header: 'Position',

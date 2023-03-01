@@ -12,12 +12,12 @@ import { optionsCalculation } from "../../../utils/optionsCalculation";
 import { chartDataHelper, optionsGenerateDataHelper } from "../../../utils/chartDataHelper";
 
 const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate} : any) => {
-  // console.log(data)
+
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
     const dataArray = useMemo(() => data, [data]);
-    const [sliderValue, setSliderValue] = useState(0);
-    const [chartData, setChartData] = useState([]);
+    const [sliderValue, setSliderValue] = useState<number>(0);
+    const [chartData, setChartData] = useState<any[]>([]);
     const [chartInstance, setChartInstance] = useState<any>(null);
 
     const xMin = 0

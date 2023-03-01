@@ -2,7 +2,7 @@ import moment from "moment";
 import BlackScholes from "./blackScholes";
 
 export const chartDataHelper = (dataArray: any[], dateChange: any) =>{
-    let newResultArr : any = [];
+    const newResultArr : any = [];
     dataArray.map((item : any)=>{
         const instrumentType = item.callOrPut;
         const instrumentStrikePrice = Number(item.strike)
@@ -19,7 +19,7 @@ export const chartDataHelper = (dataArray: any[], dateChange: any) =>{
         const diffDays = dateChange;
         const buyOrSellVal = item.position === 'Long' ? 1 : -1
         let optionPriceObject = {
-          stockPrice: underlyingPrice === null ? item.indexPrice : underlyingPrice,
+          stockPrice: underlyingPrice === null ? item.indexPrice : underlyingPrice, //
           interestRate: 0.02,
           buyOrSell: item.position === 'Long' ? "buy" : "sell",
           quantity: amount,

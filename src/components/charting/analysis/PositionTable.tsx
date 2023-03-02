@@ -226,8 +226,7 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
                                                 <>
                                                         <td
                                                             {...cell.getCellProps()}
-                                                            className={`px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white ${
-                                                            cellIndex < 2 ? "sticky left-0 z-10 bg-white" : ""
+                                                            className={`px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white
                                                             }`}
                                                             style={{ zIndex: 1 }}
                                                         >

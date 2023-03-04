@@ -9,6 +9,7 @@ const Expiry = () => {
     const [exchangeOption, setExchangeOption] = useState('ALL')
     const [ccyOption, setCcyOption] = useState('BTC')
     const [keysOptions, setKeysOptions] = useState('ALL');
+    const [spotValLocalStorage, setSpotValLocalStorage] = useState<number>(0);
     let spotVal = `https://api4.binance.com/api/v3/ticker/price?symbol=${ccyOption}USDT`;
     let url = `https://data-ribbon-collector.com/api/v1.0/${ccyOption.toLowerCase()}/${exchangeOption.toLowerCase()}/option-chart?strike=${keysOptions === 'ALL' ? '' : keysOptions}`;
     const { data, error, loading} = useFetchSingleData(url)
@@ -16,8 +17,7 @@ const Expiry = () => {
     const responseData : any = data || [];
     let keysOption = [];   
 
-
-    const price  = spotData? spotData.data?.price : null;
+    const price  = spotValLocalStorage;
     const dataList =  data !== null && price !== null ? formatData(responseData.expiryData, price) : [] ;
  
 
@@ -60,6 +60,15 @@ const Expiry = () => {
     const handleKeyChange = (value :any) =>{
         setKeysOptions(value)
     }
+
+    useEffect(() => {
+        const spotVal = ccyOption === 'BTC' ? 'btc' : ccyOption === 'ETH' ? 'eth' : 'sol';
+
+        const value = Number(localStorage.getItem(spotVal)) ?? 0;
+        setSpotValLocalStorage(value);
+      }, [ccyOption]);
+
+
     const option = [
         {id: 0, value: 'ALL'},
         {id: 1, value: 'Deribit'},

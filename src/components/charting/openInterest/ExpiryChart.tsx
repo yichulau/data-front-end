@@ -177,7 +177,7 @@ const ExpiryChart = ({data ,error, loading, ccyOption, exchangeOption} : any) =>
     chartInstance.setOption(option);
     echartsResize(chartInstance)
   }
-  },[data,isDarkTheme])
+  },[data,isDarkTheme,chartInstance])
 
   
   return (

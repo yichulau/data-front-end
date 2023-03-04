@@ -16,12 +16,8 @@ const Expiry = () => {
     const responseData : any = data || [];
     let keysOption = [];   
 
-    let price  = 0;
-    if (typeof localStorage !== 'undefined') {
-        const spotVal = ccyOption === 'BTC' ? 'btc' : ccyOption === 'ETH' ? 'eth' : 'sol';
-        price = Number(localStorage.getItem(spotVal));
 
-    }
+    const price  = spotData? spotData.data?.price : null;
     const dataList =  data !== null && price !== null ? formatData(responseData.expiryData, price) : [] ;
  
 
@@ -64,10 +60,6 @@ const Expiry = () => {
     const handleKeyChange = (value :any) =>{
         setKeysOptions(value)
     }
-
-  
-
-
     const option = [
         {id: 0, value: 'ALL'},
         {id: 1, value: 'Deribit'},

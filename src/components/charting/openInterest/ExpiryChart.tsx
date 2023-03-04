@@ -24,6 +24,9 @@ const ExpiryChart = ({data ,error, loading, ccyOption, exchangeOption} : any) =>
   }
 
   useEffect(()=>{
+    if (!chartRef.current) {
+      return;
+    }
     if (!chartInstance) {
       setChartInstance(isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current));
     }

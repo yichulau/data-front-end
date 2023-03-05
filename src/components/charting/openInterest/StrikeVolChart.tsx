@@ -11,7 +11,6 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
   const responseData = useMemo(()=> data, [data]);
   const callVolTotal  = (sumCalculation(responseData.callVolList)).toFixed(2)
   const putVolTotal  = (sumCalculation(responseData.putVolList)).toFixed(2)
-  const [chartInstance, setChartInstance] = useState<any>(null);
   let chart: any;
 
   function sumCalculation(data : any) :number {
@@ -25,12 +24,7 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
 
 
   useEffect(()=>{
-    if (!chartRef.current) {
-      return;
-    }
-    if (!chartInstance) {
-      setChartInstance(isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current));
-    }
+    chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
     const option = {
       backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
       tooltip: {
@@ -174,11 +168,12 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
         },
       ],
   };
-    if (chartInstance) {
-      chartInstance.setOption(option);
-      echartsResize(chartInstance)
-    }
-  },[data,isDarkTheme,chartInstance])
+    chart.setOption(option);
+    echartsResize(chart)
+    return () => {
+      chart.dispose();
+    };
+  },[data,isDarkTheme])
 
 
 

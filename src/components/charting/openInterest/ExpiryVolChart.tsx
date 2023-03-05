@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import * as echarts from 'echarts';
 import ReactEcharts from "echarts-for-react";
 import calculateRatio from '../../../utils/calculateRatio';
@@ -11,8 +11,7 @@ const ExpiryVolChart = ({data ,error, loading, ccyOption} : any) => {
   const responseData = useMemo(()=> data, [data]);
   const callVolTotal  = (sumCalculation(responseData.callVolList)).toFixed(2)
   const putVolTotal  = (sumCalculation(responseData.putVolList)).toFixed(2)
-  const [chartInstance, setChartInstance] = useState<any>(null);
-  // let chart: any;
+  let chart: any;
 
   function sumCalculation(data : any) :number {
     let sum = 0;
@@ -24,12 +23,7 @@ const ExpiryVolChart = ({data ,error, loading, ccyOption} : any) => {
   }
 
   useEffect(()=>{
-    if (!chartRef.current) {
-      return;
-    }
-    if (!chartInstance) {
-      setChartInstance(isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current));
-    }
+    chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
     const option = {
       backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
       tooltip: {
@@ -173,11 +167,12 @@ const ExpiryVolChart = ({data ,error, loading, ccyOption} : any) => {
           },
         ],
     };
-    if (chartInstance) {
-      chartInstance.setOption(option);
-      echartsResize(chartInstance)
-    }
-  },[data,isDarkTheme,chartInstance])
+    chart.setOption(option);
+    echartsResize(chart)
+    return () => {
+      chart.dispose();
+    };
+  },[data,isDarkTheme])
 
 
   return (

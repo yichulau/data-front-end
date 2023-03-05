@@ -3,7 +3,7 @@ import Dropdown from '../../components/misc/Dropdown'
 import StrikeChart from '../../components/charting/openInterest/StrikeChart';
 import useFetchSingleData from '../../hooks/useFetchSingleData';
 import DropdownLeftOption from '../../components/misc/DropdownLeftOption';
-
+import useSWR from 'swr';
 
 const Strike = () => {
     const [exchangeOption, setExchangeOption] = useState('ALL')
@@ -12,7 +12,10 @@ const Strike = () => {
     let spotVal = `https://api4.binance.com/api/v3/ticker/price?symbol=${ccyOption}USDT`;
     let url = `https://data-ribbon-collector.com/api/v1.0/${ccyOption.toLowerCase()}/${exchangeOption.toLowerCase()}/option-chart?expiry=${keysOptions === 'ALL' ? '' : keysOptions}`;
     const { data, error, loading} = useFetchSingleData(url)
-    const spotData : any = useFetchSingleData(spotVal)
+    const spotData : any = useSWR(spotVal, async (url) => {
+        const res = await fetch(url);
+        return res.json();
+    });
     const responseData : any = data || [];
     let keysOption = [];
     

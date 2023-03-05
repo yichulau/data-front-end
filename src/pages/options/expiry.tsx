@@ -10,7 +10,7 @@ const Expiry = () => {
     const [exchangeOption, setExchangeOption] = useState('ALL')
     const [ccyOption, setCcyOption] = useState('BTC')
     const [keysOptions, setKeysOptions] = useState('ALL');
-    let spotVal = `https://api4.binance.com/api/v3/ticker/price?symbol=${ccyOption}USDT`;
+    let spotVal = `https://data-ribbon-collector.com/api/v1.0/${ccyOption.toLowerCase()}/spotval`;
     let url = `https://data-ribbon-collector.com/api/v1.0/${ccyOption.toLowerCase()}/${exchangeOption.toLowerCase()}/option-chart?strike=${keysOptions === 'ALL' ? '' : keysOptions}`;
     const { data, error, loading} = useFetchSingleData(url)
     const spotData : any = useSWR(spotVal, async (url) => {
@@ -22,7 +22,7 @@ const Expiry = () => {
 
 
 
-    const price  = spotData? spotData.data?.price : null;
+    const price  = spotData? spotData.data?.spotValue : null;
     const dataList =  data !== null && price !== null ? formatData(responseData.expiryData, price) : [] ;
  
 

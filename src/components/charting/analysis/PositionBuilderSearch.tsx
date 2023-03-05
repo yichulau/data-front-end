@@ -11,7 +11,7 @@ const PositionBuilderSearch = ({
   handleLongShort, 
   exchange, 
   error, 
-  errorMessage, instrumentLoading } : any) => {
+  errorMessage, instrumentLoading,symbolLoading } : any) => {
 
   const instrumentData = data;
   const filteredInstrumentData = instrumentData.map((item : any, index : any) => ({id: index, value: item}));
@@ -119,6 +119,7 @@ const PositionBuilderSearch = ({
                 }}  
                 exchange={exchange}
                 state={state}
+                symbolLoading={symbolLoading}
                 />            
             </div>
             <div className='w-full my-1'>

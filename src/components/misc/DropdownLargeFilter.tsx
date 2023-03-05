@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, Fragment, useMemo } from 'react'
 import listenForOutsideClicks from '../../utils/listen-for-outside-clicks';
 import moment from 'moment';
 
-const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, state} : any) => {
+const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, state, symbolLoading} : any) => {
     let initialTitle = title;
     const [selectedOption, setSelectedOption] = useState(initialTitle);
     const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +13,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
     const [filterStrike, setFilterStrike] = useState([]);
     const [selectedStrike, setSelectedStrike] = useState('');
     const {currency, symbol, exchange: exchanges, amount} = state
+    const isLoading = useMemo(() => symbolLoading, [symbolLoading]);
 
     const toggleOptions = () => {
       setIsOpen(!isOpen);
@@ -130,7 +131,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
             {isOpen && (
                     <div id="dropdownDelay" 
                         className={  `block z-50 bg-white divide-y divide-gray-100 rounded-lg shadow w-auto min-w-[24rem] md:w-[26rem] dark:bg-gray-700 absolute h-full md:max-h-[31rem]`}>
-                            {filteredOptions.length > 0 ? (
+                            {isLoading === false ? (
                                 <>
                                     <div className='flex px-2 py-2'>
                                         <label htmlFor="simple-search" className="sr-only">Search</label>
@@ -191,7 +192,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
                                             </select>
                                         </div>
                                     </div>        
-                                    <ul className="py-2 text-sm text-gray-700 dark:text-white max-h-56 md:max-h-64  overflow-y-auto" aria-labelledby="dropdownDelayButton">
+                                    <ul className="py-2 text-sm text-gray-700 dark:text-white max-h-56 md:max-h-64  overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg" aria-labelledby="dropdownDelayButton">
                                         {filteredOptions.map((item : any)=>{ 
                                             return ( 
                                                 <li key={item.id} onClick={() => selectOption(item.value)}>

@@ -11,7 +11,8 @@ const PositionBuilderSearch = ({
   handleLongShort, 
   exchange, 
   error, 
-  errorMessage, instrumentLoading } : any) => {
+  errorMessage, 
+  instrumentLoading } : any) => {
 
   const instrumentData = data;
   const filteredInstrumentData = instrumentData.map((item : any, index : any) => ({id: index, value: item}));
@@ -85,6 +86,7 @@ const PositionBuilderSearch = ({
     setCurrencyDropdownReset(resetCode);
     setInstrumentReset(resetCode); 
     setAmount(0);
+    setState(prevState => ({ ...prevState, currency: null, symbol: null, exchange: null, amount: 0 }));
   }
 
   return (

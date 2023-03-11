@@ -44,12 +44,12 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
     const handleStrikePriceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedStrikePrice = event.target.value;
         setSelectedStrike(selectedStrikePrice);
-      
+
         if (selectedStrikePrice === 'All Strike Price') {
           setFilteredOptions(options);
         } else {
           const filteredByStrike = options.filter((option: any) =>
-            option.value.includes(selectedStrikePrice)
+            isSelectedPriceSameAsOptions(option.value, selectedStrikePrice)
           );
           setFilteredOptions(filteredByStrike);
         }
@@ -85,6 +85,12 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
         setFilterStrike(strike)
     }
 
+    const isSelectedPriceSameAsOptions = (instrumentText: string, selectedPrice: string) => {
+        const array = instrumentText.split("-");
+        let instrumentPrice = array[array.length -2]
+        return instrumentPrice === selectedPrice
+    }
+
     useEffect(()=>{
         filterDateFunction()
         return () => filterDateFunction()
@@ -109,7 +115,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
             );
             if (selectedStrike && selectedStrike !== 'All Strike Price') {
                 filteredOptions = dateOptions.filter((option: any) =>
-                    option.value.includes(selectedStrike)
+                    isSelectedPriceSameAsOptions(option.value, selectedStrike)
                 );
             }
 

@@ -197,7 +197,7 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
             </div>
             <div className='px-2 md: px-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg'
                  style={{
-                    height: '300px'
+                    height: '280px'
                 }}
             >
                 <table ref={tableRef}  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400">

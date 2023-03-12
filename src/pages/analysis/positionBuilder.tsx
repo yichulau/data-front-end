@@ -31,7 +31,7 @@ interface PositionProps {
 const PositionBuilder : React.FC<PositionProps> = () => {
   
   const dataSet: number[][] = []
-  const [width, setWidth] = useState<number>(0);
+  const [width, setWidth] = useState<any>(undefined);
   const [currency, setCurrency] = useState('')
   const [exchange, setExchange] = useState('')
   const [currentPrice, setCurrentPrice] = useState(0)
@@ -50,7 +50,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [layout, setLayout] = useState<any>([
     { i: 'positionCreator', x: 0, y: 0, w: 3, h: 11, minW: 2, maxW: 12 , minH: 9, },
     { i: 'chartContainer', x: 5, y: 0, w: 9, h: 11, minW: 9, maxW: 12 , minH: 11, maxH: 13 },
-    { i: 'positionsTable', x: 0, y: 1, w: 12, h: 8 , minW: 6, maxW: 12 , minH: 6, maxH: 13 },
+    { i: 'positionsTable', x: 0, y: 1, w: 12, h: 7 , minW: 6, maxW: 12 , minH: 7, maxH: 13 },
   ]);
 
   function storeToLocalStorage(value: any, triggerType :any){
@@ -461,12 +461,16 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   
 
   useEffect(()=>{
+
+    setStore(JSON.parse(localStorage.getItem('positions') || '{}'))
+    calculation();
+  },[])
+
+  useLayoutEffect(()=>{
     if (typeof window !== 'undefined') {
       windowWidth.current = window.innerWidth;
       setWidth(windowWidth.current);
     }
-    setStore(JSON.parse(localStorage.getItem('positions') || '{}'))
-    calculation();
   },[])
 
   useEffect(()=>{
@@ -553,15 +557,6 @@ const PositionBuilder : React.FC<PositionProps> = () => {
     },
   ];
 
-
-  const onPositionsTableDragStart = (layout: any, oldItem: any, newItem: any) => {
-    const positionCreatorItem = layout.find((item: any) => item.i === 'positionCreator');
-    if (newItem.y < positionCreatorItem.y + positionCreatorItem.h) {
-      // Don't allow the positionsTable component to overlap with the positionCreator component
-      newItem.y = positionCreatorItem.y + positionCreatorItem.h;
-    }
-    setLayout(layout.map((item: any) => item.i === newItem.i ? newItem : item));
-  }
 
 
   

@@ -1,6 +1,10 @@
 import React from 'react'
 
+
 const ActivityTable = () => {
+
+
+
   return (
     <>
         <section className="bg-gray-50 dark:bg-gray-900">

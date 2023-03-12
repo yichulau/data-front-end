@@ -199,14 +199,14 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
                  style={
                     {
                         overflowY: 'auto',
-                        height: '400px'
+                        height: '300px'
                     }
                  }>
                 <table ref={tableRef}  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
                            style={{
-                            position: "sticky",
-                             top:"-5px"
+                            position: 'sticky',
+                             top: '-2px'
                            }}>
                         {headerGroups.map((headerGroup, index )=> (
                             <>

@@ -195,19 +195,13 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
                 </div>
 
             </div>
-            <div className='px-2 md: px-auto overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg'
-                 style={
-                    {
-                        overflowY: 'auto',
-                        height: '300px'
-                    }
-                 }>
-                <table ref={tableRef}  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-                           style={{
-                            position: 'sticky',
-                             top: '-2px'
-                           }}>
+            <div className='px-2 md: px-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg'
+                 style={{
+                    height: '300px'
+                }}
+            >
+                <table ref={tableRef}  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
                         {headerGroups.map((headerGroup, index )=> (
                             <>
                                 <tr {...headerGroup.getHeaderGroupProps()}>

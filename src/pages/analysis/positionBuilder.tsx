@@ -468,8 +468,10 @@ const PositionBuilder : React.FC<PositionProps> = () => {
 
   useLayoutEffect(()=>{
     if (typeof window !== 'undefined') {
-      windowWidth.current = window.innerWidth;
-      setWidth(windowWidth.current);
+      window.onresize = () => {
+        setWidth(window.innerWidth);
+      }
+      setWidth(() => window.innerWidth);
     }
   },[])
 

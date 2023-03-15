@@ -1,247 +1,497 @@
-import React from 'react'
+import React, { useMemo, useRef } from 'react'
+import ReactTable, { useTable, useExpanded, useGroupBy, useRowSelect, usePagination, useGlobalFilter, useBlockLayout,useAsyncDebounce, useFilters , useSortBy}  from 'react-table';
+import ActivitySearch from './ActivitySearch';
+import { classNames } from '../../utils/Utils';
+import { CgChevronDoubleLeft, CgChevronDoubleRight, CgChevronRight, CgChevronLeft } from 'react-icons/cg'
+import {FaBitcoin, FaEthereum} from 'react-icons/fa'
+import ReactGridLayout from "react-grid-layout";
+import moment from 'moment';
+import { exchangeModel } from '../../models/exchangeModel';
+import ActivityFilterDropdown from './ActivityFilterDropdown';
+import {GiStoneBlock} from "react-icons/gi"
+import FilterDropdown from '../misc/FilterDropdown';
 
+interface ActivityTable {
+    blockTradeID: number,
+    coinCurrencyID: number,
+    instrumentID: string,
+    price: number,
+    tradeID: string,
+    tradeTime: Date
+}
+interface ActivityTableProps{
+    data: ActivityTable[]
+    title: string
+}
+const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTableProps) => {
+    const tableRef = useRef(null);
+    const dataSet = useMemo(() => data ,[data]);
+    const column : any[] = React.useMemo(
+        () => [
+            {
+              Header: "direction",
+              accessor: "direction",
+              Cell: DirectionPill,
+              Filter: SelectColumnFilter,  // new
+              filter: 'includes',  // new
+            },
+            {
+              Header: "exchange",
+              accessor: "exchangeID",
+              Cell: ExchangePill
+            },
+            {
+              Header: "instruments",
+              accessor: "instrumentID",
+              Filter: SelectColumnFilter,  // new
+              filter: 'includes',  // new
+            },
 
-const ActivityTable = () => {
+            {
+                Header: "coinCurrency",
+                accessor: "coinCurrencyID",
+                Cell: coinCurrencyPill
+            },
+            {
+              Header: "optionType",
+              accessor: "optionType",
+              Cell: optionTypePill
+            },
+            {
+                Header: "price",
+                accessor: "price",
+            },
+            {
+              Header: "amount",
+              accessor: "amount",
+            },
+            {
+              Header: "trade Time",
+              accessor: "tradeTime",
+              Cell: tradeTimePill
+            }
+        ],
+        []
+    );
+    
+    const { getTableProps, 
+    getTableBodyProps, 
+    headerGroups, 
+    //new
+    page, 
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    prepareRow,
+    state, // new
+    preGlobalFilteredRows, // new
+    setGlobalFilter, // new    
+    getToggleHideAllColumnsProps,
+    allColumns
+    } = useTable({
+        data: dataSet,
+        columns: column
+    },
+        useFilters, 
+        useGlobalFilter,
+        useSortBy,
+        usePagination,  // new
+    );
+
+    // console.log(data)
 
 
 
   return (
     <>
-        <section className="bg-gray-50 dark:bg-gray-900">
-  <div className="px-4 mx-auto max-w-screen-2xl lg:px-12">
-      <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-          <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
-              <div className="flex items-center flex-1 space-x-4">
-                  <h5>
-                      <span className="text-gray-500">All Products:</span>
-                      <span className="dark:text-white">123456</span>
-                  </h5>
-                  <h5>
-                      <span className="text-gray-500">Total sales:</span>
-                      <span className="dark:text-white">$88.4k</span>
-                  </h5>
-              </div>
-              <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-                  <button type="button" className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
-                      <svg className="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
-                      </svg>
-                      Add new product
-                  </button>
-                  <button type="button" className="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                      <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                      </svg>
-                      Update stocks 1/250
-                  </button>
-                  <button type="button" className="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                      <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                      </svg>
-                      Export
-                  </button>
-              </div>
+ 
+      <div className="sm:flex sm:gap-x-2 bg-white dark:bg-black sm:rounded-t-lg px-3 pb-3 ">
+        <div className='flex flex-col w-full'>
+          <div className='w-full py-4 text-left font-bold text-sm text-black dark:text-white '>
+            {title}
           </div>
-          <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                      <tr>
-                          <th scope="col" className="p-4">
-                              <div className="flex items-center">
-                                  <input id="checkbox-all" type="checkbox" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                                  <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
-                              </div>
-                          </th>
-                          <th scope="col" className="px-4 py-3">Product</th>
-                          <th scope="col" className="px-4 py-3">Category</th>
-                          <th scope="col" className="px-4 py-3">Stock</th>
-                          <th scope="col" className="px-4 py-3">Sales/Day</th>
-                          <th scope="col" className="px-4 py-3">Sales/Month</th>
-                          <th scope="col" className="px-4 py-3">Rating</th>
-                          <th scope="col" className="px-4 py-3">Sales</th>
-                          <th scope="col" className="px-4 py-3">Revenue</th>
-                          <th scope="col" className="px-4 py-3">Last Update</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <tr className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
-                          <td className="w-4 px-4 py-3">
-                              <div className="flex items-center">
-                                  <input id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                                  <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
-                              </div>
-                          </td>
-                          <th scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                              <img src="https://flowbite.s3.amazonaws.com/blocks/application-ui/products/imac-front-image.png" alt="iMac Front Image" className="w-auto h-8 mr-3"/>
-                              Apple iMac 27&#34;
-                          </th>
-                          <td className="px-4 py-2">
-                              <span className="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">Desktop PC</span>
-                          </td>
-                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                              <div className="flex items-center">
-                                  <div className="inline-block w-4 h-4 mr-2 bg-red-700 rounded-full"></div>
-                                  95
-                              </div>
-                          </td>
-                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">1.47</td>
-                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">0.47</td>
-                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                              <div className="flex items-center">
-                                  <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                  </svg>
-                                  <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                  </svg>
-                                  <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                  </svg>
-                                  <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                  </svg>
-                                  <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                  </svg>
-                                  <span className="ml-1 text-gray-500 dark:text-gray-400">5.0</span>
-                              </div>
-                          </td>
-                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                              <div className="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 mr-2 text-gray-400" aria-hidden="true">
-                                      <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
-                                  </svg>
-                                  1.6M
-                              </div>
-                          </td>
-                          <td className="px-4 py-2">$3.2M</td>
-                          <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">Just now</td>
-                      </tr>
-                 
-                  </tbody>
-              </table>
-          </div>
-          <nav className="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0" aria-label="Table navigation">
-              <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                  Showing
-                  <span className="font-semibold text-gray-900 dark:text-white">1-10</span>
-                  of
-                  <span className="font-semibold text-gray-900 dark:text-white">1000</span>
-              </span>
-              <ul className="inline-flex items-stretch -space-x-px">
-                  <li>
-                      <a href="#" className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                          <span className="sr-only">Previous</span>
-                          <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                          </svg>
-                      </a>
-                  </li>
-                  <li>
-                      <a href="#" className="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-                  </li>
-                  <li>
-                      <a href="#" className="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-                  </li>
-                  <li>
-                      <a href="#" aria-current="page" className="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight border text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-                  </li>
-                  <li>
-                      <a href="#" className="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">...</a>
-                  </li>
-                  <li>
-                      <a href="#" className="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">100</a>
-                  </li>
-                  <li>
-                      <a href="#" className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                          <span className="sr-only">Next</span>
-                          <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                          </svg>
-                      </a>
-                  </li>
-              </ul>
-          </nav>
-      </div>
-  </div>
-</section>
+        
+          <div className='flex'>
+            <ActivityFilterDropdown allColumns={allColumns} getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}/>
+              {/* <ActivitySearch
+                preGlobalFilteredRows={preGlobalFilteredRows}
+                globalFilter={state.globalFilter}
+                setGlobalFilter={setGlobalFilter}
+              />
+             */}
+     
 
-
-
-
-{/* <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <div className="flex items-center justify-between pb-4">
-
-              <label htmlFor="table-search" className="sr-only">Search</label>
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg className="w-5 h-5 text-gray-500 dark:text-gray-   400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path></svg>
+              {/* {headerGroups.map((headerGroup) =>
+                headerGroup.headers.map((column) =>
+                  column.Filter ? (
+                    <div className="mt-2 sm:mt-0" key={column.id}>
+                      {column.render("Filter")}
                     </div>
-                    <input type="text" id="table-search" className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for items"/>
-                </div> 
-            </div>
-            <table {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-white dark:bg-black dark:text-white">
-                {headerGroups.map((headerGroup, index )=> (
-                        //  <tr key={headerGroup.id}>
+                  ) : null
+                )
+              )} */}
+          </div>
+        </div>
+
+     
+      </div>
+      {/* table */}
+      <div className="flex flex-col">
+        <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
+          <div className="py-2 align-middle inline-block w-full sm:px-6 lg:px-8">
+            <div className="shadow overflow-hidden border-b border-gray-200 dark:border-black ">
+              <div className='flex flex-1 w-full relative'>
+                <div className='w-full overflow-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-white dark:scrollbar-track-zinc-600'>
+                  <table {...getTableProps()} className="w-full  divide-y table-auto divide-gray-200 dark:divide-black">
+                    <thead className="bg-gray-50 dark:bg-zinc-900">
+                      {headerGroups.map(headerGroup => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
-
-                        <th scope="col" className="p-4">
-                            <div className="flex items-center">
-                                <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                                <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
-                            </div>
-                        </th>
-                        {headerGroup.headers.map(column => (
-                        // <th
-                        //     {...column.getHeaderProps()}
-                        //     scope="col"
-                        //     className="px-6 py-3"
-                        // >
-                        <th
-                            key={column.id}
-                            scope="col"
-                            className="px-6 py-3"
-                        >
-                            {column.render('Header')}
-                        </th>
-                        ))}
-                    </tr>
-                    )
-                    )}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-
-                    {rows.map((row, index) => {
+                          {headerGroup.headers.map(column => (
+                            // Add the sorting props to control sorting. For this example
+                            // we can add them into the header props
+                            <th
+                              scope="col"
+                              className="group px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
+                              {...column.getHeaderProps(column.getSortByToggleProps())}
+                            >
+                              <div className="flex items-center justify-between">
+                                {column.render('Header')}
+                                {/* Add a sort direction indicator */}
+                                <span>
+                                  {column.isSorted
+                                    ? column.isSortedDesc
+                                      ? <SortDownIcon className="w-4 h-4 text-gray-400" />
+                                      : <SortUpIcon className="w-4 h-4 text-gray-400" />
+                                    : (
+                                      <SortIcon className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100" />
+                                    )}
+                                </span>
+                              </div>
+                            </th>
+                          ))}
+                        </tr>
+                      ))}
+                    </thead>
+                    <tbody
+                      {...getTableBodyProps()}
+                      className="bg-white dark:bg-black divide-y divide-gray-200 dark:divide-gray-600 "
+                    >
+                      {page.map((row : any, i) => {  // new
                         prepareRow(row)
-                        const { original } : any = row 
-                        
+                        const direction  = row.original.direction
+
                         return (
-                                //  {...row.getRowProps()}
-                                <tr key={row.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                   <td className="w-4 p-4">
-                                        <div className="flex items-center">
-                                            <input id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                                            <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
-                                        </div>
-                                    </td>
-                                    {row.cells.map(cell => {
-                                        // {...cell.getCellProps()}
-                                       
-                                        return <td key={cell.row.id} className="px-6 py-4" >{cell.render('Cell')}</td>
-                                    })}
-                                
-                                </tr>
+                          <tr {...row.getRowProps()} className='dark:even:bg-zinc-900 dark:odd:bg-black even:bg-white odd:bg-gray-100'>
+                            {row.cells.map((cell:any) => {
+                              return (
+                                <td
+                                  {...cell.getCellProps()}
+                                  className={classNames(
+                                    "px-3  py-1 whitespace-nowrap",
+                                    direction === "BUY" ? " text-green-700" : null,
+                                    direction === "SELL" ? " text-red-700" : null,
+                                  )}
+                                  role="cell"
+                                >
+                                  {cell.column.Cell.name === "defaultRenderer"
+                                    ? <div 
+                                      className={classNames(
+                                        "text-sm font-bold",
+                                        direction === "BUY" ? "text-green-700" : null,
+                                        direction === "SELL" ? "text-red-700" : null,
+                                      )}
+                                    >{cell.render('Cell')}</div>
+                                    : cell.render('Cell')
+                                  }
+                                </td>
+                              )
+                            })}
+                          </tr>
                         )
-                    })}
+                      })}
+                      {page.length === 0 ? (
+                         <tr>
+                          <td colSpan={100} className="py-8 text-center font-bold">
+                            No Data
+                          </td>
+                       </tr>
+                      ) : null  }
+                    </tbody>
+                  </table>
+                </div>
+                {/* <div className="w-[50px] px-4 py-8 right-0 flex-col justify-center items-center bg-gray-50 dark:bg-black">
+                  <div className="flex items-center mb-4 whitespace-nowrap transform rotate-90 font-medium">
                     
-                </tbody>
-            </table>
-        </div> */}
-
-
+                    Columns
+                    <FaBitcoin/>
+                  </div>
+                 
+                </div> */}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Pagination */}
+      <div className="py-3 px-3 flex items-center justify-between bg-white dark:bg-black rounded-b-lg">
+        <div className="flex-1 flex justify-between sm:hidden">
+          <Button onClick={() => previousPage()} disabled={!canPreviousPage}>Previous</Button>
+          <Button onClick={() => nextPage()} disabled={!canNextPage}>Next</Button>
+        </div>
+        <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div className="flex gap-x-2 items-baseline">
+            <span className="text-sm text-gray-700">
+              Page <span className="font-medium">{state.pageIndex + 1}</span> of <span className="font-medium">{pageOptions.length}</span>
+            </span>
+            <label>
+              <span className="sr-only">Items Per Page</span>
+              <select
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-black dark:border-gray-900"
+                value={state.pageSize}
+                onChange={e => {
+                  setPageSize(Number(e.target.value))
+                }}
+              >
+                {[5, 10, 20].map(pageSize => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div>
+            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px " aria-label="Pagination">
+              <PageButton
+                className="rounded-l-md dark:bg-black dark:border-gray-900"
+                onClick={() => gotoPage(0)}
+                disabled={!canPreviousPage}
+              >
+                <span className="sr-only">First</span>
+                <CgChevronDoubleLeft className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </PageButton>
+              <PageButton
+                className="dark:bg-black dark:border-gray-900"
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                <span className="sr-only">Previous</span>
+                <CgChevronLeft className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </PageButton>
+              <PageButton
+                className="dark:bg-black dark:border-gray-900"
+                onClick={() => nextPage()}
+                disabled={!canNextPage
+                }>
+                <span className="sr-only">Next</span>
+                <CgChevronRight className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </PageButton>
+              <PageButton
+                className="rounded-r-md dark:bg-black dark:border-gray-900"
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                <span className="sr-only">Last</span>
+                <CgChevronDoubleRight className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </PageButton>
+            </nav>
+          </div>
+        </div>
+      </div>
     </>
   )
 }
 
 export default ActivityTable
+
+
+export function SelectColumnFilter({
+    column: { filterValue, setFilter, preFilteredRows, id, render  },
+  }: any) {
+    // Calculate the options for filtering
+    // using the preFilteredRows
+    const options = React.useMemo(() => {
+      const options = new Set();
+      preFilteredRows.forEach((row: any) => {
+        options.add(row.values[id]);
+      });
+      return [...options.values()];
+    }, [id, preFilteredRows]);
+  
+    // Render a multi-select box
+    return (
+        <label className="flex gap-x-2 items-baseline">
+          <span className="text-gray-700">{render("Header")}: </span>
+          <select
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            name={id}
+            id={id}
+            value={filterValue}
+            onChange={e => {
+              setFilter(e.target.value || undefined)
+            }}
+          >
+            <option value="">All</option>
+            {options.map((option : any, i) => (
+              <option key={i} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </label>
+    );
+}
+
+export function Button({ children, className, ...rest }: any) {
+    return (
+      <button
+        type="button"
+        className={classNames(
+          "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50",
+          className
+        )}
+        {...rest}
+      >
+        {children}
+      </button>
+    );
+  }
+  
+  export function PageButton({ children, className, ...rest }: any) {
+    return (
+      <button
+        type="button"
+        className={classNames(
+          "relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50",
+          className
+        )}
+        {...rest}
+      >
+        {children}
+      </button>
+    );
+  }
+
+  export function SortIcon({ className }:any) {
+    return (
+      <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z"></path></svg>
+    )
+  }
+  
+  export function SortUpIcon({ className }:any) {
+    return (
+      <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M279 224H41c-21.4 0-32.1-25.9-17-41L143 64c9.4-9.4 24.6-9.4 33.9 0l119 119c15.2 15.1 4.5 41-16.9 41z"></path></svg>
+    )
+  }
+  
+  export function SortDownIcon({ className }:any) {
+    return (
+      <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z"></path></svg>
+    )
+  }
+
+
+  export function StatusPill({ value } : any) {
+    const status = value ? value.toUpperCase() : "unknown";
+  
+    return (
+      <span
+        className={classNames(
+          "px-3 py-1 uppercase leading-wide font-bold text-xs rounded-lg shadow-sm",
+          status === 'BUY' ? "bg-green-100 text-green-700" : null,
+          status === 'SELL' ? "bg-red-100 text-red-700" : null,
+        )}
+      >
+        {status}
+      </span>
+    );
+  }
+
+
+  export function coinCurrencyPill({ value } : any) {
+    const status = value ? value: "unknown";
+  
+    return (
+      <span
+        className={classNames(
+          "px-3 py-1 uppercase leading-wide font-bold text-xs text-center flex gap-2",
+        )}
+      >
+        {status === 1 ? (
+        <>
+         <FaBitcoin/> BTC
+
+        
+        </>) : (<><FaEthereum/> ETH</>)}
+      </span>
+    );
+  }
+
+
+  export function tradeTimePill({ value } : any) {
+    const timestamp = value; // timestamp in seconds
+    const date = moment.unix(timestamp);
+    const formattedDate = date.format('DD MMM YYYY, HH:mm:ss');
+  
+    return (
+      <span
+        className={classNames(
+          "px-3 py-1 uppercase leading-wide font-bold text-xs ",
+
+        )}
+      >
+        {formattedDate}
+      </span>
+    );
+  }
+
+  export function ExchangePill({ value } : any) {
+    const values = value !== undefined ? value : 'unknown'
+  
+    return (
+      <span
+        className={classNames(
+          "px-3 py-1 uppercase leading-wide font-bold text-xs ",
+
+        )}
+      >
+        {exchangeModel.getDataByExchange(values)}
+      </span>
+    );
+  }
+
+  export function DirectionPill({ row, value } : any) {
+    const isBlockTrade = row.original.isBlockTrade === 1 ? true: false;
+    const values = value !== undefined ? value : 'UNKNOWN'
+  
+    return (
+      <span
+        className={classNames(
+          "px-3 py-1 uppercase leading-wide font-bold text-xs flex gap-2",
+
+        )}
+      >
+         {isBlockTrade && (<GiStoneBlock/>)}{values}
+      </span>
+    );
+  }
+
+  export function optionTypePill({ row, value } : any) {
+    const values = value === 'C' ? 'CALL' : 'PUT'
+  
+    return (
+      <span
+        className={classNames(
+          "px-3 py-1 uppercase leading-wide font-bold text-xs flex gap-2",
+
+        )}
+      >
+        {values}
+      </span>
+    );
+  }

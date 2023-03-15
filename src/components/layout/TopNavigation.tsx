@@ -93,6 +93,9 @@ const TopNavigation = () => {
                                 <Link href="/options/expiryVol">
                                     <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white">Options OI Volume By Expiry</div>
                                 </Link>
+                                <Link href="/activity/recentTrade">
+                                    <div className="px-5 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white">Recent Trades</div>
+                                </Link>
                             </div>
                         </li>
                         <li className={router.pathname == "/analysis/positionBuilder" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow px-1 md:px-4 rounded-lg py-1 md:py-2" : "py-1 md:py-2 px-1 md:px-4"}>

@@ -149,8 +149,8 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                 <div className='w-full overflow-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-white dark:scrollbar-track-zinc-600'>
                   <table {...getTableProps()} className="w-full  divide-y table-auto divide-gray-200 dark:divide-black">
                     <thead className="bg-gray-50 dark:bg-zinc-900">
-                      {headerGroups.map(headerGroup => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
+                      {headerGroups.map((headerGroup, index ) => (
+                        <tr {...headerGroup.getHeaderGroupProps()} key={`header-${index}`}>
                           {headerGroup.headers.map(column => (
                             // Add the sorting props to control sorting. For this example
                             // we can add them into the header props
@@ -158,6 +158,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                               scope="col"
                               className="group px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
                               {...column.getHeaderProps(column.getSortByToggleProps())}
+                              key={`header-${index}-${column.id}`}
                             >
                               <div className="flex items-center justify-between">
                                 {column.render('Header')}
@@ -186,7 +187,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                         const direction  = row.original.direction
 
                         return (
-                          <tr {...row.getRowProps()} className='dark:even:bg-zinc-900 dark:odd:bg-black even:bg-white odd:bg-gray-100'>
+                          <tr   key={`row-${i}`} {...row.getRowProps()} className='dark:even:bg-zinc-900 dark:odd:bg-black even:bg-white odd:bg-gray-100'>
                             {row.cells.map((cell:any) => {
                               return (
                                 <td
@@ -197,6 +198,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                                     direction === "SELL" ? " text-red-700" : null,
                                   )}
                                   role="cell"
+                                  key={`row-${i}-${cell.column.id}`}
                                 >
                                   {cell.column.Cell.name === "defaultRenderer"
                                     ? <div 

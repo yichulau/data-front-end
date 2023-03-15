@@ -1,9 +1,7 @@
 import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
-import { v4 as uuidv4 } from 'uuid';
 import ReactTable, { useTable, useExpanded, useGroupBy, useRowSelect, usePagination, useGlobalFilter, useBlockLayout}  from 'react-table';
 import { useSticky } from 'react-table-sticky'
 import IndeterminateCheckbox from './IndeterminateCheckbox';
-import { useRowSelectColumn } from '@lineup-lite/hooks';
 import { useDownloadExcel } from 'react-export-table-to-excel';
 import FilterDropdown from '../../misc/FilterDropdown';
 

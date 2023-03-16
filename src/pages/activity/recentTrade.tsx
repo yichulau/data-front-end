@@ -95,14 +95,14 @@ const RecentTrade = () => {
                     isBlockTrade: 1, 
                     direction: data.data.direction !== undefined ? (data.data.direction).toUpperCase() : data.data.side !== undefined ? (data.data.side).toUpperCase() : 'UNKNOWN' , 
                     price: data.data.price !== undefined ? data.data.price : data.data.orderPrice, 
-                    amount:  data.data.amount !== undefined ? data.data.amount : data.data.positionQuantity !== undefined ? data.data.positionQuantity : data.data.quantity !== undefined ? data.data.quantity : data.data.size,
+                    amount: data.data.amount !== undefined ? data.data.amount : data.data.positionQuantity !== undefined ? data.data.positionQuantity : data.data.quantity !== undefined ? data.data.quantity : data.data.size !== undefined ? data.data.size : undefined,
                     optionType: "",
                 }]);
                 setPutContractData((prevData : any) => [...prevData, {...data.data, 
                     isBlockTrade: 1, 
                     direction: data.data.direction !== undefined ? (data.data.direction).toUpperCase() : data.data.side !== undefined ? (data.data.side).toUpperCase() : 'UNKNOWN' , 
                     price: data.data.price !== undefined ? data.data.price : data.data.orderPrice, 
-                    amount: data.data.amount !== undefined ? data.data.amount : data.data.positionQuantity !== undefined ? data.data.positionQuantity : data.data.quantity !== undefined ? data.data.quantity : data.data.size,
+                    amount: data.data.amount !== undefined ? data.data.amount : data.data.positionQuantity !== undefined ? data.data.positionQuantity : data.data.quantity !== undefined ? data.data.quantity : data.data.size !== undefined ? data.data.size : undefined,
                     optionType: "",
                 }]);
 
@@ -180,7 +180,7 @@ const RecentTrade = () => {
                 onLayoutChange={(newLayout: any) => setLayout(newLayout)}
             >
                 <div key="table1" className="grid-item">
-                    <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>x</div>
+                    <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
                     <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
                         
                         <div className="overflow-x-auto scrollbar-none md:w-full ">
@@ -194,7 +194,7 @@ const RecentTrade = () => {
                     </div>
                 </div>
                 <div key="table2" className="grid-item">
-                    <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>x</div>
+                    <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
                     <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>  
                         <div className="overflow-x-auto scrollbar-none md:w-full">
                             {/* <div className="cursor-grab top-5 right-4 drag-handle absolute "><MdOutlineDragIndicator /></div> */}

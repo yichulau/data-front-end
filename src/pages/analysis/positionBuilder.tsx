@@ -48,9 +48,9 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const [symbolLoading, setSymbolLoading] = useState(false);
   const windowWidth = useRef<number>(0);
   const [layout, setLayout] = useState<any>([
-    { i: 'positionCreator', x: 0, y: 0, w: 3, h: 11, minW: 2, maxW: 12 , minH: 9, },
+    { i: 'positionCreator', x: 0, y: 0, w: 3, h: 11, minW: 2, maxW: 12 , minH: 5, },
     { i: 'chartContainer', x: 5, y: 0, w: 9, h: 11, minW: 9, maxW: 12 , minH: 11, maxH: 13 },
-    { i: 'positionsTable', x: 0, y: 1, w: 12, h: 7 , minW: 6, maxW: 12 , minH: 7, maxH: 13 },
+    { i: 'positionsTable', x: 0, y: 1, w: 12, h: 5 , minW: 2, maxW: 12 , minH: 5, maxH: 13 },
   ]);
 
   function storeToLocalStorage(value: any, triggerType :any){
@@ -578,8 +578,8 @@ const PositionBuilder : React.FC<PositionProps> = () => {
               useCSSTransforms={false} 
             >
               <div key="positionCreator" className="grid-item">
-                <div className=" bg-white w-full h-full shadow-sm rounded-lg p-4 dark:bg-black">
-                      <div className='md:w-full mt-2'>
+                <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full p-4'>  
+                      <div className="overflow-x-auto scrollbar-none md:w-full">
                         <div className="cursor-grab right-4 drag-handle absolute "><MdOutlineDragIndicator /></div>
                         <PositionBuilderSearch data={apiData}
                             handleExchangeChange={handleExchangeChange}
@@ -622,11 +622,20 @@ const PositionBuilder : React.FC<PositionProps> = () => {
                 </div>
               </div>
               <div key="positionsTable" className="grid-item">
+                  <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>  
+                      <div className="overflow-x-auto scrollbar-none md:w-full">
+                        <div className="cursor-grab float-right drag-handle pr-4 pt-4"><MdOutlineDragIndicator /></div>
+                        <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
+
+                      </div>
+                  </div>
+              </div>
+              {/* <div key="positionsTable" className="grid-item">
                 <div className="bg-white w-full h-full shadow-sm rounded-lg py-2  dark:bg-black">
                     <div className="cursor-grab float-right drag-handle pr-4 pt-4"><MdOutlineDragIndicator /></div>
                     <PositionBuilderExpandable dataSet={store} onDelete={handleDelete} handleCheckBoxChanges={handleCheckBoxChanges}/>
                 </div>
-              </div>
+              </div> */}
             </ResponsiveGridLayout>
               {/* <div className="flex flex-wrap">
                   <div className="px-2 py-2 w-full md:w-1/4 flex flex-col items-start">

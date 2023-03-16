@@ -150,7 +150,7 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
             }
         </div> */}
 
-      <div className="relative overflow-hidden bg-white  dark:bg-black sm:rounded-lg  ">
+      <div className="relative overflow-hidden bg-white  dark:bg-black sm:rounded-lg  w-full">
           <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
               <div className="flex items-center flex-1 space-x-4">
                 <h5>
@@ -194,9 +194,6 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
 
             </div>
             <div className='px-2 md: px-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg'
-                 style={{
-                    height: '280px'
-                }}
             >
                 <table ref={tableRef}  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">

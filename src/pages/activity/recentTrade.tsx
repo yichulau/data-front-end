@@ -24,12 +24,13 @@ const RecentTrade = () => {
     const [putContractData, setPutContractData] : any = useState([]);
 
     const [layouts, setLayout] = useState<any>([
-        { i: 'table1', x: 0, y: 0, w: 6, h: 15, minW: 4 },
-        { i: 'table2', x: 6, y: 0, w: 6, h: 15, minW: 4 },
+        { i: 'table1', x: 0, y: 1, w: 6, h: 15, minW: 4 },
+        { i: 'table2', x: 6, y: 1, w: 6, h: 15, minW: 4 },
+        { i: 'table3', x: 0, y: 0, w: 12, h: 9, minW: 4 },
       ]);
 
-    // const dataSet = useFetchData(urlsContracts)
-    // const summarizeData = summarizeCount24h(dataSet)
+    const dataSet = useFetchData(urlsContracts)
+    const summarizeData = summarizeCount24h(dataSet)
 
 
     const { sendJsonMessage, getWebSocket } = useWebSocket(WS_URL, {
@@ -122,7 +123,7 @@ const RecentTrade = () => {
           const count24h = data
             .filter((d : any) => d.exchange === exchange)
             .reduce((sum : any, d: any) => sum + d.count24h, 0);
-          result.push({ count24h, exchange });
+          result.push({ count24h, exchange: exchange.toUpperCase()});
         }
         return result;
     }  
@@ -202,6 +203,15 @@ const RecentTrade = () => {
                                 title={`Option Call (PUT)`}
                                 data={putContractData.sort((a:any,b:any) => b.tradeTime - a.tradeTime)}
                             />
+                        </div>
+                    </div>
+                    
+                </div>
+                <div key="table3" className="grid-item">
+                    <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
+                    <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>  
+                        <div className="overflow-x-auto scrollbar-none md:w-full">
+                            <ActivityPieChart data={summarizeData}/> 
                         </div>
                     </div>
                     

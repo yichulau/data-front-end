@@ -8,177 +8,225 @@ const ActivityPieChart = ({data}: any) => {
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef: any = useRef();
     const responseData = useMemo(()=> data, [data]);
-    let chart: any;
-
-    let colorPie = ['#173852', '#0b2036', '#002e49'];
-    let colorWrap = ['#3087d6', '#f6ce54', '#4be1ff'];
-    let baseDataPie :any = [],  baseDataWrap :any  = [];
-    let total = 0;
-    responseData.forEach(function(val : any, idx: any, arr: any) {
-        total += val.value;
-    })
-    for (let i = 0; i < responseData.length; i++) {
-        baseDataPie.push({
-            value: responseData[i].count24h,
-            name: responseData[i].exchange,
-            itemStyle: {
-                normal: {
-                    borderWidth: 20,
-                    borderColor: colorPie[i],
-                }
-            }
-        });
-        baseDataWrap.push({
-            value: responseData[i].count24h,
-            name: responseData[i].exchange,
-            itemStyle: {
-                normal: {
-                    color: colorWrap[i],
-                    borderWidth: 5,
-                    borderColor: colorWrap[i],
-                    shadowBlur: 50,
-                    shadowColor: 'rgba(7, 132, 250, 0.8)',
-                }
-            }
-        }, {
-            value: 20,
-            name: '',
-            itemStyle: {
-                normal: {
-                    color: 'transparent',
-                    borderWidth: 5,
-                    borderColor: 'transparent',
-
-                }
-            }
-        });
-    }
+    const [chartInstance, setChartInstance] = useState<any>(null);
+    const sumOfContracts = responseData.reduce((accumulator:any,currentVal:any) => {
+        return accumulator + currentVal.count24h 
+    },0)
 
 
 
 
     useEffect(()=>{
-        chart = isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current);
-        const option = {
-            backgroundColor: "#031223",
-            title: {
-                text: '设备总数',
-                subtext: '10,225',
-                textStyle: {
-                    color: '#00b5f3',
-                    fontSize: 14,
+        if (!chartRef.current) {
+            return;
+        }
+        if (!chartInstance) {
+            setChartInstance(isDarkTheme ?  echarts.init(chartRef.current,'dark') :  echarts.init(chartRef.current));
+        }
 
+
+        const chartData : any = responseData.map((item:any) => ({
+            value: item.count24h,
+            name: item.exchange
+        }));
+
+        const colorList = ['#88D9FF', '#0092FF', '#81EDD2', '#B0FA93', '#63F2FF', '#9999FE'];
+        const sum = chartData.reduce((per:any, cur:any) => per + cur.value, 0);
+        const gap = (1 * sum) / 100;
+        const pieData1 = [];
+        const pieData2 = [];
+        const gapData = {
+          name: '',
+          value: gap,
+          itemStyle: {
+            color: 'transparent',
+          },
+        };
+
+        let lefts = ['4%', '4%', '4%', '80%', '80%', '80%'];
+        let tops = ['24%', '40%', '55%', '24%', '40%', '55%'];
+        let legendData = [];
+        let total = 0;
+        chartData.forEach((item: any) => {
+          total += item.value;
+        });
+    
+        for (let i = 0; i < chartData.length; i++) {
+          pieData1.push({
+            ...chartData[i],
+            itemStyle: {
+              borderRadius: 10,
+            },
+          });
+          pieData1.push(gapData);
+    
+          pieData2.push({
+            ...chartData[i],
+            itemStyle: {
+              color: colorList[i],
+              opacity: 0.21,
+            },
+          });
+          pieData2.push(gapData);
+    
+          let bfb = Math.round((chartData[i].value / total) * 100).toString() + '%';
+          legendData.push({
+            show: true,
+            icon: 'circle',
+            left: lefts[i],
+            top: tops[i],
+            itemStyle: {
+              color: colorList[i],
+            },
+            formatter: `{aa| ${chartData[i].name} }\n\n{bb| ${bfb}}`,
+            x: 'left',
+            textStyle: {
+              rich: {
+                aa: {
+                  color: isDarkTheme ? "#f5f5f6" : '#000000',
+                },
+                bb: {
+                  color: colorList[i],
+                },
+              },
+            },
+            data: [(chartData[i].name)],
+          });
+        }
+    
+        console.log(legendData)
+
+        const option = {
+            backgroundColor: isDarkTheme ? '#000000':  '#ffffff' ,
+
+            title: {
+                text: "Total Contracts",
+                subtext: sumOfContracts,
+                x: "49.7%",
+                y: "35%",
+                itemGap:15,
+                textStyle: {
+                  color: isDarkTheme ? "#f5f5f6" : '#000000' ,
+                  fontSize: 15,
+                  fontWeight: "bold",
                 },
                 subtextStyle: {
-                    align: 'center',
-                    fontSize: 20,
-                    color: ['#85c7e3'],
-                    fontWeight: 800
+                   
+                  color: isDarkTheme ? "#f5f5f6" : '#000000' ,
+                  fontSize: 30,
+                  fontWeight: "bold",
                 },
-                x: '33%',
-                y: 'center',
-            },
-            grid: {
-                left: '1%', // 与容器左侧的距离
-                right: '1%', // 与容器右侧的距离
-                top: '1%', // 与容器顶部的距离
-                bottom: '1%', // 与容器底部的距离
-
+                textAlign:'center'
             },
             tooltip: {
-                show: true,
-                trigger: 'item',
-                formatter: "{a}：{b} <br/>占比：{d}%"
+              show: true,
+              backgroundColor: 'rgba(0, 0, 0,.8)',
+              textStyle: {
+                color: '#fff',
+              },
             },
-            legend: {
-                data: ['企业', '政府', '个人'],
-                icon: 'vertical',
-                right: '5%',
-                top: 'center',
-                orient: 'vertical',
-                itemGap: 20,
-                itemWidth: 15,
-                itemHeight: 8,
-                formatter: function(name : any) {
-
-
-                    let target,percent;
-                    for (let i = 0; i < responseData.length; i++) {
-                        if (responseData[i].exchange === name) {
-                            target = responseData[i].count24h;
-                            percent = ((target/total)*100).toFixed(2);
-                        }
-                    }
-                    let arr = [ percent+'% '+' {yellow|' + target + '}', ' {blue|' + name + '}' ];
-                    return arr.join("\n")
-
-                },
-                textStyle: {
-
-                    lineHeight: 20,
-                    color: '#f0f4f6',
-                    align: 'right',
-                    rich: {
-                        yellow: {
-                            color: '#f6ce54',
-                            
-
-                        },
-                        blue: {
-                            color: '#4be1ff',
-                            align: 'right',
-
-                        },
-                    }
-
-                },
+            legend: legendData,
+            grid: {
+              top: 30,
+              right: 20,
+              bottom: 10,
+              left: 10,
             },
-
-            series: [{
+            color: colorList,
+            series: [
+              {
+                name: '',
+                type: 'pie',
+                roundCap: true,
+                radius: ['66%', '70%'],
+                center: ['50%', '45%'],
+                label: {
+                  show: false,
+                },
+                labelLine: {
+                  show: false,
+                },
+                data: pieData1,
+              },
+              {
+                type: 'pie',
+                radius: ['66%', '60%'],
+                center: ['50%', '45%'],
+                gap: 1.71,
+                label: {
+                  show: false,
+                },
+                labelLine: {
+                  show: false,
+                },
+                silent: true,
+                data: pieData2,
+              },
+              {
+                type: 'gauge',
+                zlevel: 2,
+                splitNumber: 90,
+                radius: '60%',
+                center: ['50%', '45%'],
+                startAngle: 90,
+                endAngle: -269.9999,
+                axisLine: {
+                  show: false,
+                },
+                axisTick: {
+                  show: false,
+                },
+                axisLabel: {
+                  show: false,
+                },
+                splitLine: {
+                  show: true,
+                  length: 7,
+                  lineStyle: {
+                    width: 4,
+                    color: 'rgb(33,85,130)',
+                  },
+                },
+                pointer: {
+                  show: 0,
+                },
+                detail: {
+                  show: 0,
+                },
+              },
+              {
+                type: 'pie',
+                center: ['50%', '45%'],
+                radius: [0, '45.6%'],
+                label: {
+                  show: false,
+                },
+                labelLine: {
+                  show: false,
+                },
+                itemStyle: {
+                  color: 'rgba(75, 126, 203,.1)',
+                },
+                silent: true,
+                data: [
+                  {
+                    value: 100,
                     name: '',
-                    type: 'pie',
-                    clockWise: false, //顺时加载
-                    hoverAnimation: false, //鼠标移入变大
-                    center: ['40%', '50%'],
-                    radius: ['80%', '81%'],
-                    tooltip: {
-                        show: false
-                    },
-                    label: {
-                        normal: {
-                            show: false
-                        }
-                    },
-                    data: baseDataWrap
-                },
-                {
-                    name: '报警',
-                    type: 'pie',
-                    color: colorPie,
-                    selectedMode: 'single',
-                    radius: ['55%', '58%'],
-                    center: ['40%', '50%'],
-                    hoverAnimation: false,
-                    label: {
-                        normal: {
-                            show: false,
-                        }
-                    },
-                    data: baseDataPie
-                },
-
-            ]
-        }
-        chart.setOption(option);
-        echartsResize(chart)
-        return () => {
-          chart.dispose();
+                  },
+                ],
+              },
+            ],
         };
+        if (chartInstance) {
+        chartInstance.setOption(option);
+        echartsResize(chartInstance)
+        }
       },[data,isDarkTheme])
 
   return (
    <>
-     <div className='mt-2 mb-2' style={{maxWidth: "100%",height: '400px'}}>
+    <div className='text-center font-bold text-md md:text-2xl dark:text-white px-2 py-2'>Total Contracts Traded For The Past 24 Hours Across Exchanges</div>
+    <div className='mt-2 mb-2 pb-2 items-center justify-center text-center' style={{maxWidth: "100%",height: '300px'}}>
           <div ref={chartRef} style={{height: "310px"}}></div>
     </div>
    </>

@@ -100,7 +100,7 @@ const ActivityPieChart = ({data}: any) => {
             backgroundColor: isDarkTheme ? '#000000':  '#ffffff' ,
 
             title: {
-                text: "Total Contracts",
+                text: "Total Traded",
                 subtext: sumOfContracts,
                 x: "49.7%",
                 y: "35%",
@@ -227,7 +227,7 @@ const ActivityPieChart = ({data}: any) => {
    <>
     <div className='text-center font-bold text-md md:text-2xl dark:text-white px-2 py-2'>Total Contracts Traded For The Past 24 Hours Across Exchanges</div>
     <div className='mt-2 mb-2 pb-2 items-center justify-center text-center' style={{maxWidth: "100%",height: '300px'}}>
-          <div ref={chartRef} style={{height: "310px"}}></div>
+          <div ref={chartRef} style={{height: "310px", width:'100%'}}></div>
     </div>
    </>
   )

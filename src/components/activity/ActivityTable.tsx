@@ -191,7 +191,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                                 <td
                                   {...cell.getCellProps()}
                                   className={classNames(
-                                    "px-3  py-1 whitespace-nowrap",
+                                    "px-3 py-1 whitespace-nowrap",
                                     direction === "BUY" ? " text-green-700" : null,
                                     direction === "SELL" ? " text-red-700" : null,
                                   )}
@@ -441,7 +441,7 @@ export function Button({ children, className, ...rest }: any) {
     return (
       <span
         className={classNames(
-          "px-3 py-1 uppercase leading-wide font-bold text-xs ",
+          "px-3 py-1 uppercase leading-wide font-bold text-sm ",
 
         )}
       >
@@ -456,7 +456,7 @@ export function Button({ children, className, ...rest }: any) {
     return (
       <span
         className={classNames(
-          "px-3 py-1 uppercase leading-wide font-bold text-xs ",
+          "px-3 py-1 uppercase leading-wide text-sm font-bold whitespace-nowrap ",
 
         )}
       >
@@ -472,7 +472,7 @@ export function Button({ children, className, ...rest }: any) {
     return (
       <span
         className={classNames(
-          "px-3 py-1 uppercase leading-wide font-bold text-xs flex gap-2",
+          "px-3 py-1 uppercase leading-wide text-sm font-bold flex gap-2",
 
         )}
       >
@@ -487,7 +487,7 @@ export function Button({ children, className, ...rest }: any) {
     return (
       <span
         className={classNames(
-          "px-3 py-1 uppercase leading-wide font-bold text-xs flex gap-2",
+          "px-3 py-1 uppercase leading-wide text-sm font-bold flex gap-2",
 
         )}
       >

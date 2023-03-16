@@ -1,15 +1,13 @@
 import React, { useMemo, useRef } from 'react'
 import ReactTable, { useTable, useExpanded, useGroupBy, useRowSelect, usePagination, useGlobalFilter, useBlockLayout,useAsyncDebounce, useFilters , useSortBy}  from 'react-table';
-import ActivitySearch from './ActivitySearch';
 import { classNames } from '../../utils/Utils';
 import { CgChevronDoubleLeft, CgChevronDoubleRight, CgChevronRight, CgChevronLeft } from 'react-icons/cg'
 import {FaBitcoin, FaEthereum} from 'react-icons/fa'
-import ReactGridLayout from "react-grid-layout";
 import moment from 'moment';
 import { exchangeModel } from '../../models/exchangeModel';
 import ActivityFilterDropdown from './ActivityFilterDropdown';
 import {GiStoneBlock} from "react-icons/gi"
-import FilterDropdown from '../misc/FilterDropdown';
+
 
 interface ActivityTable {
     blockTradeID: number,
@@ -142,7 +140,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
       </div>
       {/* table */}
       <div className="flex flex-col">
-        <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
+        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block w-full sm:px-6 lg:px-8">
             <div className="shadow overflow-hidden border-b border-gray-200 dark:border-black ">
               <div className='flex flex-1 w-full relative'>
@@ -240,7 +238,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
         </div>
       </div>
       {/* Pagination */}
-      <div className="py-3 px-3 flex items-center justify-between bg-white dark:bg-black rounded-b-lg">
+      <div className="py-3 px-3 flex items-center justify-between bg-white dark:bg-black sm:rounded-b-lg">
         <div className="flex-1 flex justify-between sm:hidden">
           <Button onClick={() => previousPage()} disabled={!canPreviousPage}>Previous</Button>
           <Button onClick={() => nextPage()} disabled={!canNextPage}>Next</Button>
@@ -270,11 +268,11 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
           <div>
             <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px " aria-label="Pagination">
               <PageButton
-                className="rounded-l-md dark:bg-black dark:border-gray-900"
+                className="rounded-l-md "
                 onClick={() => gotoPage(0)}
                 disabled={!canPreviousPage}
               >
-                <span className="sr-only">First</span>
+                <span className="sr-only ">First</span>
                 <CgChevronDoubleLeft className="h-5 w-5 text-gray-400" aria-hidden="true" />
               </PageButton>
               <PageButton
@@ -354,7 +352,7 @@ export function Button({ children, className, ...rest }: any) {
       <button
         type="button"
         className={classNames(
-          "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50",
+          "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 dark:text-white bg-white hover:bg-gray-50 dark:bg-black dark:border-gray-700",
           className
         )}
         {...rest}
@@ -369,7 +367,7 @@ export function Button({ children, className, ...rest }: any) {
       <button
         type="button"
         className={classNames(
-          "relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50",
+          "relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 dark:text-white hover:bg-gray-50 dark:bg-black dark:border-gray-700",
           className
         )}
         {...rest}

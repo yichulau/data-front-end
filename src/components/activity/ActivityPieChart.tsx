@@ -180,7 +180,7 @@ const ActivityPieChart = ({data}: any) => {
    <>
      <div className='mt-2 mb-2' style={{maxWidth: "100%",height: '400px'}}>
           <div ref={chartRef} style={{height: "310px"}}></div>
-        </div>
+    </div>
    </>
   )
 }

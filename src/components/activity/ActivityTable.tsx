@@ -74,6 +74,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
     getTableBodyProps, 
     headerGroups, 
     //new
+    rows,
     page, 
     canPreviousPage,
     canNextPage,
@@ -142,7 +143,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
           <div className="py-2 align-middle inline-block w-full sm:px-6 lg:px-8">
             <div className="shadow overflow-hidden border-b border-gray-200 dark:border-black ">
               <div className='flex flex-1 w-full relative'>
-                <div className='w-full overflow-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-white dark:scrollbar-track-zinc-600'>
+                <div className='w-full min-h-[400px]  overflow-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-white dark:scrollbar-track-zinc-600'>
                   <table {...getTableProps()} className="w-full  divide-y table-auto divide-gray-200 dark:divide-black">
                     <thead className="bg-gray-50 dark:bg-zinc-900">
                       {headerGroups.map((headerGroup, index ) => (
@@ -212,13 +213,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                           </tr>
                         )
                       })}
-                      {page.length === 0 ? (
-                         <tr>
-                          <td colSpan={100} className="py-8 text-center font-bold">
-                            No Data
-                          </td>
-                       </tr>
-                      ) : null  }
+
                     </tbody>
                   </table>
                 </div>
@@ -493,3 +488,5 @@ export function Button({ children, className, ...rest }: any) {
       </span>
     );
   }
+
+  

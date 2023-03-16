@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import useFetchData from '../../hooks/useFetchData';
 import { contractTraded } from '../../utils/contract-traded-urls';
 import ActivityPieChart from '../../components/activity/ActivityPieChart';
@@ -18,18 +18,18 @@ const WS_URL = 'wss://data-ribbon-collector.com/websocket';
 const RecentTrade = () => {
     const urlsContracts = contractTraded.urls;
     const ResponsiveGridLayout : any = useMemo(() => WidthProvider(Responsive), []);
-
+    const [width, setWidth] = useState<any>(undefined);
 
     const [callContractData, setCallContractData] : any = useState([]);
     const [putContractData, setPutContractData] : any = useState([]);
 
     const [layouts, setLayout] = useState<any>([
-        { i: 'table1', x: 0, y: 0, w: 6, h: 14,minW: 4 ,},
-        { i: 'table2', x: 6, y: 0, w: 6, h: 14, minW: 4 , },
-    ]);
+        { i: 'table1', x: 0, y: 0, w: 6, h: 15, minW: 4 },
+        { i: 'table2', x: 6, y: 0, w: 6, h: 15, minW: 4 },
+      ]);
 
-    const dataSet = useFetchData(urlsContracts)
-    const summarizeData = summarizeCount24h(dataSet)
+    // const dataSet = useFetchData(urlsContracts)
+    // const summarizeData = summarizeCount24h(dataSet)
 
 
     const { sendJsonMessage, getWebSocket } = useWebSocket(WS_URL, {
@@ -127,6 +127,14 @@ const RecentTrade = () => {
         return result;
     }  
 
+    useLayoutEffect(()=>{
+        if (typeof window !== 'undefined') {
+          window.onresize = () => {
+            setWidth(window.innerWidth);
+          }
+          setWidth(() => window.innerWidth);
+        }
+    },[])
 
     useEffect(() => {
         function connect() {
@@ -158,58 +166,70 @@ const RecentTrade = () => {
   return (
     <>
     <div className="container py-1 mx-auto">
+        {width > 764 ? (
+            <ResponsiveGridLayout
+                className="layout"
+                layouts={{ lg: layouts }}
+                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
+                rowHeight={30}
+                margin={[10, 10]}
+                isResizable={true}
+                isDraggable={true}
+                draggableHandle=".drag-handle"
+                onLayoutChange={(newLayout: any) => setLayout(newLayout)}
+            >
+                <div key="table1" className="grid-item">
+                    <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>x</div>
+                    <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
+                        
+                        <div className="overflow-x-auto scrollbar-none md:w-full ">
+                            {/* <div className="cursor-grab top-5 right-4 drag-handle absolute "><MdOutlineDragIndicator /></div> */}
+                            <ActivityTable
+                                title={`Option Call (CALL)`}
+                                data={callContractData.sort((a: any, b: any) => b.tradeTime - a.tradeTime)}
+                            />
+                        </div>
     
-      {/* <ResponsiveGridLayout
-          className="layout"
-          layouts={{ lg: layouts }}
-          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-          cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
-          rowHeight={30}
-          margin={[10, 10]}
-          isResizable={false}
-          isDraggable={true}
-          draggableHandle=".drag-handle"
-          onLayoutChange={(newLayout: any) => setLayout(newLayout)}
+                    </div>
+                </div>
+                <div key="table2" className="grid-item">
+                    <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>x</div>
+                    <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>  
+                        <div className="overflow-x-auto scrollbar-none md:w-full">
+                            {/* <div className="cursor-grab top-5 right-4 drag-handle absolute "><MdOutlineDragIndicator /></div> */}
+                            <ActivityTable 
+                                title={`Option Call (PUT)`}
+                                data={putContractData.sort((a:any,b:any) => b.tradeTime - a.tradeTime)}
+                            />
+                        </div>
+                    </div>
+                    
+                </div>
+            </ResponsiveGridLayout>
 
-        >
-        <div key="table1" className="grid-item" >
-            <div className="w-full h-full drag-handle">
-                <div className='md:w-full mt-2'>
-                    <ActivityTable
-                        title={`Option Call (CALL)`}
-                        data={callContractData.sort((a: any, b: any) => b.tradeTime - a.tradeTime)}
+        ) : null}
+        {width <= 764 ? (
+            <div className="flex flex-wrap w-full px-auto md:px-6">
+                <div key="table1" className='flex flex-col w-full md:w-1/2 px-2 mb-4'>
+                    <ActivityTable 
+                    title={`Option Call (CALL)`}
+                    data={callContractData.sort((a:any,b:any) => b.tradeTime - a.tradeTime)}
+                    />
+                </div>
+                <div key="table2" className='flex flex-col w-full md:w-1/2 px-2 mb-4'>
+                    <ActivityTable 
+                    title={`Option Call (PUT)`}
+                    data={putContractData.sort((a:any,b:any) => b.tradeTime - a.tradeTime)}
                     />
                 </div>
             </div>
-        </div>
-        <div key="table2" className="grid-item" >
-            <div className="w-full h-full drag-handle">
-                <div className='md:w-full mt-2'>
-                <ActivityTable
-                        title={`Option Call (PUT)`}
-                        data={putContractData.sort((a: any, b: any) => b.tradeTime - a.tradeTime)}
-                    />
-                </div>
-            </div>
-        </div>
+        ): null}
 
-        </ResponsiveGridLayout> */}
-
+    
+   
         {/* <ActivityPieChart data={summarizeData}/> */}
-       <div className="flex flex-wrap w-full px-auto md:px-6">
-            <div key="table1" className='flex flex-col w-full md:w-1/2 px-2 mb-4'>
-                <ActivityTable 
-                title={`Option Call (CALL)`}
-                data={callContractData.sort((a:any,b:any) => b.tradeTime - a.tradeTime)}
-                />
-            </div>
-            <div key="table2" className='flex flex-col w-full md:w-1/2 px-2 mb-4'>
-                <ActivityTable 
-                title={`Option Call (PUT)`}
-                data={putContractData.sort((a:any,b:any) => b.tradeTime - a.tradeTime)}
-                />
-            </div>
-        </div>
+
 
    
     </div>

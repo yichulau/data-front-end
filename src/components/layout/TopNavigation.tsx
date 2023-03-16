@@ -68,7 +68,7 @@ const TopNavigation = () => {
         <nav className="bg-gray-50 dark:bg-gray-800">
             <div className="max-w-screen-xl px-4 py-3 mx-auto md:px-6">
                 <div className="flex items-center">
-                    <ul className="flex flex-row mt-0 mr-6 space-x-6 text-sm font-medium">
+                    <ul className="flex flex-row mt-0 mr-6 space-x-1 md:space-x-6 text-sm font-medium">
                         <li className={router.pathname == "/" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow px-1 md:px-4 rounded-lg py-1 md:py-2" : "py-1 md:py-2 px-1 md:px-4"}>
                             <Link href="/">
                                 <div className="text-gray-900 dark:text-white md:hover:underline" aria-current="page">Dashboard</div>

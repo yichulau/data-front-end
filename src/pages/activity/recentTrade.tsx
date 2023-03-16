@@ -95,14 +95,14 @@ const RecentTrade = () => {
                     isBlockTrade: 1, 
                     direction: data.data.direction !== undefined ? (data.data.direction).toUpperCase() : data.data.side !== undefined ? (data.data.side).toUpperCase() : 'UNKNOWN' , 
                     price: data.data.price !== undefined ? data.data.price : data.data.orderPrice, 
-                    amount: data.data.amount !== undefined ? data.data.amount : data.data.positionQuantity !== undefined ? data.data.positionQuantity : data.data.quantity,
+                    amount:  data.data.amount !== undefined ? data.data.amount : data.data.positionQuantity !== undefined ? data.data.positionQuantity : data.data.quantity !== undefined ? data.data.quantity : data.data.size,
                     optionType: "",
                 }]);
                 setPutContractData((prevData : any) => [...prevData, {...data.data, 
                     isBlockTrade: 1, 
                     direction: data.data.direction !== undefined ? (data.data.direction).toUpperCase() : data.data.side !== undefined ? (data.data.side).toUpperCase() : 'UNKNOWN' , 
                     price: data.data.price !== undefined ? data.data.price : data.data.orderPrice, 
-                    amount: data.data.amount !== undefined ? data.data.amount : data.data.positionQuantity !== undefined ? data.data.positionQuantity : data.data.quantity,
+                    amount: data.data.amount !== undefined ? data.data.amount : data.data.positionQuantity !== undefined ? data.data.positionQuantity : data.data.quantity !== undefined ? data.data.quantity : data.data.size,
                     optionType: "",
                 }]);
 

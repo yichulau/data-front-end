@@ -30,8 +30,6 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
               Header: "direction",
               accessor: "direction",
               Cell: DirectionPill,
-              Filter: SelectColumnFilter,  // new
-              filter: 'includes',  // new
             },
             {
               Header: "exchange",
@@ -41,14 +39,14 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
             {
               Header: "instruments",
               accessor: "instrumentID",
-              Filter: SelectColumnFilter,  // new
-              filter: 'includes',  // new
             },
 
             {
                 Header: "coinCurrency",
                 accessor: "coinCurrencyID",
-                Cell: coinCurrencyPill
+                Cell: coinCurrencyPill,
+                // Filter: SelectColumnFilter,  // new
+                // filter: 'includes',  // new
             },
             {
               Header: "optionType",
@@ -124,7 +122,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
              */}
      
 
-              {/* {headerGroups.map((headerGroup) =>
+              {headerGroups.map((headerGroup) =>
                 headerGroup.headers.map((column) =>
                   column.Filter ? (
                     <div className="mt-2 sm:mt-0" key={column.id}>
@@ -132,7 +130,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                     </div>
                   ) : null
                 )
-              )} */}
+              )}
           </div>
         </div>
 
@@ -185,13 +183,13 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                         const direction  = row.original.direction
 
                         return (
-                          <tr   key={`row-${i}`} {...row.getRowProps()} className='dark:even:bg-zinc-900 dark:odd:bg-black even:bg-white odd:bg-gray-100'>
+                          <tr   key={`row-${i}`} {...row.getRowProps()} className='dark:even:bg-zinc-900 dark:odd:bg-black even:bg-white odd:bg-gray-100 md:hover:bg-zinc-100 md:dark:hover:bg-stone-800'>
                             {row.cells.map((cell:any) => {
                               return (
                                 <td
                                   {...cell.getCellProps()}
                                   className={classNames(
-                                    "px-3 py-1 whitespace-nowrap",
+                                    "px-3 py-1 whitespace-nowrap ",
                                     direction === "BUY" ? " text-green-700" : null,
                                     direction === "SELL" ? " text-red-700" : null,
                                   )}
@@ -326,7 +324,7 @@ export function SelectColumnFilter({
     // Render a multi-select box
     return (
         <label className="flex gap-x-2 items-baseline">
-          <span className="text-gray-700">{render("Header")}: </span>
+          {/* <span className="text-gray-700">{render("Header")}: </span> */}
           <select
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             name={id}
@@ -336,7 +334,7 @@ export function SelectColumnFilter({
               setFilter(e.target.value || undefined)
             }}
           >
-            <option value="">All</option>
+            <option value="">{render("Header")}</option>
             {options.map((option : any, i) => (
               <option key={i} value={option}>
                 {option}
@@ -419,7 +417,7 @@ export function Button({ children, className, ...rest }: any) {
     return (
       <span
         className={classNames(
-          "px-3 py-1 uppercase leading-wide font-bold text-xs text-center flex gap-2",
+          "px-3 py-1 uppercase leading-wide font-bold text-sm text-center flex gap-2 items-center",
         )}
       >
         {status === 1 ? (

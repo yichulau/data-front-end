@@ -94,7 +94,7 @@ const ActivityPieChart = ({data}: any) => {
           });
         }
     
-        console.log(legendData)
+
 
         const option = {
             backgroundColor: isDarkTheme ? '#000000':  '#ffffff' ,

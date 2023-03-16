@@ -221,6 +221,9 @@ const RecentTrade = () => {
         ) : null}
         {width <= 764 ? (
             <div className="flex flex-wrap w-full px-auto md:px-6">
+                <div key="table3" className='flex flex-col w-full md:w-1/2 px-2 mb-4'>
+                    <ActivityPieChart data={summarizeData}/> 
+                </div>
                 <div key="table1" className='flex flex-col w-full md:w-1/2 px-2 mb-4'>
                     <ActivityTable 
                     title={`Option Call (CALL)`}

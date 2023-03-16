@@ -7,6 +7,7 @@ import MyThemeContext from '../../store/myThemeContext';
 const ActivityPieChart = ({data}: any) => {
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef: any = useRef();
+    const resizeObserver : any= useRef(null);
     const responseData = useMemo(()=> data, [data]);
     const [chartInstance, setChartInstance] = useState<any>(null);
     const sumOfContracts = responseData.reduce((accumulator:any,currentVal:any) => {
@@ -218,17 +219,32 @@ const ActivityPieChart = ({data}: any) => {
             ],
         };
         if (chartInstance) {
-        chartInstance.setOption(option);
-        echartsResize(chartInstance)
+            chartInstance.setOption(option);
+            resizeObserver.current = new ResizeObserver(() => {
+                chartInstance.resize();
+            });
+              resizeObserver.current.observe(chartRef.current);
+            return () => {
+                // Clean up the observer on component unmount
+                if (chartRef.current) {
+                    resizeObserver.current.unobserve(chartRef.current);
+                }
+            };
+            // echartsResize(chartInstance)
         }
       },[data,isDarkTheme])
 
   return (
    <>
-    <div className='text-center font-bold text-md md:text-2xl dark:text-white px-2 py-2'>Total Contracts Traded For The Past 24 Hours Across Exchanges</div>
-    <div className='mt-2 mb-2 pb-2 items-center justify-center text-center' style={{maxWidth: "100%",height: '300px'}}>
-          <div ref={chartRef} style={{height: "310px", width:'100%'}}></div>
-    </div>
+        <div className="text-center font-bold text-md md:text-2xl dark:text-white px-2 py-2">
+        Total Contracts Traded For The Past 24 Hours Across Exchanges
+      </div>
+      <div
+        className="mt-2 mb-2 pb-2 items-center justify-center text-center"
+        style={{ maxWidth: '100%', height: '300px' }}
+      >
+        <div ref={chartRef} style={{ height: '310px', width: '100%' }}></div>
+      </div>
    </>
   )
 }

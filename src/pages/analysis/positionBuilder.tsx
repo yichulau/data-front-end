@@ -49,7 +49,7 @@ const PositionBuilder : React.FC<PositionProps> = () => {
   const windowWidth = useRef<number>(0);
   const [layout, setLayout] = useState<any>([
     { i: 'positionCreator', x: 0, y: 0, w: 3, h: 11, minW: 2, maxW: 12 , minH: 5, },
-    { i: 'chartContainer', x: 5, y: 0, w: 9, h: 11, minW: 9, maxW: 12 , minH: 11, maxH: 13 },
+    { i: 'chartContainer', x: 5, y: 0, w: 9, h: 11, minW: 5, maxW: 12 , minH: 11, maxH: 13 },
     { i: 'positionsTable', x: 0, y: 1, w: 12, h: 5 , minW: 2, maxW: 12 , minH: 5, maxH: 13 },
   ]);
 

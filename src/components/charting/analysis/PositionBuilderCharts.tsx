@@ -15,6 +15,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
 
     const { isDarkTheme}= useContext(MyThemeContext); 
     const chartRef = useRef<HTMLDivElement>(null);
+    const resizeObserver : any= useRef(null);
     const dataArray = useMemo(() => data, [data]);
     const [sliderValue, setSliderValue] = useState<number>(0);
     const [chartData, setChartData] = useState<any[]>([]);
@@ -374,7 +375,17 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
       
       if (chartInstance) {
         chartInstance.setOption(options);
-        echartsResize(chartInstance)
+        resizeObserver.current = new ResizeObserver(() => {
+            chartInstance.resize();
+        });
+          resizeObserver.current.observe(chartRef.current);
+        return () => {
+        // Clean up the observer on component unmount
+           if (chartRef.current) {
+              resizeObserver.current.unobserve(chartRef.current);
+            }
+        };
+        // echartsResize(chartInstance)
       }
     }, [data,isDarkTheme,chartData,chartInstance]);
 

@@ -79,7 +79,7 @@ const StrikeVol = () => {
     <>
       <div className="container py-1 mx-auto">
           <div className="flex flex-wrap">
-              <div className="px-6 py-2 w-full h-full flex flex-col items-start">
+              <div className="px-2 md:px-6 py-2 w-full h-full flex flex-col items-start">
                   <div className='bg-white w-full shadow-sm rounded-lg p-4 dark:bg-black'>
                       <h2 className="ml-1 text-lg font-medium text-gray-900 mt-4 mb-4 dark:text-white">Options Open Interest Volume By Strike</h2>
                       <div className='flex flex-row justify-between'>

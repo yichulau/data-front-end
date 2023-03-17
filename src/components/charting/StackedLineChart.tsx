@@ -7,6 +7,7 @@ import DropdownIndex from '../misc/DropdownIndex';
 import MyThemeContext from '../../store/myThemeContext';
 import Loader from '../misc/Loader';
 import aggregrationCalculation from '../../utils/aggregrationCalculation';
+import DropdownLeft from '../misc/DropdownLeft';
 
 const StackedLineChart = ( {data: dataSet } : any) => {
     const { isDarkTheme }= useContext(MyThemeContext); 
@@ -313,7 +314,7 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                     />
                 </div>
                 <div className='px-2 flex flex-col'>
-                    <DropdownIndex 
+                    <DropdownLeft 
                         title={`Granularity`}
                         options={granularityOption}
                         onChange={handleGranularityChange}

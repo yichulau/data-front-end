@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import useFetchData from '../../hooks/useFetchData';
 import { contractTraded } from '../../utils/contract-traded-urls';
 import ActivityPieChart from '../../components/activity/ActivityPieChart';
@@ -18,26 +18,22 @@ const RecentTrade = () => {
     const urlsContracts = contractTraded.urls;
     const ResponsiveGridLayout : any = useMemo(() => WidthProvider(Responsive), []);
     const [width, setWidth] = useState<any>(undefined);
-
     const [callContractData, setCallContractData] : any = useState([]);
     const [putContractData, setPutContractData] : any = useState([]);
-
-    const [layouts, setLayout] = useState<any>([
-        { i: 'table1', x: 0, y: 1, w: 6, h: 15, minW: 4 },
-        { i: 'table2', x: 6, y: 1, w: 6, h: 15, minW: 4 },
-        { i: 'table3', x: 0, y: 0, w: 12, h: 9, minW: 4 },
-      ]);
-
+    const [isRadio, setIsRadio] = useState(1);
     const dataSet = useFetchData(urlsContracts)
     const summarizeData = summarizeCount24h(dataSet)
-
-
     const { sendJsonMessage, getWebSocket } = useWebSocket(WS_URL, {
         onOpen: () => console.log('WebSocket connection opened.'),
         onClose: () => console.log('WebSocket connection closed.'),
         shouldReconnect: (closeEvent) => true,
         onMessage: (event: WebSocketEventMap['message']) =>  processMessages(event)
     });
+    const [layouts, setLayout] = useState<any>([
+        { i: 'table1', x: 0, y: 1, w: 6, h: 15, minW: 4 },
+        { i: 'table2', x: 6, y: 1, w: 6, h: 15, minW: 4 },
+        { i: 'table3', x: 0, y: 0, w: 12, h: 10, minW: 4 },
+    ]);
 
     
     function processMessages(event: { data: string; }){
@@ -111,10 +107,6 @@ const RecentTrade = () => {
 
     }
 
-
-    
-
-    
     function summarizeCount24h(data : any) {
         const result = [];
         const exchanges : any = new Set(data.map((d : any) => d.exchange));
@@ -126,6 +118,30 @@ const RecentTrade = () => {
         }
         return result;
     }  
+
+    function handleFilterCoin(selectionVal : number){
+        const result = [];
+        const exchanges : any = new Set(dataSet.map((d : any) => d.coinCurrency));
+        console.log(exchanges)
+        console.log(dataSet)
+        // eth
+        for (const exchange of exchanges) {
+          const count24h = dataSet
+            .filter((d : any) => d.coinCurrency === exchange)
+            .reduce((sum : any, d: any) => sum + d.count24h, 0);
+          result.push({ count24h, exchange: exchange.toUpperCase()});
+        }
+        console.log(result)
+        // return result;
+    }
+    
+    
+    function onCoinChange(event: ChangeEvent<HTMLInputElement>){
+        const {name, value} = event.target
+        console.log(value)
+        setIsRadio(+value);
+        handleFilterCoin(+value)
+    }
 
     useLayoutEffect(()=>{
         if (typeof window !== 'undefined') {
@@ -155,12 +171,6 @@ const RecentTrade = () => {
         
         return () => clearInterval(pingInterval);
     }, [sendJsonMessage, getWebSocket]);
-
-
-
-    
-    
-
 
 
   return (
@@ -210,6 +220,47 @@ const RecentTrade = () => {
                     <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
                     <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>  
                         <div className="overflow-x-auto scrollbar-none md:w-full">
+                            <div className="text-center font-bold text-md md:text-lg dark:text-white px-2 py-2 rounded-lg">
+                                Total Contracts Traded For The Past 24 Hours Across Exchanges
+                            </div>
+{/* 
+                            <div className='justify-center text-center flex flex-wrap'>
+                                <div className="flex items-center mr-4">
+                                    <input 
+                                        value='1'
+                                        onChange={onCoinChange}
+                                        checked={isRadio === 1}
+                                        id="red-radio" type="radio" 
+                                        name="colored-radio" 
+                                        className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                    />
+                                    <label htmlFor="red-radio" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">ALL</label>
+                                </div>
+                                <div className="flex items-center mr-4">
+                                    <input 
+                                        value='2'
+                                        onChange={onCoinChange}
+                                        checked={isRadio === 2}
+                                        id="green-radio" 
+                                        type="radio"
+                                        name="colored-radio" 
+                                        className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                    />
+                                    <label htmlFor="green-radio" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">BTC</label>
+                                </div>
+                                <div className="flex items-center mr-4">
+                                    <input 
+                                        value='3'
+                                        onChange={onCoinChange}
+                                        checked={isRadio === 3}
+                                        id="purple-radio" 
+                                        type="radio" 
+                                        name="colored-radio" 
+                                        className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                    />
+                                    <label htmlFor="purple-radio" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">ETH</label>
+                                </div>
+                            </div> */}
                             <ActivityPieChart data={summarizeData}/> 
                         </div>
                     </div>

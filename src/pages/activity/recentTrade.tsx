@@ -5,7 +5,6 @@ import ActivityPieChart from '../../components/activity/ActivityPieChart';
 import ActivityTable from '../../components/activity/ActivityTable';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
-import ActivityDataGrid from '../../components/activity/ActivityDataGrid';
 import {MdOutlineDragIndicator} from 'react-icons/md';
 import '/node_modules/react-grid-layout/css/styles.css';
 import '/node_modules/react-resizable/css/styles.css';

@@ -236,7 +236,7 @@ const ActivityPieChart = ({data}: any) => {
 
   return (
    <>
-        <div className="text-center font-bold text-md md:text-2xl dark:text-white px-2 py-2">
+        <div className="text-center font-bold text-md md:text-lg dark:text-white px-2 py-2">
         Total Contracts Traded For The Past 24 Hours Across Exchanges
         </div>
         <div

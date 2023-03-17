@@ -69,6 +69,9 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
         ],
         []
     );
+
+
+ 
     
     const { getTableProps, 
     getTableBodyProps, 
@@ -85,6 +88,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
     previousPage,
     setPageSize,
     prepareRow,
+    totalColumnsWidth,
     state, // new
     preGlobalFilteredRows, // new
     setGlobalFilter, // new    
@@ -99,6 +103,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
         useSortBy,
         usePagination,  // new
     );
+
 
     // console.log(data)
 
@@ -179,6 +184,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                       {...getTableBodyProps()}
                       className="bg-white dark:bg-black divide-y divide-gray-200 dark:divide-gray-600 "
                     >
+
                       {page.map((row : any, i) => {  // new
                         prepareRow(row)
                         const direction  = row.original.direction

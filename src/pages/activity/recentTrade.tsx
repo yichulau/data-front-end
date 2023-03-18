@@ -10,7 +10,7 @@ import '/node_modules/react-grid-layout/css/styles.css';
 import '/node_modules/react-resizable/css/styles.css';
 
 const WS_URL = 'wss://data-ribbon-collector.com/websocket';
-
+const originalLayouts = getFromLS("layouts") || {};
 // const WS_URL = 'ws://127.0.0.1:3002';
 
 
@@ -29,11 +29,7 @@ const RecentTrade = () => {
         shouldReconnect: (closeEvent) => true,
         onMessage: (event: WebSocketEventMap['message']) =>  processMessages(event)
     });
-    const [layouts, setLayout] = useState<any>([
-        { i: 'table1', x: 0, y: 1, w: 6, h: 15, minW: 4 },
-        { i: 'table2', x: 6, y: 1, w: 6, h: 15, minW: 4 },
-        { i: 'table3', x: 0, y: 0, w: 12, h: 10, minW: 4 },
-    ]);
+    const [layouts, setLayout] = useState<any>(JSON.parse(JSON.stringify(originalLayouts)));
 
     const [summarizeDataSet, setSummarizeDataSet] = useState([])
     const summarizeData = summarizeCount24h(dataSet)
@@ -164,12 +160,13 @@ const RecentTrade = () => {
         return result;
     }
     
-    
     function onCoinChange(event: ChangeEvent<HTMLInputElement>){
         const {name, value} = event.target
         setIsRadio(+value);
         setSummarizeDataSet(handleFilterCoin(+value))
     }
+
+
 
     useLayoutEffect(()=>{
         if (typeof window !== 'undefined') {
@@ -201,7 +198,7 @@ const RecentTrade = () => {
         return () => clearInterval(pingInterval);
     }, [sendJsonMessage, getWebSocket]);
 
-    console.log(dataSet)
+    
   return (
     <>
     <div className="container py-1 mx-auto">
@@ -216,7 +213,11 @@ const RecentTrade = () => {
                 isResizable={true}
                 isDraggable={true}
                 draggableHandle=".drag-handle"
-                onLayoutChange={(newLayout: any) => setLayout(newLayout)}
+                onLayoutChange={(newLayout: any ) => {
+                    saveToLS("layouts", newLayout)
+                    setLayout(newLayout)
+                }}
+                useCSSTransforms={false}
             >
                 <div key="table1" className="grid-item">
                     <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
@@ -399,3 +400,30 @@ const RecentTrade = () => {
 
 export default RecentTrade
 
+
+function getFromLS(key: any) {
+    let ls : any= {};
+    if (typeof window !== "undefined") {
+        if (localStorage) {
+            try {
+      
+              ls = (JSON.parse(localStorage.getItem('rgl-8') || '{}'));
+            } catch (e) {
+              /*Ignore*/
+            }
+          }
+    }
+
+    return ls[key];
+}
+  
+function saveToLS(key: any, value: any) {
+    if (global.localStorage) {
+        global.localStorage.setItem(
+        "rgl-8",
+        JSON.stringify({
+            [key]: value
+        })
+        );
+    }
+}

@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react'
-import ReactTable, { useTable, useExpanded, useGroupBy, useRowSelect, usePagination, useGlobalFilter, useBlockLayout,useAsyncDebounce, useFilters , useSortBy}  from 'react-table';
+import ReactTable, { useTable, useExpanded, useGroupBy, useRowSelect, usePagination, useGlobalFilter, useBlockLayout,useAsyncDebounce, useFilters , useSortBy, useResizeColumns}  from 'react-table';
 import { classNames } from '../../utils/Utils';
 import { CgChevronDoubleLeft, CgChevronDoubleRight, CgChevronRight, CgChevronLeft } from 'react-icons/cg'
 import {FaBitcoin, FaEthereum} from 'react-icons/fa'
@@ -7,6 +7,7 @@ import moment from 'moment';
 import { exchangeModel } from '../../models/exchangeModel';
 import ActivityFilterDropdown from './ActivityFilterDropdown';
 import {GiStoneBlock} from "react-icons/gi"
+import ActivitySearch from './ActivitySearch';
 
 
 interface ActivityTable {
@@ -39,6 +40,8 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
             {
               Header: "instruments",
               accessor: "instrumentID",
+              Filter: SelectColumnFilter,  // new
+              filter: 'includes',  // new
             },
 
             {
@@ -101,6 +104,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
         useFilters, 
         useGlobalFilter,
         useSortBy,
+        useResizeColumns,
         usePagination,  // new
     );
 
@@ -118,17 +122,18 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
             {title}
           </div>
         
-          <div className='flex'>
-            <ActivityFilterDropdown allColumns={allColumns} getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}/>
-              {/* <ActivitySearch
+          <div className='flex justify-between'>
+              <ActivitySearch
                 preGlobalFilteredRows={preGlobalFilteredRows}
                 globalFilter={state.globalFilter}
                 setGlobalFilter={setGlobalFilter}
               />
-             */}
+              <ActivityFilterDropdown allColumns={allColumns} getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}/>
+           
+            
      
 
-              {headerGroups.map((headerGroup) =>
+              {/* {headerGroups.map((headerGroup) =>
                 headerGroup.headers.map((column) =>
                   column.Filter ? (
                     <div className="mt-2 sm:mt-0" key={column.id}>
@@ -136,7 +141,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                     </div>
                   ) : null
                 )
-              )}
+              )} */}
           </div>
         </div>
 
@@ -175,6 +180,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                                     )}
                                 </span>
                               </div>
+                             
                             </th>
                           ))}
                         </tr>

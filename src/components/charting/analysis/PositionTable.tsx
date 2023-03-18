@@ -174,7 +174,7 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
                             <input type="text" id="simple-search"
                                 value={globalFilter || ""}   
                                 onChange={(e :any) => setGlobalFilter(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" 
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-900 dark:border-gray-800 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" 
                             />
                         </div>
                     </form>
@@ -184,7 +184,7 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
                     <FilterDropdown allColumns={allColumns} getToggleHideAllColumnsProps={getToggleHideAllColumnsProps} />
                     <button type="button" 
                         onClick={onDownload}
-                    className="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    className="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-800 dark:hover:text-white dark:hover:bg-gray-700">
                         <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                         </svg>
@@ -193,10 +193,10 @@ const PositionTable = ({columns, data, handleCheckBoxChange} : any) => {
                 </div>
 
             </div>
-            <div className='px-2 md: px-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg'
+            <div className='px-2 md: px-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-white dark:scrollbar-track-zinc-600 pb-4 scrollbar-rounded-lg'
             >
                 <table ref={tableRef}  {...getTableProps()} className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-stone-900 dark:text-gray-400 sticky top-0">
                         {headerGroups.map((headerGroup, index )=> (
                             <>
                                 <tr {...headerGroup.getHeaderGroupProps()}>

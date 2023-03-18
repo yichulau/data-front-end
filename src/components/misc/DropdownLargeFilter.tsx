@@ -136,7 +136,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
                 className="text-[#58667E] w-full bg-[#EFF2F5] hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-800" type="button">{selectedOption}<svg className="w-4 h-4 ml-2 float-right" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
             {isOpen && (
                     <div id="dropdownDelay" 
-                        className={  `block z-50 bg-white divide-y divide-gray-100 rounded-lg shadow w-auto min-w-[24rem] md:w-[26rem] dark:bg-gray-700 absolute h-full md:max-h-[31rem]`}>
+                        className={  `block z-50 bg-white divide-y divide-gray-100 dark:divide-gray-700 rounded-lg shadow w-auto min-w-[24rem] md:w-[26rem] dark:bg-gray-900 border border-gray-800 absolute h-full md:max-h-[31rem]`}>
                             {isLoading === false ? (
                                 <>
                                     <div className='flex px-2 py-2'>
@@ -145,11 +145,11 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
                                             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                                 <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path></svg>
                                                 </div>
-                                            <input type="text" id="simple-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" onChange={(e) => setSearchQuery(e.target.value)} />
+                                            <input type="text" id="simple-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-800 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" onChange={(e) => setSearchQuery(e.target.value)} />
                                         </div>
                                     </div>
                                     <div className="flex px-2 py-2">
-                                        <div className="flex flex-wrap items-center justify-center">
+                                        <div className="flex items-center justify-center overflow-x-auto pl-6 pb-4 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-gray-800 scrollbar-track-white dark:scrollbar-track-zinc-600">
                                             <button
                                                 className="text-center items-center font-medium text-gray-900 dark:text-white dark:bg-gray-800 hover:bg-blue-600 hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800  p-1 border border-white dark:border-gray-700  rounded-lg shadow-sm text-md py-3 px-2 cursor-pointer active:bg-blue-600 active:text-white dark:active:bg-gray-600 dark:active:text-white  focus:bg-blue-600 focus:border-blue-400 focus:text-white dark:focus:bg-gray-700 dark:focus:border-gray-300"
                                                 onClick={() => {
@@ -191,14 +191,14 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
                                             <select 
                                             defaultValue={'All Strike Price'}
                                             onChange={handleStrikePriceChange}
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                                 {filterStrike.map((obj, index)=> (
                                                     <option key={index}>{obj}</option>
                                                 ))}
                                             </select>
                                         </div>
                                     </div>        
-                                    <ul className="py-2 text-sm text-gray-700 dark:text-white max-h-56 md:max-h-64  overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-teal-900 scrollbar-track-white dark:scrollbar-track-zinc-400 pb-4 scrollbar-rounded-lg" aria-labelledby="dropdownDelayButton">
+                                    <ul className="py-2 text-sm text-gray-700 dark:text-white max-h-56 md:max-h-64  overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-gray-800 scrollbar-track-white dark:scrollbar-track-zinc-600 pb-4 scrollbar-rounded-lg" aria-labelledby="dropdownDelayButton">
                                         {filteredOptions.map((item : any)=>{ 
                                             return ( 
                                                 <li key={item.id} onClick={() => selectOption(item.value)}>

@@ -29,7 +29,11 @@ const RecentTrade = () => {
         shouldReconnect: (closeEvent) => true,
         onMessage: (event: WebSocketEventMap['message']) =>  processMessages(event)
     });
-    const [layouts, setLayout] = useState<any>(JSON.parse(JSON.stringify(originalLayouts)));
+    const [layouts, setLayout] = useState<any>([
+        { i: 'table1', x: 0, y: 1, w: 6, h: 15, minW: 4 },
+        { i: 'table2', x: 6, y: 1, w: 6, h: 15, minW: 4 },
+        { i: 'table3', x: 0, y: 0, w: 12, h: 10, minW: 4 },
+    ]);
 
     const [summarizeDataSet, setSummarizeDataSet] = useState([])
     const summarizeData = summarizeCount24h(dataSet)
@@ -406,8 +410,17 @@ function getFromLS(key: any) {
     if (typeof window !== "undefined") {
         if (localStorage) {
             try {
-      
               ls = (JSON.parse(localStorage.getItem('rgl-8') || '{}'));
+              if (ls) {
+                const parsedData = JSON.parse(ls);
+                const currentTime = new Date().getTime();
+                const isExpired = currentTime - parsedData.timestamp > 24 * 60 * 60 * 1000;
+
+                if (!isExpired) {
+                    ls = parsedData.data;
+                }
+            }
+
             } catch (e) {
               /*Ignore*/
             }
@@ -418,12 +431,19 @@ function getFromLS(key: any) {
 }
   
 function saveToLS(key: any, value: any) {
-    if (global.localStorage) {
-        global.localStorage.setItem(
-        "rgl-8",
-        JSON.stringify({
-            [key]: value
-        })
+    if (localStorage) {
+        const currentTime = new Date().getTime();
+        const storageData = {
+            timestamp: currentTime,
+            data: {
+                [key]: value
+            }
+        };
+        localStorage.setItem(
+            "rgl-8",
+            JSON.stringify(storageData)
         );
     }
 }
+
+

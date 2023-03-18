@@ -3,9 +3,11 @@ import React, { useEffect, useMemo, useState } from 'react'
 const useFetchData = (urls: string[]) => {
 
     const [data, setData] = useState([]);
+    const [loading ,setLoading] = useState(false)
     
     useMemo(() => {
         const fetchData = async () => {
+            setLoading(true)
             try {
               const responses = await Promise.all(urls.map(url => fetch(url)));
               const data : any = await Promise.all(responses.map(response => response.json()));
@@ -29,14 +31,16 @@ const useFetchData = (urls: string[]) => {
               })
 
               setData(results);
+              setLoading(false)
             } catch (error) {
               console.error(error);
+              setLoading(false)
             }
           }
           fetchData();
           
     }, [])
-    return data;
+    return {data, loading};
 }
 
 

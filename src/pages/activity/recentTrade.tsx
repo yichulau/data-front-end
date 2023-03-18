@@ -21,8 +21,8 @@ const RecentTrade = () => {
     const [callContractData, setCallContractData] : any = useState([]);
     const [putContractData, setPutContractData] : any = useState([]);
     const [isRadio, setIsRadio] = useState(1);
-    const dataSet = useFetchData(urlsContracts)
-    const summarizeData = summarizeCount24h(dataSet)
+    const {data: dataSet, loading} = useFetchData(urlsContracts)
+
     const { sendJsonMessage, getWebSocket } = useWebSocket(WS_URL, {
         onOpen: () => console.log('WebSocket connection opened.'),
         onClose: () => console.log('WebSocket connection closed.'),
@@ -35,7 +35,9 @@ const RecentTrade = () => {
         { i: 'table3', x: 0, y: 0, w: 12, h: 10, minW: 4 },
     ]);
 
-    
+    const [summarizeDataSet, setSummarizeDataSet] = useState([])
+    const summarizeData = summarizeCount24h(dataSet)
+   
     function processMessages(event: { data: string; }){
         const response = JSON.parse(event.data);
 
@@ -120,27 +122,53 @@ const RecentTrade = () => {
     }  
 
     function handleFilterCoin(selectionVal : number){
-        const result = [];
-        const exchanges : any = new Set(dataSet.map((d : any) => d.coinCurrency));
-        console.log(exchanges)
-        console.log(dataSet)
-        // eth
-        for (const exchange of exchanges) {
-          const count24h = dataSet
-            .filter((d : any) => d.coinCurrency === exchange)
-            .reduce((sum : any, d: any) => sum + d.count24h, 0);
-          result.push({ count24h, exchange: exchange.toUpperCase()});
+        let result = [];
+        const btcData  = dataSet.filter((item:any)=> item.coinCurrency === 'btc');
+        const ethData = dataSet.filter((item: any) => item.coinCurrency === 'eth');
+
+        if(selectionVal === 1){
+            result = summarizeCount24h(dataSet)
         }
-        console.log(result)
-        // return result;
+        if(selectionVal === 2){
+            result = btcData.reduce((acc:any, curr:any) => {
+                const exchangeIndex = acc.findIndex((item: any) => item.exchange === curr.exchange.toUpperCase());
+    
+                if (exchangeIndex === -1) {
+                    acc.push({
+                    count24h: curr.count24h,
+                    exchange: curr.exchange.toUpperCase(),
+                    });
+                } else {
+                    acc[exchangeIndex].count24h += curr.count24h;
+                }
+    
+                return acc;
+            }, []);
+        }
+        if(selectionVal === 3){
+            result = ethData.reduce((acc:any, curr:any) => {
+                const exchangeIndex = acc.findIndex((item: any) => item.exchange === curr.exchange.toUpperCase());
+    
+                if (exchangeIndex === -1) {
+                    acc.push({
+                    count24h: curr.count24h,
+                    exchange: curr.exchange.toUpperCase(),
+                    });
+                } else {
+                    acc[exchangeIndex].count24h += curr.count24h;
+                }
+    
+                return acc;
+            }, []);
+        }
+        return result;
     }
     
     
     function onCoinChange(event: ChangeEvent<HTMLInputElement>){
         const {name, value} = event.target
-        console.log(value)
         setIsRadio(+value);
-        handleFilterCoin(+value)
+        setSummarizeDataSet(handleFilterCoin(+value))
     }
 
     useLayoutEffect(()=>{
@@ -151,6 +179,7 @@ const RecentTrade = () => {
           setWidth(() => window.innerWidth);
         }
     },[])
+
 
     useEffect(() => {
         function connect() {
@@ -172,7 +201,7 @@ const RecentTrade = () => {
         return () => clearInterval(pingInterval);
     }, [sendJsonMessage, getWebSocket]);
 
-
+    console.log(dataSet)
   return (
     <>
     <div className="container py-1 mx-auto">
@@ -223,45 +252,59 @@ const RecentTrade = () => {
                             <div className="text-center font-bold text-md md:text-lg dark:text-white px-2 py-2 rounded-lg">
                                 Total Contracts Traded For The Past 24 Hours Across Exchanges
                             </div>
-{/* 
-                            <div className='justify-center text-center flex flex-wrap'>
-                                <div className="flex items-center mr-4">
-                                    <input 
-                                        value='1'
-                                        onChange={onCoinChange}
-                                        checked={isRadio === 1}
-                                        id="red-radio" type="radio" 
-                                        name="colored-radio" 
-                                        className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                    />
-                                    <label htmlFor="red-radio" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">ALL</label>
-                                </div>
-                                <div className="flex items-center mr-4">
-                                    <input 
-                                        value='2'
-                                        onChange={onCoinChange}
-                                        checked={isRadio === 2}
-                                        id="green-radio" 
-                                        type="radio"
-                                        name="colored-radio" 
-                                        className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                    />
-                                    <label htmlFor="green-radio" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">BTC</label>
-                                </div>
-                                <div className="flex items-center mr-4">
-                                    <input 
-                                        value='3'
-                                        onChange={onCoinChange}
-                                        checked={isRadio === 3}
-                                        id="purple-radio" 
-                                        type="radio" 
-                                        name="colored-radio" 
-                                        className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                    />
-                                    <label htmlFor="purple-radio" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">ETH</label>
-                                </div>
-                            </div> */}
-                            <ActivityPieChart data={summarizeData}/> 
+
+                            <div className='justify-center text-center flex flex-wrap '>
+                                <div className='sm:w-[200px] md:w-[200px] lg:w-[200px] rounded-lg flex flex-wrap justify-center items-center bg-[#EFF2F5] dark:bg-stone-900'>
+                                        <div className={ `flex items-center mr-4`}>    
+                                            <input 
+                                                value='1'
+                                                onChange={onCoinChange}
+                                                checked={isRadio === 1}
+                                                id="red-radio" type="radio" 
+                                                name="colored-radio" 
+                                                className="peer hidden "
+                                            />
+                                            <label htmlFor="red-radio" 
+                                            className={isRadio === 1  ? `bg-gray-50 dark:bg-black rounded-lg ml-2 px-2 py-1 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300` :  `bg-[#EFF2F5] dark:bg-stone-900 ml-2 px-2 py-2 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300`}>
+                                                ALL
+                                            </label>
+                    
+                                        </div>
+                                        <div className="flex items-center mr-4">
+                                            <input 
+                                                value='2'
+                                                onChange={onCoinChange}
+                                                checked={isRadio === 2}
+                                                id="green-radio" 
+                                                type="radio"
+                                                name="colored-radio" 
+                                                className="peer hidden w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                            />
+                                            <label htmlFor="green-radio" 
+                                                className={isRadio === 2  ? `bg-gray-50 dark:bg-black rounded-lg ml-2 px-2 py-1 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300` : `bg-[#EFF2F5] dark:bg-stone-900 ml-2 px-2 py-2 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300`}>
+                                                BTC
+                                            </label>
+                                        </div>
+                                        <div className="flex items-center mr-4">
+                                            <input 
+                                                value='3'
+                                                onChange={onCoinChange}
+                                                checked={isRadio === 3}
+                                                id="purple-radio" 
+                                                type="radio" 
+                                                name="colored-radio" 
+                                                className="peer hidden w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                            />
+                                            <label htmlFor="purple-radio" 
+                                                className={isRadio === 3  ? `bg-gray-50 dark:bg-black rounded-lg ml-2 px-2 py-1 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300` : `bg-[#EFF2F5] dark:bg-stone-900 ml-2 px-2 py-2 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300`}>
+                                                ETH
+                                            </label>
+                                        </div>
+                                    </div>
+                            </div>
+                            <ActivityPieChart 
+                                data={summarizeDataSet.length !== 0 ? summarizeDataSet : summarizeData }
+                            /> 
                         </div>
                     </div>
                     
@@ -272,7 +315,61 @@ const RecentTrade = () => {
         {width <= 764 ? (
             <div className="flex flex-wrap w-full px-auto md:px-6">
                 <div key="table3" className='flex flex-col w-full md:w-1/2 px-2 mb-4 bg-white dark:bg-black'>
-                    <ActivityPieChart data={summarizeData}/> 
+                    <div className="text-center font-bold text-md md:text-lg dark:text-white px-2 py-2 rounded-lg">
+                        Total Contracts Traded For The Past 24 Hours Across Exchanges
+                    </div>
+                    <div className='justify-center text-center flex flex-wrap '>
+                        <div className='sm:w-[200px] md:w-[200px] lg:w-[200px] rounded-lg flex flex-wrap justify-center items-center bg-[#EFF2F5] dark:bg-stone-900'>
+                            <div className={ `flex items-center mr-4`}>    
+                                <input 
+                                    value='1'
+                                    onChange={onCoinChange}
+                                    checked={isRadio === 1}
+                                    id="red-radio" type="radio" 
+                                    name="colored-radio" 
+                                    className="peer hidden "
+                                />
+                                <label htmlFor="red-radio" 
+                                className={isRadio === 1  ? `bg-gray-50 dark:bg-black rounded-lg ml-2 px-2 py-1 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300` :  `bg-[#EFF2F5] dark:bg-stone-900 ml-2 px-2 py-2 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300`}>
+                                    ALL
+                                </label>
+        
+                            </div>
+                            <div className="flex items-center mr-4">
+                                <input 
+                                    value='2'
+                                    onChange={onCoinChange}
+                                    checked={isRadio === 2}
+                                    id="green-radio" 
+                                    type="radio"
+                                    name="colored-radio" 
+                                    className="peer hidden w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                />
+                                <label htmlFor="green-radio" 
+                                    className={isRadio === 2  ? `bg-gray-50 dark:bg-black rounded-lg ml-2 px-2 py-1 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300` : `bg-[#EFF2F5] dark:bg-stone-900 ml-2 px-2 py-2 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300`}>
+                                    BTC
+                                </label>
+                            </div>
+                            <div className="flex items-center mr-4">
+                                <input 
+                                    value='3'
+                                    onChange={onCoinChange}
+                                    checked={isRadio === 3}
+                                    id="purple-radio" 
+                                    type="radio" 
+                                    name="colored-radio" 
+                                    className="peer hidden w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                />
+                                <label htmlFor="purple-radio" 
+                                    className={isRadio === 3  ? `bg-gray-50 dark:bg-black rounded-lg ml-2 px-2 py-1 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300` : `bg-[#EFF2F5] dark:bg-stone-900 ml-2 px-2 py-2 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300`}>
+                                    ETH
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <ActivityPieChart 
+                        data={summarizeDataSet.length !== 0 ? summarizeDataSet : summarizeData}
+                    /> 
                 </div>
                 <div key="table1" className='flex flex-col w-full md:w-1/2 px-2 mb-4'>
                     <ActivityTable 

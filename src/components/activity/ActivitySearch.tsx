@@ -29,7 +29,7 @@ export default function ActivitySearch({
               setValue(e.target.value);
               onChange(e.target.value);
             }}
-            placeholder={`Search: ${count} records...`}
+            placeholder={`Search: `}
           />
         </label>
       )

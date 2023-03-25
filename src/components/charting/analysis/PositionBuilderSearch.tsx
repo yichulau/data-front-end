@@ -96,7 +96,7 @@ const PositionBuilderSearch = ({
           <div className='flex flex-col'>
             <h2 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>Add Simulated Position Builder</h2>
             <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"/>
-            <div className='w-full my-1'>
+            <div className='w-full my-1 px-1'>
               <DropdownLong title={`Choose Exchange`} 
                 resetFlag={exchangeDropdownReset}
                 options={exchangeOption} 
@@ -106,7 +106,7 @@ const PositionBuilderSearch = ({
                 }}
               />
             </div>
-            <div className='w-full my-1'>
+            <div className='w-full my-1 px-1'>
               <DropdownLong title={`Choose Currency`} resetFlag={currencyDropdownReset} options={coinCurrencyOption} 
                 onChange={(value: any) => {
                   handleCurrencyChange(value)
@@ -114,7 +114,7 @@ const PositionBuilderSearch = ({
                 }}
               />
             </div>
-            <div className='w-full my-1'>
+            <div className='w-full my-1 px-1'>
               <DropdownLargeFilter title={`Instruments`} resetFlag={instrumentReset} options={filteredInstrumentData} 
                 onChange={(value: any) => {
                   handleSymbolChange(value)
@@ -125,7 +125,7 @@ const PositionBuilderSearch = ({
                 symbolLoading={symbolLoading}
                 />            
             </div>
-            <div className='w-full my-1'>
+            <div className='w-full my-1 px-1'>
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
               <input type="number"
                 min="0"
@@ -136,7 +136,7 @@ const PositionBuilderSearch = ({
                 }}  
                 className="bg-[#EFF2F5] border border-[#EFF2F5] font-medium text-[#58667E] text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:text-bg-gray-700 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-800 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-700" placeholder="Enter Amount" />
             </div>
-            <div className='flex flex-row w-full my-4 '>
+            <div className='flex flex-row w-full my-4 px-1'>
               {isLoading ? (
                   <button type="button"
                     disabled={true}
@@ -180,7 +180,7 @@ const PositionBuilderSearch = ({
 
 
             </div>
-            <div className='w-full my-1'>
+            <div className='w-full my-1 px-1'>
                 <button type="button" 
                   className="text-gray-900 w-full bg-[#EFF2F5] border focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-2.5 py-2.5  mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                   onClick={handleResetButtonClick}

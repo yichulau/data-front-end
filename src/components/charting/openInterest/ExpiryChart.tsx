@@ -1,6 +1,5 @@
 import React, { useEffect,useState, useRef, useContext, useMemo } from 'react'
 import * as echarts from 'echarts';
-import ReactEcharts from "echarts-for-react";
 import calculateRatio from '../../../utils/calculateRatio';
 import { echartsResize } from '../../../utils/resize';
 import MyThemeContext from '../../../store/myThemeContext';
@@ -33,7 +32,7 @@ const ExpiryChart = ({data ,error, loading, ccyOption, exchangeOption} : any) =>
             color: '#fff',
             fontSize: 14
         },
-        backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+        backgroundColor: 'rgba(18, 57, 60, .8)', 
         borderColor: "rgba(18, 57, 60, .8)",
         formatter: function (params : any) {
           let str = "";

@@ -7,6 +7,7 @@ import moment from 'moment';
 import MyThemeContext from '../../store/myThemeContext';
 import DropdownIndex from '../misc/DropdownIndex';
 import DropdownLeft from '../misc/DropdownLeft';
+import { volumeOption, coinExchangeOption, granularityOption } from '../../utils/selector';
 
 
 const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , onChange} :any) => {
@@ -17,21 +18,6 @@ const LineChartVolume = ({data : dataSet , earliestTimestamp, latestTimeStamp , 
     let data = useMemo(()=> dataSet, [dataSet])
     let xData: any = [];
     let chart: any;
-
-    const volumeOption = [
-      {id: 0, value: 'Notional'},
-      {id: 1, value: 'Premium'}
-    ]
-    const coinExchangeOption = [
-        {id: 0, value: 'BTC'},
-        {id: 1, value: 'ETH'},
-        {id: 2, value: 'SOL'},
-    ]
-
-    const granularityOption = [
-      {id: 0, value: '1D'},
-      {id: 1, value: 'Raw'}
-    ]
     
     const handleFilterChange = (value: number) => {
       setFilter(value); 

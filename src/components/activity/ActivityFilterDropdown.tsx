@@ -38,7 +38,7 @@ const ActivityFilterDropdown = ({allColumns , getToggleHideAllColumnsProps}  : a
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
                         id="filterDropdown" 
-                        className="block z-10 p-3 bg-white divide-gray-100 rounded-lg shadow w-44 dark:bg-black absolute max-h-60 overflow-y-auto top-15 scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-white dark:scrollbar-track-zinc-600">
+                        className="block z-10 p-3 bg-white right-2 divide-gray-100 rounded-lg shadow w-44 dark:bg-black absolute max-h-60 overflow-y-auto top-15 scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-white dark:scrollbar-track-zinc-600">
                         <h6 className="mb-3 text-sm font-medium text-gray-900 dark:text-white">Choose Columns</h6>
                         <ul className="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
                             {/* <li className="flex items-center">

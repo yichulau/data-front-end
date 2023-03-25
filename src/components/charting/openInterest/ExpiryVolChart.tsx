@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import * as echarts from 'echarts';
-import ReactEcharts from "echarts-for-react";
 import calculateRatio from '../../../utils/calculateRatio';
 import { echartsResize } from '../../../utils/resize';
 import MyThemeContext from '../../../store/myThemeContext';
@@ -33,7 +32,7 @@ const ExpiryVolChart = ({data ,error, loading, ccyOption} : any) => {
             color: '#fff',
             fontSize: 14
         },
-        backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+        backgroundColor: 'rgba(18, 57, 60, .8)', 
         borderColor: "rgba(18, 57, 60, .8)",
         formatter: function (params : any) {
           let str = "";
@@ -178,7 +177,6 @@ const ExpiryVolChart = ({data ,error, loading, ccyOption} : any) => {
   return (
     <>
          <div className='mt-2 mb-2' style={{ maxWidth: "100%", maxHeight: "400px" }}>
-            {/* <ReactEcharts option={option}/> */}
             <div ref={chartRef} style={{height: "310px"}}></div>
             <div className='flex flex-row items-center justify-center mt-6'>
                 <div className="py-4 px-4 text-center">
@@ -199,13 +197,6 @@ const ExpiryVolChart = ({data ,error, loading, ccyOption} : any) => {
                     <div className='text-xs md:text-lg font-bold'>{callVolTotal && putVolTotal ? calculateRatio(Number(callVolTotal), Number(putVolTotal)) : 0}</div>
                 </div>
             </div>
-            {/* <style jsx>{`
-                @media (max-width: 767px) { 
-                div.resizing {
-                    height: 200px;
-                }
-                }
-            `}</style> */}
         </div>
     </>
   )

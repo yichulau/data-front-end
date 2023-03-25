@@ -1,6 +1,5 @@
 import React, { useEffect,useState, useRef, useContext, useMemo } from 'react'
 import * as echarts from 'echarts';
-import ReactEcharts from "echarts-for-react";
 import calculateRatio from '../../../utils/calculateRatio';
 import MyThemeContext from '../../../store/myThemeContext';
 import { echartsResize } from '../../../utils/resize';
@@ -34,7 +33,7 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
             color: '#fff',
             fontSize: 14
         },
-        backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+        backgroundColor: 'rgba(18, 57, 60, .8)', 
         borderColor: "rgba(18, 57, 60, .8)",
         formatter: function (params : any) {
           let str = "";
@@ -200,13 +199,6 @@ const StrikeVolChart = ({data ,error, loading, ccyOption} : any) => {
                     <div className='text-xs md:text-lg font-bold'>{callVolTotal && putVolTotal ? calculateRatio(Number(callVolTotal), Number(putVolTotal)) : 0}</div>
                 </div>
             </div>
-            {/* <style jsx>{`
-                @media (max-width: 767px) {
-                div.resizing {
-                    height: 200px;
-                }
-                }
-            `}</style> */}
         </div>
     </>
   )

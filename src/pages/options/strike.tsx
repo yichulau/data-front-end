@@ -3,14 +3,16 @@ import Dropdown from '../../components/misc/Dropdown'
 import StrikeChart from '../../components/charting/openInterest/StrikeChart';
 import useFetchSingleData from '../../hooks/useFetchSingleData';
 import DropdownLeftOption from '../../components/misc/DropdownLeftOption';
+import { activityCoinCurrencyOption, activityOption } from '../../utils/selector';
+import { serverHost } from "../../utils/server-host";
 import useSWR from 'swr';
 
 const Strike = () => {
     const [exchangeOption, setExchangeOption] = useState('ALL')
     const [ccyOption, setCcyOption] = useState('BTC')
     const [keysOptions, setKeysOptions] = useState('ALL')
-    let spotVal = `https://data-ribbon-collector.com/api/v1.0/${ccyOption.toLowerCase()}/spotval`;
-    let url = `https://data-ribbon-collector.com/api/v1.0/${ccyOption.toLowerCase()}/${exchangeOption.toLowerCase()}/option-chart?expiry=${keysOptions === 'ALL' ? '' : keysOptions}`;
+    let spotVal = `https://${serverHost.hostname}/api/v1.0/${ccyOption.toLowerCase()}/spotval`;
+    let url = `https://${serverHost.hostname}/api/v1.0/${ccyOption.toLowerCase()}/${exchangeOption.toLowerCase()}/option-chart?expiry=${keysOptions === 'ALL' ? '' : keysOptions}`;
     const { data, error, loading} = useFetchSingleData(url)
     const spotData : any = useSWR(spotVal, async (url) => {
         const res = await fetch(url);
@@ -61,19 +63,7 @@ const Strike = () => {
     const handleKeyChange = (value :any) =>{
         setKeysOptions(value)
     }
-    const option = [
-        {id: 0, value: 'ALL'},
-        {id: 1, value: 'Deribit'},
-        {id: 2, value: 'OKEX'},
-        {id: 3, value: 'Bit.com'},
-        {id: 4, value: 'Binance'},
-        {id: 5, value: 'Bybit'}
-    ]
-    const coinCurrencyOption = [
-        {id: 1, value: 'BTC'},
-        {id: 2, value: 'ETH'},
-        {id: 3, value: 'SOL'},
-    ]
+
   return (
     <>
     <div className="container py-1 mx-auto">
@@ -87,14 +77,14 @@ const Strike = () => {
                             <div className='px-2 flex flex-col'>
                                 <Dropdown 
                                     title={`Exchange`}
-                                    options={option}
+                                    options={activityOption}
                                     onChange={handleOnChange}
                                 />
                             </div>
                             <div className='px-2'>
                                 <Dropdown 
                                     title={`Symbol`}
-                                    options={coinCurrencyOption}
+                                    options={activityCoinCurrencyOption}
                                     onChange={handleCcyChange}
                                 />
                             </div>

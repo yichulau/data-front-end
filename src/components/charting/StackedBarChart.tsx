@@ -4,12 +4,12 @@ import ReactECharts from 'echarts-for-react';
 import { echartsResize } from '../../utils/resize';
 import moment from 'moment';
 import { exchangeModel } from '../../models/exchangeModel';
-import SelectOption from '../misc/SelectOption';
 import Dropdown from '../misc/Dropdown';
 import DropdownIndex from '../misc/DropdownIndex';
 import MyThemeContext from '../../store/myThemeContext';
 import aggregrationCalculation from '../../utils/aggregrationCalculation';
 import DropdownLeft from '../misc/DropdownLeft';
+import { volumeOption, byExchangeCoin, granularityOption } from '../../utils/selector';
 
 interface Data {
     ts: string | number;
@@ -38,21 +38,6 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
     let seriesData : any= {};
     let xData: string[] = [];
     let chart: any;
-
-   
-    const volumeOption: Filter[] = [
-        {id: 0, value: 'Notional'},
-        {id: 1, value: 'Premium'}
-    ]
-    const byExchangeCoin: Filter[] = [
-        {id: 0, value: 'By Exchange'},
-        {id: 1, value: 'By Coin'}
-    ]
-
-    const granularityOption: Filter[] = [
-        {id: 0, value: '1D'},
-        {id: 1, value: 'Raw'}
-    ]
 
     const getDataByExchange = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
@@ -215,7 +200,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                     color: '#fff',
                     fontSize: 14
                 },
-                backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+                backgroundColor: 'rgba(18, 57, 60, .8)', 
                 borderColor: "rgba(18, 57, 60, .8)",
                 formatter: function (params : any) {
                   let str = "";

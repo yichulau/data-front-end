@@ -13,15 +13,7 @@ const useFetchData = (urls: string[]) => {
               const data : any = await Promise.all(responses.map(response => response.json()));
               const results = data.map((result : any, index: any)=>{
                 const regex = /\/api\/v1\.0\/([a-zA-Z]+?)\/([a-zA-Z.]+?)\/contracts-traded/;
-                // if(dataPoint === 'contracts-traded'){
-                //     regex = /\/api\/v1\.0\/([a-zA-Z]+?)\/([a-zA-Z.]+?)\/contracts-traded/;
-                // } else if (dataPoint === 'volume-notional'){
-                //     regex = /\/api\/v1\.0\/([a-zA-Z]+?)\/([a-zA-Z.]+?)\/volume-notional/;
-                // } else if (dataPoint === 'volume-premium'){
-                //     regex = /\/api\/v1\.0\/([a-zA-Z]+?)\/([a-zA-Z.]+?)\/volume-premium/;
-                // } else if (dataPoint === 'open-interest'){
-                //     regex = /\/api\/v1\.0\/([a-zA-Z]+?)\/([a-zA-Z.]+?)\/open-interest/;
-                // }
+
                 const match = urls[index].match(regex) || '';
                 return {
                     coinCurrency: match[1],

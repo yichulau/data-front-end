@@ -8,6 +8,7 @@ import MyThemeContext from '../../store/myThemeContext';
 import Loader from '../misc/Loader';
 import aggregrationCalculation from '../../utils/aggregrationCalculation';
 import DropdownLeft from '../misc/DropdownLeft';
+import { byExchangeCoin, granularityOption } from '../../utils/selector';
 
 const StackedLineChart = ( {data: dataSet } : any) => {
     const { isDarkTheme }= useContext(MyThemeContext); 
@@ -19,15 +20,6 @@ const StackedLineChart = ( {data: dataSet } : any) => {
     let xData: string[] = [];
     let chart: any;
 
-    const byExchangeCoin = [
-        {id: 0, value: 'By Exchange'},
-        {id: 1, value: 'By Coin'}
-    ]
-
-    const granularityOption = [
-        {id: 0, value: '1D'},
-        {id: 1, value: 'Raw'}
-    ]
 
     const getDataByExchange = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
@@ -191,7 +183,7 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                     color: '#fff',
                     fontSize: 14
                 },
-                backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+                backgroundColor: 'rgba(18, 57, 60, .8)', 
                 borderColor: "rgba(18, 57, 60, .8)",
                 formatter: function (params : any) {
                   let str = "";
@@ -254,9 +246,6 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                     }
                   }
             },
-            // color: [
-            //     '#FF3333', '#FF7744', '#FFCC22', '#33FF33', '#33CCFF', '#7744FF', '#E93EFF'
-            // ],
             series: Object.keys(seriesData).map(exchangeId => {
                 return {
                     name: exchangeId,
@@ -323,17 +312,6 @@ const StackedLineChart = ( {data: dataSet } : any) => {
             </div>
         </div>
         <div>
-        
-        {/* <Form {...layout}>
-            <Form.Item>
-                <Select 
-                defaultValue={filter} 
-                onChange={handleFilterChange}>
-                    <Option value={0}>By Exchange</Option>
-                    <Option value={1}>By Currency</Option>
-                </Select>
-            </Form.Item>
-        </Form> */}
         </div>
         {data ? (<div ref={chartRef}  style={{ height: '400px', width:'100%'}}></div>) : (<Loader />) }
     </div>

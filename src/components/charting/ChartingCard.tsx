@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { contractTraded } from '../../utils/contract-traded-urls';
 import { notionalVolume } from '../../utils/notional-volume-urls';
-import BarChart from './BarChart';
 import useFetchData from '../../hooks/useFetchData';
 import useFetchNotional from '../../hooks/useFetchNotional';
 import StackedBarChart from './StackedBarChart';
@@ -14,19 +13,14 @@ import useFetchPremium from '../../hooks/useFetchPremium';
 import LineChartVolume from './LineChartVolume';
 import MiddleMedium from './MiddleMedium';
 import LineChartOI from './LineChartOI';
-import moment from 'moment';
 import { MiddleMediumVol } from './MiddleMediumVol';
 
 const ChartingCard = ({option}: any) => {
-
-    const [dataSet, setData] = useState({});
   
-    const urlsContracts = contractTraded.urls;
     const urlsNotional = notionalVolume.urls
     const urlsOpenInterest = openInterest.urls; 
     const urlsPremium = premiumVolume.urls
 
-    // const fetchMultipleData = useFetchData(urlsContracts, 'contracts-traded');
     const fetchNotionalData = useFetchNotional(urlsNotional);  
     const fetchPremiumData = useFetchPremium(urlsPremium);
 
@@ -101,20 +95,11 @@ const ChartingCard = ({option}: any) => {
     aggregratePremiumData.sort((a,b) => {return a.ts - b.ts});
     aggregrateOIData.sort((a,b)=>{return a.ts - b.ts});
 
-    // const last24hNewFetchNotionalData = newFetchNotionalData.splice(-49);
-    // const last24hNewFetchPremiumData = newFetchPremiumData.splice(-49);
-    // const last24hFetchInterestData = fetchInterestData.splice(-49);
-    
-    // const last24hAggregrateNotionalData = aggregrateNotionalData.splice(-49);
-    // const last24hAggregrateOIData = aggregrateOIData.splice(-49);
-
     return (
     <>
         <div className="px-2 md:px-6 py-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-black dark:border-black">
           <div className='w-full'>
             {option === 'StackedBarChart' ? (<MiddleMedium newFetchNotionalData={newFetchNotionalData} newFetchPremiumData={newFetchPremiumData} /> ) : null }
-            {/* {option === 'StackedBarChart' ? (<StackedBarChart data={newFetchNotionalData} onChange={volFilterChange} /> ) : null } */}
-            {/* {option === 'BarChart' ? (<BarChart data={useFetchData(urlsContracts)} />) : null } */}
             {option === "StackedLineChart" ? (<StackedLineChart data={fetchInterestData}  />) : null }
             {option === "LineChartVolume" ? (<MiddleMediumVol newFetchNotionalData={aggregrateNotionalData} newFetchPremiumData={aggregratePremiumData} earliestTimestamp={earliestTimestamp} latestTimeStamp={latestTimeStamp} />) : null }
             {option === "LineChartOI" ? (<LineChartOI data={aggregrateOIData} earliestTimestamp={earliestOITimestamp} latestTimeStamp={latestOITimeStamp} />) : null }

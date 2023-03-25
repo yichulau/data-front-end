@@ -6,6 +6,7 @@ import { echartsResize } from '../../utils/resize';
 import moment from 'moment';
 import MyThemeContext from '../../store/myThemeContext';
 import DropdownIndex from '../misc/DropdownIndex';
+import { coinExchangeOption, granularityOption } from '../../utils/selector';
 
 
 const LineChartOI = ({data: dataSet , earliestTimestamp, latestTimeStamp} :any) => {
@@ -17,17 +18,6 @@ const LineChartOI = ({data: dataSet , earliestTimestamp, latestTimeStamp} :any) 
     let xData: string[] = [];
     let chart: any;
   
-    const coinExchangeOption = [
-      {id: 0, value: 'BTC'},
-      {id: 1, value: 'ETH'},
-      {id: 2, value: 'SOL'},
-    ]
-    
-    const granularityOption = [
-      {id: 0, value: '1D'},
-      {id: 1, value: 'Raw'}
-    ]
-
     const handleFilterChange = (value: number) => {
       setFilter(value); 
     }; 
@@ -120,7 +110,7 @@ const LineChartOI = ({data: dataSet , earliestTimestamp, latestTimeStamp} :any) 
               color: '#fff',
               fontSize: 14
           },
-          backgroundColor: 'rgba(18, 57, 60, .8)', //设置背景颜色
+          backgroundColor: 'rgba(18, 57, 60, .8)',
           borderColor: "rgba(18, 57, 60, .8)",
           formatter: function (params : any) {
             let str = "";
@@ -252,16 +242,6 @@ const LineChartOI = ({data: dataSet , earliestTimestamp, latestTimeStamp} :any) 
                           onChange={handleGranularityChange}
                       />
                    </div>
-                    {/* <div className='px-2 flex flex-col'>
-                        <DropdownIndex 
-                            title={`Type`}
-                            options={volumeOption}
-                            onChange={handleVolumeChange}
-                       
-                        />
-                    </div> */}
-       
-                   
                 </div>
             </div>
             

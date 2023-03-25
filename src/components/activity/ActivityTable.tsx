@@ -25,7 +25,7 @@ interface ActivityTableProps{
 const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTableProps) => {
     const tableRef = useRef(null);
     const dataSet = useMemo(() => data ,[data]);
-    const column : any[] = React.useMemo(
+    const column : any[] = useMemo(
         () => [
             {
               Header: "direction",
@@ -40,16 +40,16 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
             {
               Header: "instruments",
               accessor: "instrumentID",
-              Filter: SelectColumnFilter,  // new
-              filter: 'includes',  // new
+              Filter: SelectColumnFilter,  
+              filter: 'includes',  
             },
 
             {
                 Header: "coinCurrency",
                 accessor: "coinCurrencyID",
                 Cell: coinCurrencyPill,
-                // Filter: SelectColumnFilter,  // new
-                // filter: 'includes',  // new
+                // Filter: SelectColumnFilter,  
+                // filter: 'includes',  
             },
             {
               Header: "optionType",
@@ -73,13 +73,9 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
         []
     );
 
-
- 
-    
     const { getTableProps, 
     getTableBodyProps, 
     headerGroups, 
-    //new
     rows,
     page, 
     canPreviousPage,
@@ -92,9 +88,9 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
     setPageSize,
     prepareRow,
     totalColumnsWidth,
-    state, // new
-    preGlobalFilteredRows, // new
-    setGlobalFilter, // new    
+    state, 
+    preGlobalFilteredRows, 
+    setGlobalFilter,   
     getToggleHideAllColumnsProps,
     allColumns
     } = useTable({
@@ -105,7 +101,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
         useGlobalFilter,
         useSortBy,
         useResizeColumns,
-        usePagination,  // new
+        usePagination, 
     );
 
 
@@ -115,13 +111,11 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
 
   return (
     <>
- 
       <div className="sm:flex sm:gap-x-2 bg-white dark:bg-black sm:rounded-t-lg px-3 pb-3 ">
         <div className='flex flex-col w-full'>
           <div className='w-full py-4 text-left font-bold text-sm text-black dark:text-white '>
             {title}
           </div>
-        
           <div className='flex justify-between'>
               <ActivitySearch
                 preGlobalFilteredRows={preGlobalFilteredRows}
@@ -129,10 +123,6 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                 setGlobalFilter={setGlobalFilter}
               />
               <ActivityFilterDropdown allColumns={allColumns} getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}/>
-           
-            
-     
-
               {/* {headerGroups.map((headerGroup) =>
                 headerGroup.headers.map((column) =>
                   column.Filter ? (
@@ -159,8 +149,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                       {headerGroups.map((headerGroup, index ) => (
                         <tr {...headerGroup.getHeaderGroupProps()} key={`header-${index}`}>
                           {headerGroup.headers.map(column => (
-                            // Add the sorting props to control sorting. For this example
-                            // we can add them into the header props
+                            // Add the sorting props to control sorting.
                             <th
                               scope="col"
                               className="group px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
@@ -191,7 +180,7 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                       className="bg-white dark:bg-black divide-y divide-gray-200 dark:divide-gray-600 "
                     >
 
-                      {page.map((row : any, i) => {  // new
+                      {page.map((row : any, i) => {  
                         prepareRow(row)
                         const direction  = row.original.direction
 
@@ -316,189 +305,188 @@ export default ActivityTable
 
 
 export function SelectColumnFilter({
-    column: { filterValue, setFilter, preFilteredRows, id, render  },
-  }: any) {
-    // Calculate the options for filtering
-    // using the preFilteredRows
-    const options = React.useMemo(() => {
-      const options = new Set();
-      preFilteredRows.forEach((row: any) => {
-        options.add(row.values[id]);
-      });
-      return [...options.values()];
-    }, [id, preFilteredRows]);
-  
-    // Render a multi-select box
-    return (
-        <label className="flex gap-x-2 items-baseline">
-          {/* <span className="text-gray-700">{render("Header")}: </span> */}
-          <select
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            name={id}
-            id={id}
-            value={filterValue}
-            onChange={e => {
-              setFilter(e.target.value || undefined)
-            }}
-          >
-            <option value="">{render("Header")}</option>
-            {options.map((option : any, i) => (
-              <option key={i} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </label>
-    );
+  column: { filterValue, setFilter, preFilteredRows, id, render  },
+}: any) {
+  // Calculate the options for filtering
+  // using the preFilteredRows
+  const options = React.useMemo(() => {
+    const options = new Set();
+    preFilteredRows.forEach((row: any) => {
+      options.add(row.values[id]);
+    });
+    return [...options.values()];
+  }, [id, preFilteredRows]);
+
+  // Render a multi-select box
+  return (
+      <label className="flex gap-x-2 items-baseline">
+        {/* <span className="text-gray-700">{render("Header")}: </span> */}
+        <select
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          name={id}
+          id={id}
+          value={filterValue}
+          onChange={e => {
+            setFilter(e.target.value || undefined)
+          }}
+        >
+          <option value="">{render("Header")}</option>
+          {options.map((option : any, i) => (
+            <option key={i} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </label>
+  );
 }
 
 export function Button({ children, className, ...rest }: any) {
-    return (
-      <button
-        type="button"
-        className={classNames(
-          "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 dark:text-white bg-white hover:bg-gray-50 dark:bg-black dark:border-gray-700",
-          className
-        )}
-        {...rest}
-      >
-        {children}
-      </button>
-    );
-  }
-  
-  export function PageButton({ children, className, ...rest }: any) {
-    return (
-      <button
-        type="button"
-        className={classNames(
-          "relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 dark:text-white hover:bg-gray-50 dark:bg-black dark:border-gray-700",
-          className
-        )}
-        {...rest}
-      >
-        {children}
-      </button>
-    );
-  }
+  return (
+    <button
+      type="button"
+      className={classNames(
+        "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 dark:text-white bg-white hover:bg-gray-50 dark:bg-black dark:border-gray-700",
+        className
+      )}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+}
 
-  export function SortIcon({ className }:any) {
-    return (
-      <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z"></path></svg>
-    )
-  }
-  
-  export function SortUpIcon({ className }:any) {
-    return (
-      <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M279 224H41c-21.4 0-32.1-25.9-17-41L143 64c9.4-9.4 24.6-9.4 33.9 0l119 119c15.2 15.1 4.5 41-16.9 41z"></path></svg>
-    )
-  }
-  
-  export function SortDownIcon({ className }:any) {
-    return (
-      <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z"></path></svg>
-    )
-  }
+export function PageButton({ children, className, ...rest }: any) {
+  return (
+    <button
+      type="button"
+      className={classNames(
+        "relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 dark:text-white hover:bg-gray-50 dark:bg-black dark:border-gray-700",
+        className
+      )}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+}
 
+export function SortIcon({ className }:any) {
+  return (
+    <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z"></path></svg>
+  )
+}
 
-  export function StatusPill({ value } : any) {
-    const status = value ? value.toUpperCase() : "unknown";
-  
-    return (
-      <span
-        className={classNames(
-          "px-3 py-1 uppercase leading-wide font-bold text-xs rounded-lg shadow-sm",
-          status === 'BUY' ? "bg-green-100 text-green-700" : null,
-          status === 'SELL' ? "bg-red-100 text-red-700" : null,
-        )}
-      >
-        {status}
-      </span>
-    );
-  }
+export function SortUpIcon({ className }:any) {
+  return (
+    <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M279 224H41c-21.4 0-32.1-25.9-17-41L143 64c9.4-9.4 24.6-9.4 33.9 0l119 119c15.2 15.1 4.5 41-16.9 41z"></path></svg>
+  )
+}
+
+export function SortDownIcon({ className }:any) {
+  return (
+    <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z"></path></svg>
+  )
+}
 
 
-  export function coinCurrencyPill({ value } : any) {
-    const status = value ? value: "unknown";
-  
-    return (
-      <span
-        className={classNames(
-          "px-3 py-1 uppercase leading-wide font-bold text-sm text-center flex gap-2 items-center",
-        )}
-      >
-        {status === 1 ? (
-        <>
-         <FaBitcoin/> BTC
+export function StatusPill({ value } : any) {
+  const status = value ? value.toUpperCase() : "unknown";
 
-        
-        </>) : (<><FaEthereum/> ETH</>)}
-      </span>
-    );
-  }
+  return (
+    <span
+      className={classNames(
+        "px-3 py-1 uppercase leading-wide font-bold text-xs rounded-lg shadow-sm",
+        status === 'BUY' ? "bg-green-100 text-green-700" : null,
+        status === 'SELL' ? "bg-red-100 text-red-700" : null,
+      )}
+    >
+      {status}
+    </span>
+  );
+}
 
 
-  export function tradeTimePill({ value } : any) {
-    const timestamp = value; // timestamp in seconds
-    const date = moment.unix(timestamp);
-    const formattedDate = date.format('DD MMM YYYY, HH:mm:ss');
-  
-    return (
-      <span
-        className={classNames(
-          "px-3 py-1 uppercase leading-wide font-bold text-sm ",
+export function coinCurrencyPill({ value } : any) {
+  const status = value ? value: "unknown";
 
-        )}
-      >
-        {formattedDate}
-      </span>
-    );
-  }
+  return (
+    <span
+      className={classNames(
+        "px-3 py-1 uppercase leading-wide font-bold text-sm text-center flex gap-2 items-center",
+      )}
+    >
+      {status === 1 ? (
+      <>
+        <FaBitcoin/> BTC
 
-  export function ExchangePill({ value } : any) {
-    const values = value !== undefined ? value : 'unknown'
-  
-    return (
-      <span
-        className={classNames(
-          "px-3 py-1 uppercase leading-wide text-sm font-bold whitespace-nowrap ",
+      
+      </>) : (<><FaEthereum/> ETH</>)}
+    </span>
+  );
+}
 
-        )}
-      >
-        {exchangeModel.getDataByExchange(values)}
-      </span>
-    );
-  }
 
-  export function DirectionPill({ row, value } : any) {
-    const isBlockTrade = row.original.isBlockTrade === 1 ? true: false;
-    const values = value !== undefined ? value : 'UNKNOWN'
-  
-    return (
-      <span
-        className={classNames(
-          "px-3 py-1 uppercase leading-wide text-sm font-bold flex gap-2",
+export function tradeTimePill({ value } : any) {
+  const timestamp = value; // timestamp in seconds
+  const date = moment.unix(timestamp);
+  const formattedDate = date.format('DD MMM YYYY, HH:mm:ss');
 
-        )}
-      >
-         {isBlockTrade && (<GiStoneBlock/>)}{values}
-      </span>
-    );
-  }
+  return (
+    <span
+      className={classNames(
+        "px-3 py-1 uppercase leading-wide font-bold text-sm ",
 
-  export function optionTypePill({ row, value } : any) {
-    const values = value === 'C' ? 'CALL' : 'PUT'
-  
-    return (
-      <span
-        className={classNames(
-          "px-3 py-1 uppercase leading-wide text-sm font-bold flex gap-2",
+      )}
+    >
+      {formattedDate}
+    </span>
+  );
+}
 
-        )}
-      >
-        {values}
-      </span>
-    );
-  }
+export function ExchangePill({ value } : any) {
+  const values = value !== undefined ? value : 'unknown'
 
-  
+  return (
+    <span
+      className={classNames(
+        "px-3 py-1 uppercase leading-wide text-sm font-bold whitespace-nowrap ",
+
+      )}
+    >
+      {exchangeModel.getDataByExchange(values)}
+    </span>
+  );
+}
+
+export function DirectionPill({ row, value } : any) {
+  const isBlockTrade = row.original.isBlockTrade === 1 ? true: false;
+  const values = value !== undefined ? value : 'UNKNOWN'
+
+  return (
+    <span
+      className={classNames(
+        "px-3 py-1 uppercase leading-wide text-sm font-bold flex gap-2",
+
+      )}
+    >
+        {isBlockTrade && (<GiStoneBlock/>)}{values}
+    </span>
+  );
+}
+
+export function optionTypePill({ row, value } : any) {
+  const values = value === 'C' ? 'CALL' : 'PUT'
+
+  return (
+    <span
+      className={classNames(
+        "px-3 py-1 uppercase leading-wide text-sm font-bold flex gap-2",
+
+      )}
+    >
+      {values}
+    </span>
+  );
+}
+

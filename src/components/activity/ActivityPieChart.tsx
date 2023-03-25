@@ -237,10 +237,7 @@ const ActivityPieChart = ({data}: any) => {
 
   return (
    <>
-        <div
-            className="mt-2 mb-2 pb-2 items-center justify-center text-center"
-            style={{ maxWidth: '100%', height: '300px' }}
-        >
+        <div className="mt-2 mb-2 pb-2 items-center justify-center text-center" style={{ maxWidth: '100%', height: '300px' }}>
             <div ref={chartRef} style={{ height: '300px', width: '98%' }}></div>
         </div>
    </>

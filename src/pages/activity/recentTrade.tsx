@@ -5,13 +5,13 @@ import ActivityPieChart from '../../components/activity/ActivityPieChart';
 import ActivityTable from '../../components/activity/ActivityTable';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
-import {MdOutlineDragIndicator} from 'react-icons/md';
+import { serverHost } from "../../utils/server-host";
 import '/node_modules/react-grid-layout/css/styles.css';
 import '/node_modules/react-resizable/css/styles.css';
 
-const WS_URL = 'wss://data-ribbon-collector.com/websocket';
-const originalLayouts = getFromLS("layouts") || {};
+const WS_URL = `wss://${serverHost.hostname}/websocket`;
 // const WS_URL = 'ws://127.0.0.1:3002';
+const originalLayouts = getFromLS("layouts") || {}; // for local storage changes
 
 
 const RecentTrade = () => {
@@ -22,22 +22,21 @@ const RecentTrade = () => {
     const [putContractData, setPutContractData] : any = useState([]);
     const [isRadio, setIsRadio] = useState(1);
     const {data: dataSet, loading} = useFetchData(urlsContracts)
-
+    const [summarizeDataSet, setSummarizeDataSet] = useState([])
+    const summarizeData = summarizeCount24h(dataSet)
+    const [layouts, setLayout] = useState<any>([
+        { i: 'table1', x: 0, y: 1, w: 6, h: 15, minW: 4 },
+        { i: 'table2', x: 6, y: 1, w: 6, h: 15, minW: 4 },
+        { i: 'table3', x: 0, y: 0, w: 12, h: 10, minW: 4 },
+    ]);
+   
     const { sendJsonMessage, getWebSocket } = useWebSocket(WS_URL, {
         onOpen: () => console.log('WebSocket connection opened.'),
         onClose: () => console.log('WebSocket connection closed.'),
         shouldReconnect: (closeEvent) => true,
         onMessage: (event: WebSocketEventMap['message']) =>  processMessages(event)
     });
-    const [layouts, setLayout] = useState<any>([
-        { i: 'table1', x: 0, y: 1, w: 6, h: 15, minW: 4 },
-        { i: 'table2', x: 6, y: 1, w: 6, h: 15, minW: 4 },
-        { i: 'table3', x: 0, y: 0, w: 12, h: 10, minW: 4 },
-    ]);
 
-    const [summarizeDataSet, setSummarizeDataSet] = useState([])
-    const summarizeData = summarizeCount24h(dataSet)
-   
     function processMessages(event: { data: string; }){
         const response = JSON.parse(event.data);
 
@@ -390,13 +389,6 @@ const RecentTrade = () => {
                 </div>
             </div>
         ): null}
-
-    
-   
-        {/* <ActivityPieChart data={summarizeData}/> */}
-
-
-   
     </div>
     </>
   )

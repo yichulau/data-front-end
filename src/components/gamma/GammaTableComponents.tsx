@@ -50,7 +50,7 @@ const GammaTableComponents = ({ columns, data, expiry, currency, spotPrice, inde
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.3 }}
                             className="shadow overflow-hidden border-b border-gray-200 dark:border-black ">
-                                <div className='flex flex-1 w-full relative xs:overflow-auto md:overflow-hidden'>
+                                <div className='flex flex-1 w-full relative overflow-auto md:overflow-hidden'>
                                     <table ref={tableRef} {...getTableProps()} className="w-full divide-y table-auto divide-gray-200 dark:divide-black">
                                         <thead className="bg-white dark:bg-zinc-900">
                                             {headerGroups.map((headerGroup, index) => (

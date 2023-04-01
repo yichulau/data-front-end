@@ -154,7 +154,7 @@ const AbsoluteGammaCallsPutsChart = ({ strikes, dfAgg, spotPrice, currency, exch
       dataZoom: [
         {
             type: 'inside',
-            start: 20,
+            start: 30,
             end: 80,
             xAxisIndex: [0]
           }

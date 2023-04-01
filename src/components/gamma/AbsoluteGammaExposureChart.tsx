@@ -94,8 +94,8 @@ const AbsoluteGammaExposureChart = ({ strikes, dfAgg, spotPrice, currency , exch
         dataZoom: [
           {
               type: 'inside',
-              start: 0,
-              end: 100,
+              start: 30,
+              end: 80,
               xAxisIndex: [0]
             }
         ],

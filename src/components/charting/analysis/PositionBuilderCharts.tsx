@@ -51,7 +51,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
       resetChart()
     }
 
-
+    console.log(chartData)
     useMemo(()=>{
       const currencyType =  dataArray.length> 0 ? dataArray[0].symbol : ''
       const interval = currencyType === 'BTC' ?  500 : 50;
@@ -306,7 +306,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
                 { name: 'index Price',xAxis:indexPrice},
             ],
             silent: true,
-            symbol:'none',//去掉箭头
+            symbol:'none',
             itemStyle: {
                 normal: {
                     lineStyle: {
@@ -330,7 +330,7 @@ const PositionBuilderCharts = ({data, amount, indexPrice, resetChart, latestDate
                     }
                 }
             },
-        },
+          },
           itemStyle: {
             normal:{
               lineStyle:{

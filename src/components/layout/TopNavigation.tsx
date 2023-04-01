@@ -123,6 +123,11 @@ const TopNavigation = () => {
                                             <div className={`text-gray-900 dark:text-white md:hover:underline ${router.pathname === "/activity/recentTrade" ? `` : `` }`}>Recent Trade</div>
                                     </Link>
                                 </li>
+                                <li className={router.pathname == "/gamma/gammaExposure" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow rounded-md px-2 py-4" : "px-2 py-4"}>
+                                    <Link href="/gamma/gammaExposure">
+                                            <div className={`text-gray-900 dark:text-white md:hover:underline ${router.pathname === "/gamma/gammaExposure" ? `` : `` }`}>Gamma Exposure</div>
+                                    </Link>
+                                </li>
                                 <li className={router.pathname == "/analysis/positionBuilder" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow rounded-md px-2 py-4" : "px-2 py-4"}>
                                     <Link href="/analysis/positionBuilder">
                                         <div className={`text-gray-900 dark:text-white md:hover:underline ${router.pathname === "/analysis/positionBuilder" ? `` : `` }`}>Payoff Calculator</div>
@@ -169,6 +174,11 @@ const TopNavigation = () => {
                         <li className={router.pathname == "/activity/recentTrade" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow px-1 md:px-4 rounded-lg py-1 md:py-2" : "py-1 md:py-2 px-1 md:px-4"}>
                             <Link href="/activity/recentTrade">
                                  <div className={`text-gray-900 dark:text-white md:hover:underline ${router.pathname === "/activity/recentTrade" ? `` : `` }`}>Recent Trade</div>
+                            </Link>
+                        </li>
+                        <li className={router.pathname == "/gamma/gammaExposure" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow px-1 md:px-4 rounded-lg py-1 md:py-2" : "py-1 md:py-2 px-1 md:px-4"}>
+                            <Link href="/gamma/gammaExposure">
+                                 <div className={`text-gray-900 dark:text-white md:hover:underline ${router.pathname === "/gamma/gammaExposure" ? `` : `` }`}>Gamma Exposure</div>
                             </Link>
                         </li>
                         <li className={router.pathname == "/analysis/positionBuilder" ? "active bg-white dark:bg-gray-900 text-gra dark:text-white relative shadow px-1 md:px-4 rounded-lg py-1 md:py-2" : "py-1 md:py-2 px-1 md:px-4"}>

@@ -34,3 +34,16 @@ export const byExchangeCoin = [
     {id: 0, value: 'By Exchange'},
     {id: 1, value: 'By Coin'}
 ]
+
+export const exchangeOption = [
+    {id: 1, value: 'Deribit'},
+    {id: 2, value: 'OKEX'},
+    {id: 3, value: 'Bit.com'},
+    {id: 4, value: 'Binance'},
+    {id: 5, value: 'Bybit'}
+]
+
+export const gammaCoinExchangeOption = [
+    {id: 0, value: 'BTC'},
+    {id: 1, value: 'ETH'},
+]

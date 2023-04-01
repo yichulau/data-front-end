@@ -275,7 +275,6 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                     type: 'bar',
                     stack: 'total',
                     data: seriesData[exchangeId],
-                    // 设置柱子的宽度
                     barWidth: '50%',
                     label: {
                         show: true,

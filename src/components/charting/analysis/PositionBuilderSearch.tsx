@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import DropdownLong from '../../misc/DropdownLong'
 import DropdownLargeFilter from '../../misc/DropdownLargeFilter';
+import { exchangeOption } from '../../../utils/selector';
 
 const PositionBuilderSearch = ({
   data, 
@@ -25,14 +26,6 @@ const PositionBuilderSearch = ({
     const bStrike = Number(bValue[2])
     return aStrike - bStrike;
   })
-
-  const exchangeOption = [
-    {id: 0, value: 'Bit.com'},
-    {id: 1, value: 'Binance'},
-    {id: 2, value: 'Bybit'},
-    {id: 3, value: 'Deribit'},
-    {id: 4, value: 'OKEX'}
-  ]
 
   const coinCurrencyOption = [
     {id: 1, value: 'BTC'},

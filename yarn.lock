@@ -455,18 +455,6 @@
   "resolved" "https://registry.npmjs.org/acorn/-/acorn-8.8.2.tgz"
   "version" "8.8.2"
 
-"ag-grid-community@^29.2.0":
-  "integrity" "sha512-1xP1fpM8gXp2ALzBLONejZNul9hA3//ddszSlhq79QZ1FskQ1Z7E2WvvFeCeLJTJZrfhQkT1q1LO5DGfGeiBvg=="
-  "resolved" "https://registry.npmjs.org/ag-grid-community/-/ag-grid-community-29.2.0.tgz"
-  "version" "29.2.0"
-
-"ag-grid-react@^29.2.0":
-  "integrity" "sha512-FZEWhbe51KNkvu+MohGXxXixIJdakJrs5XDdJ/h1jqmCX9WZzHNT2OvoYHIXB7gcKKj5pf47YJB8eaEqsRlpbg=="
-  "resolved" "https://registry.npmjs.org/ag-grid-react/-/ag-grid-react-29.2.0.tgz"
-  "version" "29.2.0"
-  dependencies:
-    "prop-types" "^15.8.1"
-
 "ajv@^6.10.0", "ajv@^6.12.4":
   "integrity" "sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g=="
   "resolved" "https://registry.npmjs.org/ajv/-/ajv-6.12.6.tgz"
@@ -921,14 +909,6 @@
   "integrity" "sha512-R8LUSEay/68zE5c8/3BDxiTEvgb4xZTF0RKmAHfiEVN3klfIpXfi2/QCoiWPccVQ0J/ZGdz9OjzL4uJEP/MRAw=="
   "resolved" "https://registry.npmjs.org/dom-align/-/dom-align-1.12.4.tgz"
   "version" "1.12.4"
-
-"echarts-for-react@^3.0.2":
-  "integrity" "sha512-DRwIiTzx8JfwPOVgGttDytBqdp5VzCSyMRIxubgU/g2n9y3VLUmF2FK7Icmg/sNVkv4+rktmrLN9w22U2yy3fA=="
-  "resolved" "https://registry.npmjs.org/echarts-for-react/-/echarts-for-react-3.0.2.tgz"
-  "version" "3.0.2"
-  dependencies:
-    "fast-deep-equal" "^3.1.3"
-    "size-sensor" "^1.0.1"
 
 "echarts@^5.4.1":
   "integrity" "sha512-9ltS3M2JB0w2EhcYjCdmtrJ+6haZcW6acBolMGIuf01Hql1yrIV01L1aRj7jsaaIULJslEP9Z3vKlEmnJaWJVQ=="
@@ -1931,11 +1911,6 @@
   "resolved" "https://registry.npmjs.org/minimist/-/minimist-1.2.7.tgz"
   "version" "1.2.7"
 
-"moment-business-days@^1.2.0":
-  "integrity" "sha512-QJlceLfMSxy/jZSOgJYCKeKw+qGYHj8W0jMa/fYruyoJ85+bJuLRiYv5DIaflyuRipmYRfD4kDlSwVYteLN+Jw=="
-  "resolved" "https://registry.npmjs.org/moment-business-days/-/moment-business-days-1.2.0.tgz"
-  "version" "1.2.0"
-
 "moment@*", "moment@^2.29.4":
   "integrity" "sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w=="
   "resolved" "https://registry.npmjs.org/moment/-/moment-2.29.4.tgz"
@@ -2847,11 +2822,6 @@
     "call-bind" "^1.0.0"
     "get-intrinsic" "^1.0.2"
     "object-inspect" "^1.9.0"
-
-"size-sensor@^1.0.1":
-  "integrity" "sha512-QTy7MnuugCFXIedXRpUSk9gUnyNiaxIdxGfUjr8xxXOqIB3QvBUYP9+b51oCg2C4dnhaeNk/h57TxjbvoJrJUA=="
-  "resolved" "https://registry.npmjs.org/size-sensor/-/size-sensor-1.0.1.tgz"
-  "version" "1.0.1"
 
 "slash@^3.0.0":
   "integrity" "sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q=="

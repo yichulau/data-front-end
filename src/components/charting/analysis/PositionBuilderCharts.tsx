@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useContext, useMemo } from "react";
 import * as echarts from 'echarts';
-import ReactECharts from 'echarts-for-react';
 import { echartsResize } from '../../../utils/resize';
 import MyThemeContext from '../../../store/myThemeContext';
 import abbreviateNumber from "../../../utils/numberFormatter";

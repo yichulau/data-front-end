@@ -1,6 +1,5 @@
 import React, { useEffect,useState, useRef, useContext, useMemo, SyntheticEvent, ChangeEvent } from 'react'
 import * as echarts from 'echarts';
-import ReactEcharts from "echarts-for-react";
 import { echartsResize } from '../../utils/resize';
 import MyThemeContext from '../../store/myThemeContext';
 

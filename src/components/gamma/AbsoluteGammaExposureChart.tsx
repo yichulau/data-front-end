@@ -3,7 +3,7 @@ import * as echarts from 'echarts';
 import MyThemeContext from '../../store/myThemeContext';
 import moment from 'moment';
 
-const AbsoluteGammaExposureChart = ({ strikes, dfAgg, spotPrice, currency , exchange } : any) => {
+const AbsoluteGammaExposureChart = ({ strikes, dfAgg, spotPrice, currency , exchange, width  } : any) => {
   const { isDarkTheme }= useContext(MyThemeContext); 
     const totalGammas = Object.values(dfAgg).map((val : any) => val.TotalGamma);
     const sumOfTotalGamma = totalGammas.reduce((arr,curr) => arr+curr, 0).toFixed(2)
@@ -30,8 +30,8 @@ const AbsoluteGammaExposureChart = ({ strikes, dfAgg, spotPrice, currency , exch
         backgroundColor: isDarkTheme ? '#000000' : '#ffffff',
         grid: {
           top: '20%',
-          left: '5%',
-          right: '7%',
+          left: width <= 764 ? '7%' : '5%',
+          right: '3%',
           bottom: '8%',
           containLabel: true
         },
@@ -232,7 +232,7 @@ const AbsoluteGammaExposureChart = ({ strikes, dfAgg, spotPrice, currency , exch
   return (
     <>
      {chartLoader === false ? (
-        <div className='flex w-full bg-white dark:bg-black rounded-lg shadow-sm px-4 py-2 my-2'>
+        <div className='flex w-full bg-white dark:bg-black px-4 py-2 my-2'>
           <div className='w-full py-4'>
               <div className='font-bold text-md md:text-2xl mb-1 text-center'><h2>Total Gamma: ${sumOfTotalGamma} Bn per 1% ${currency} Move On {moment().format('DD MMM YYYY')}</h2></div>
               <div ref={chartRef}  style={{ width: "100%", height: "400px" }} />

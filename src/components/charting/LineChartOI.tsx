@@ -1,6 +1,5 @@
 import React, { useEffect,useState, useRef, useContext, useMemo } from 'react'
 import * as echarts from 'echarts';
-import ReactEcharts from "echarts-for-react";
 import DropdownCoin from '../misc/DropdownCoin';
 import { echartsResize } from '../../utils/resize';
 import moment from 'moment';

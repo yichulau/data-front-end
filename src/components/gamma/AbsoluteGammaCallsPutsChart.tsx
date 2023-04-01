@@ -4,7 +4,7 @@ import MyThemeContext from '../../store/myThemeContext';
 import moment from 'moment';
 
 
-const AbsoluteGammaCallsPutsChart = ({ strikes, dfAgg, spotPrice, currency, exchange } : any) => {
+const AbsoluteGammaCallsPutsChart = ({ strikes, dfAgg, spotPrice, currency, exchange, width } : any) => {
   const { isDarkTheme }= useContext(MyThemeContext); 
   const totalGamma = Object.values(dfAgg).map((val : any) => val.TotalGamma);
   const CallGEX = Object.values(dfAgg).map((val : any) => val.CallGEX);
@@ -100,8 +100,8 @@ const AbsoluteGammaCallsPutsChart = ({ strikes, dfAgg, spotPrice, currency, exch
       },
       grid: {
         top: '20%',
-        left: '5%',
-        right: '7%',
+        left: width <= 764 ? '7%' : '6%',
+        right: '3%',
         bottom: '8%',
         containLabel: true
       },
@@ -246,7 +246,7 @@ const AbsoluteGammaCallsPutsChart = ({ strikes, dfAgg, spotPrice, currency, exch
   
   return (
     <>
-        <div className='flex w-full bg-white dark:bg-black rounded-lg shadow-sm px-4 py-2 my-2'>
+        <div className='flex w-full bg-white dark:bg-black px-4 py-2 my-2'>
           <div className='w-full py-4'>
               <div className='font-bold text-md md:text-2xl mb-1  text-center'><h2>Total Gamma: ${sumOfTotalGamma} Bn per 1% ${currency} Move On {moment().format('DD MMM YYYY')}</h2></div>
               <div ref={chartRef}  style={{ width: "100%", height: "400px" }} />

@@ -3,7 +3,7 @@ import * as echarts from 'echarts';
 import MyThemeContext from '../../store/myThemeContext';
 import moment from 'moment';
 
-const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exchange} : any) => {
+const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exchange, width} : any) => {
   
   const {levels,
     totalGammaNormalized, 
@@ -92,8 +92,8 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
       },
       grid: {
         top: '20%',
-        left: '4%',
-        right: '7%',
+        left: width <= 764 ? '7%' : '7%',
+        right: '3%',
         bottom: '8%',
         containLabel: true
       },
@@ -109,7 +109,7 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
         nameGap: 25,
         axisLabel: {
           textStyle: {
-            color: isDarkTheme  ? '#ffffff' : '#000000'   ,
+            color: isDarkTheme  ? '#ffffff' : '#000000',
           }
         },
         splitLine: {
@@ -120,7 +120,7 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
         },
         nameTextStyle: {
           fontWeight: "bold",
-          color: isDarkTheme  ? '#ffffff' : '#000000'   ,
+          color: isDarkTheme  ? '#ffffff' : '#000000',
         },
       },
       yAxis: {
@@ -131,16 +131,17 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
         bottom: 0,
         nameTextStyle: {
           fontWeight: "bold",
-          color: isDarkTheme  ? '#ffffff' : '#000000'   ,
+          color: isDarkTheme  ? '#ffffff' : '#000000',
         },
         axisLine: {
           lineStyle: {
-            color: isDarkTheme  ? '#ffffff' : '#000000'   ,
+            color: isDarkTheme  ? '#ffffff' : '#000000',
           },
         },
         splitLine: {
           lineStyle: {
-            color: isDarkTheme  ? '#ffffff' : '#ddd'   ,
+            color: isDarkTheme  ? '#ffffff' : '#ddd',
+            type: "dashed",
           }
         }
       },
@@ -148,8 +149,10 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
           data: ['All Expiries', 'Ex-Next Expiry', 'Ex-Next Monthly Expiry', 'Spot Price', 'Gamma Flip'],
           orient: "horizontal",
           top: 15,
+          x: width < 600 ? 'left' :'center',
           textStyle: {
-            color: isDarkTheme  ? '#ffffff' : '#000000'   ,
+            color: isDarkTheme  ? '#ffffff' : '#000000' ,
+            fontSize: width < 600 ? 9 : 12,
           }
       },
       dataZoom: [
@@ -300,7 +303,7 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
   
 return (
   <>
-      <div className='flex w-full bg-white dark:bg-black rounded-lg shadow-sm px-4 py-2 my-2'>
+      <div className='flex w-full bg-white dark:bg-black px-4 py-2 my-2'>
         <div className='w-full py-4 '>
         <div className='font-bold text-md md:text-2xl mb-1 text-center'><h2>Gamma Exposure Profile, {currency}, {moment().format('DD MMM YYYY')}</h2></div>
             <div ref={chartRef}  style={{ width: "100%", height: "400px" }} />

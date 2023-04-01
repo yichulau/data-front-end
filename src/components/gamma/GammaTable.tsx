@@ -2,18 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ReactTable, { useTable, useExpanded, useGroupBy, useRowSelect, usePagination, useGlobalFilter, useBlockLayout,useAsyncDebounce, useFilters , useSortBy, useResizeColumns}  from 'react-table';
 import GammaTableComponents from './GammaTableComponents';
 import { v4 as uuidv4 } from 'uuid';
-import { NoticeType } from 'antd/es/message/interface';
-import { AgGridReact } from 'ag-grid-react';
-import '/node_modules/ag-grid-community/styles/ag-grid.css';
-import '/node_modules/ag-grid-community/styles/ag-theme-alpine.css';
 import { classNames } from '../../utils/Utils';
 import moment from 'moment';
 
 
-const GammaTable = ({ data : dataSet, loading, spotPrice, currency } : any) => {
+const GammaTable = ({ data : dataSet, loading, spotPrice, currency, width } : any) => {
   const data = useMemo(() => dataSet, []);
   const [datas, setDatas] = useState(data)
-  const [expiries, setExpiries] = useState<any>([])
   const columns = useMemo(
     () => [
       { Header: 'Price', 
@@ -110,31 +105,124 @@ const GammaTable = ({ data : dataSet, loading, spotPrice, currency } : any) => {
     ],
     []
   );
+  // const columnsMobile = useMemo(
+  //   () => [
+  //     { 
+  //       Header: 'Strike Price', 
+  //       accessor: 'strike',
+  //       Cell: StrikePill
+  //     },  
+  //     { 
+  //       Header: 'Option Type', 
+  //       accessor: 'callOrPut',
+  //     },  
+  //     { Header: 'Price', 
+  //       accessor: 'lastprice',
+  //       Cell: filterZeroPill
+  //     },
+  //     { 
+  //       Header: 'Net', 
+  //       accessor: 'net',
+  //       Cell: filterZeroPill
+  //      },
+  //     { 
+  //       Header: 'Bid', 
+  //       accessor: 'bid',
+  //       Cell: BidPill
+  //     },
+  //     { 
+  //       Header: 'Ask', 
+  //       accessor: 'ask',
+  //       Cell: AskPill
+  //     },
+  //     { Header: 'Vol', 
+  //       accessor: 'vol',
+  //       Cell: filterZeroPill
+  //     },
+  //     { Header: 'IV', 
+  //       accessor: 'iv',
+  //       Cell: filterZeroPill
+  //     },
+  //     { Header: 'Delta', 
+  //       accessor: 'delta',
+  //     },
+  //     { 
+  //       Header: 'Gamma', 
+  //       accessor: 'gamma',
+  //     },
+  //     { 
+  //       Header: 'OI', 
+  //       accessor: 'openInterest',
+  //       Cell: filterZeroPill
+  //     },   
+  //   ],
+  //   []
+  // );
 
-  const onChangeOptionChain = (item : any) =>{
-    setDatas(data.filter((obj : any)=> obj.includes(item)))
-  }
+
+  // const filterOptionsData = (data : any, expiry: any) =>{
+  //   const callMobileData  :any= [];
+  //   const putMobileData :any = [];
+
+  //   data.map((obj : any) => {
+  //       Object.entries(obj).forEach(([key, value] : any) => {
+  //         if (key.toLowerCase().startsWith("call")) {
+  //           callMobileData.push({
+  //             strike: obj.strike,
+  //             lastprice:obj.callLastPrice,
+  //             net: obj.callNet,
+  //             bid: obj.callBid,
+  //             ask: obj.callAsk,
+  //             vol: obj.callVol,
+  //             iv: obj.callIV,
+  //             delta: obj.callDelta,
+  //             gamma: obj.callGamma,
+  //             openInterest: obj.callOpenInterest,
+  //             expiry: expiry,
+  //             callOrPut: 'Call'
+  //           });
+  //         } else if (key.toLowerCase().startsWith("put")) {
+  //           putMobileData.push({
+  //             strike: obj.strike,
+  //             lastprice:obj.putLastPrice,
+  //             net: obj.putNet,
+  //             bid: obj.putBid,
+  //             ask: obj.putAsk,
+  //             vol: obj.putVol,
+  //             iv: obj.putIV,
+  //             delta: obj.putDelta,
+  //             gamma: obj.putGamma,
+  //             openInterest: obj.putOpenInterest,
+  //             expiry: expiry,
+  //             callOrPut: 'Put'
+  //           });
+  //         }
+  //       });
+
+
+  //   });
+  
+  //   return { callMobileData, putMobileData };
+  // };
+
+  // const onChangeOptionChain = (item : any) =>{
+  //   setDatas(data.filter((obj : any)=> obj.includes(item)))
+  // }
 
   const renderTable = (data:any, expiry:any, currency: any, index: any) => {
-   
+    // const { callMobileData, putMobileData } = filterOptionsData(data, expiry)
+    // const mobileDataSet = [...new Set(callMobileData), ... new Set(putMobileData)]
+
     return (
       <div key={expiry+uuidv4()} className='w-full'>
-  
-        {/* <div className='bg-white flex lg:px-1'>
-
-          <h2 className="text-xl font-semibold my-4">Expiry: {expiry}</h2>
-          <h2 className="text-xl font-semibold my-4">Currency: {currency}</h2>
-        </div> */}
         <GammaTableComponents columns={columns} data={data} expiry={expiry} currency={currency} spotPrice={spotPrice} index={index} />
       </div>
     );
   };
-  console.log(datas)
+
   useEffect(() => {
     if (dataSet && dataSet.length > 0) {
-      const expiries: string[] = dataSet.map((item : any) => item.expiry);
       dataSet.sort((a:any, b:any) => new Date(a.expiry).getTime() - new Date(b.expiry).getTime())
-      setExpiries(expiries)
       setDatas(dataSet);
     }
   }, [dataSet]);
@@ -156,25 +244,22 @@ const GammaTable = ({ data : dataSet, loading, spotPrice, currency } : any) => {
                             <div className='text-left text-sm font-bold'>Option Chain ({currency})</div>
 
                         </div>
-                        {/* <div className='flex items-center bg-white dark:bg-zinc-900 py-2 px-2 gap-2'>
-                            {expiries.map((item : string, index: number)=>{
-                                 
-                                 return (
-                                  <button
-                                      key={index}
-                                      className="text-center items-center font-medium text-gray-900  dark:bg-gray-800 hover:bg-zinc-100 hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800 dark:text-white p-1 border border-zinc-200 dark:border-gray-700 rounded-lg shadow-sm text-xs cursor-pointer" 
-                                      onClick={() => {
-                                          onChangeOptionChain(item)
-                                      }}
-                                  >
-                                      <div className='flex flex-col '>
-                                          {moment(item).format('DD MMM YY').toUpperCase()}
-                                      </div>
-                                  </button>
-                              )
-                            })}
+                        {/* {width <= 764 ? (
+                          <div className='flex items-center bg-white dark:bg-zinc-900 py-2 px-2 gap-2'>
+                                    <button
+                                        className="text-center items-center font-medium text-gray-900  dark:bg-gray-800 hover:bg-zinc-100 hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800 dark:text-white p-1 border border-zinc-200 dark:border-gray-700 rounded-lg shadow-sm text-xs cursor-pointer" 
+                                        onClick={() => {
+                                            onChangeOptionChain('dsdsd')
+                                        }}
+                                    >
+                                        <div className='flex flex-col '>
+                                            All
+                                        </div>
+                                    </button>
                             
-                        </div> */}
+                              
+                          </div> 
+                        ) : null} */}
                       </div>
                     </div>
                 </div>
@@ -184,8 +269,6 @@ const GammaTable = ({ data : dataSet, loading, spotPrice, currency } : any) => {
               })}
             </>
             ) : null}
-
-
         </div>
       )}
     </>

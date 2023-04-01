@@ -7,6 +7,8 @@ export const gammaUrls = {
         `https://${serverHost.hostname}/api/v1.0/btc/deribit/gamma`,
         `https://${serverHost.hostname}/api/v1.0/eth/okex/gamma`,
         `https://${serverHost.hostname}/api/v1.0/btc/okex/gamma`,
+        `https://${serverHost.hostname}/api/v1.0/eth/bit.com/gamma`,
+        `https://${serverHost.hostname}/api/v1.0/btc/bit.com/gamma`,
     ]
     
 }

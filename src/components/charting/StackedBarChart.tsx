@@ -1,6 +1,5 @@
 import React, { useEffect,useState, useRef, useContext, useMemo } from 'react'
 import * as echarts from 'echarts';
-import ReactECharts from 'echarts-for-react';
 import { echartsResize } from '../../utils/resize';
 import moment from 'moment';
 import { exchangeModel } from '../../models/exchangeModel';

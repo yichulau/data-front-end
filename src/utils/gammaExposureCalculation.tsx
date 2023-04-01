@@ -1,6 +1,5 @@
 import moment from 'moment';
 import _ from 'lodash';
-import 'moment-business-days';
 
 const isThirdFriday = (d: any) => {
     return d.getDay() === 5 && d.getDate() >= 15 && d.getDate() <= 21;
@@ -91,7 +90,7 @@ export const calculateAbsoluteGammaExposure = (filteredDataSet: any[], spotPrice
 
 // Calculate Zero Gamma Level based on the spot, Graph 3
 export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: number) =>{
-    const fromStrike = 0.5 * spotPrice;
+    const fromStrike = 0.3* spotPrice;
     const toStrike = 1.5 * spotPrice;
     const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
     const businessDaysPerYear = 262;

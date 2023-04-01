@@ -31,6 +31,7 @@ const GammaExposure = () => {
     const [strikes, setStrikes] = useState()
     const [width, setWidth] = useState<any>(undefined);
     const [zeroGammaLevelData, setZeroGammaLevelData] = useState({})
+    const [errorFlag, setErrorFlag] = useState(false)
     const [layouts, setLayout] = useState<any>([
         { i: 'table1', x: 0, y: 1, w: 6, h: 13, minW: 4 },
         { i: 'table2', x: 6, y: 1, w: 6, h: 13, minW: 4 },
@@ -60,8 +61,9 @@ const GammaExposure = () => {
 
    const onClickFilter = (event: MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault()
-    if(currency && exchange){
 
+    if(currency && exchange){
+        setErrorFlag(false)
         const filterDataSet : any = data.filter((obj) => obj.currency === currency.toLowerCase() && obj.exchange === exchange.toLowerCase())
         const {dfAgg, strikes} = calculateAbsoluteGammaExposure(filterDataSet, spotPrice)
         const zeroGammaLevel = calculateZeroGammaLevel(filterDataSet,  spotPrice)
@@ -71,6 +73,8 @@ const GammaExposure = () => {
         setStrikes(strikes)
         setZeroGammaLevelData(zeroGammaLevel)
         setFilterData(filterDataSet)
+    } else{
+        setErrorFlag(true)
     }
    }
 
@@ -88,27 +92,35 @@ const GammaExposure = () => {
     <>
     <div className="container py-1 mx-auto">
         <div className='w-full px-3 '>
-            <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full px-4 py-4 gap-2'>
-                <GammaFilterDropdown 
-                    title={`Coin Currency`}
-                    options={gammaCoinExchangeOption}
-                    onChange={(value:any) => {
-                        getSpotPrice(value)
-                        setCurrency(value)
-                    }}
-                />
-                <GammaFilterDropdown 
-                    title={`Exchange`}
-                    options={exchangeOption}
-                    onChange={(value: any) => setExchange(value)}
-                />
-                <button
-                    className='text-white bg-green-700 hover:bg-green-800  font-medium rounded-lg text-xs md:text-sm px-4 md:px-5 py-2.5 text-center mr-2 mb-2'
-                    onClick={onClickFilter}
-                >
-                    Submit
-                </button>
+            <div className='flex flex-col bg-white dark:bg-black rounded-lg shadow-sm w-full px-4 py-4 '>
+                <div className='flex gap-2'>
+                    <GammaFilterDropdown 
+                        title={`Coin Currency`}
+                        options={gammaCoinExchangeOption}
+                        onChange={(value:any) => {
+                            getSpotPrice(value)
+                            setCurrency(value)
+                        }}
+                    />
+                    <GammaFilterDropdown 
+                        title={`Exchange`}
+                        options={exchangeOption}
+                        onChange={(value: any) => setExchange(value)}
+                    />
+                    <button
+                        className='text-white bg-green-700 hover:bg-green-800  font-medium rounded-lg text-xs md:text-sm px-4 md:px-5 py-2.5 text-center mr-2 mb-2'
+                        onClick={onClickFilter}
+                    >
+                        Submit
+                    </button>
+                </div>
+                {errorFlag ? (
+                    <div className="p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                        <span className="font-medium">Error Alert!</span> Please Make Sure Exchange and Currency Is Selected And Try Submitting Again.
+                    </div>
+                ): null }
             </div>
+
         </div> 
         <div className='w-full px-3 '>
             {strikes && dfAgg ? (

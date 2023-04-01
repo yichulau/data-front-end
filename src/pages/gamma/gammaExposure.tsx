@@ -18,7 +18,7 @@ import GammaExposureProfileChart from '../../components/gamma/GammaExposureProfi
 import { calculateAbsoluteGammaExposure, calculateZeroGammaLevel } from '../../utils/gammaExposureCalculation';
 
 
-const gammaExposure = () => {
+const GammaExposure = () => {
     const urls = gammaUrls.urls
     const ResponsiveGridLayout : any = useMemo(() => WidthProvider(Responsive), []);
     const {data , error, loading } = useFetchGamma(urls);
@@ -224,5 +224,5 @@ const gammaExposure = () => {
   )
 }
 
-export default gammaExposure
+export default GammaExposure
 

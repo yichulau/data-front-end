@@ -52,11 +52,12 @@ const GammaTableComponents = ({ columns, data, expiry, currency, spotPrice, inde
                                 <div className='flex flex-1 w-full relative'>
                                     <table ref={tableRef} {...getTableProps()} className="w-full  divide-y table-auto divide-gray-200 dark:divide-black">
                                         <thead className="bg-white dark:bg-zinc-900">
-                                            {headerGroups.map((headerGroup) => (
-                                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                            {headerGroups.map((headerGroup, index) => (
+                                                <tr {...headerGroup.getHeaderGroupProps()} key={`header-${index}`}>
                                                 {headerGroup.headers.map((column) => (
                                                     <th
                                                     {...column.getHeaderProps()}
+                                                    key={`header-${index}-${column.id}`}
                                                     className="group px-2 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
                                                     >
                                                     {column.render('Header')}
@@ -66,15 +67,16 @@ const GammaTableComponents = ({ columns, data, expiry, currency, spotPrice, inde
                                             ))}
                                         </thead>
                                             <tbody {...getTableBodyProps()}  className="bg-white dark:bg-black">
-                                            {rows.map((row) => {
+                                            {rows.map((row:any, i) => {
                                                 prepareRow(row);
                                 
                                                 return (
-                                                <tr {...row.getRowProps()} className='dark:even:bg-zinc-900 dark:odd:bg-black even:bg-white odd:bg-gray-100 md:hover:bg-zinc-100 md:dark:hover:bg-stone-800'>
-                                                    {row.cells.map((cell) => {
+                                                <tr key={`row-${i}`} {...row.getRowProps()} className='dark:even:bg-zinc-900 dark:odd:bg-black even:bg-white odd:bg-gray-100 md:hover:bg-zinc-100 md:dark:hover:bg-stone-800'>
+                                                    {row.cells.map((cell : any) => {
                                                         if(cell.column.id === "strike"){
                                                             return (
                                                                 <td
+                                                                key={`row-${i}-${cell.column.id}`}
                                                                 {...cell.getCellProps()}
                                                                 className="w-[120px] py-2 bg-papayawhip bg-white dark:bg-black text-xs text-center border-zinc-300"
                                                                 >
@@ -84,6 +86,7 @@ const GammaTableComponents = ({ columns, data, expiry, currency, spotPrice, inde
                                                         } else {
                                                             return (
                                                                 <td
+                                                                key={`row-${i}-${cell.column.id}`}
                                                                 {...cell.getCellProps()}
                                                                 className="px-2 py-2 bg-papayawhip text-xs text-center w-[50px]"
                                                                 >

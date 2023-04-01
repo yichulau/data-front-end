@@ -302,7 +302,7 @@ return (
   <>
       <div className='flex w-full bg-white dark:bg-black rounded-lg shadow-sm px-4 py-2 my-2'>
         <div className='w-full py-4 '>
-        <div className='font-bold text-lg md:text-2xl mb-1 text-center'><h2>Gamma Exposure Profile, {currency}, {moment().format('DD MMM YYYY')}</h2></div>
+        <div className='font-bold text-md md:text-2xl mb-1 text-center'><h2>Gamma Exposure Profile, {currency}, {moment().format('DD MMM YYYY')}</h2></div>
             <div ref={chartRef}  style={{ width: "100%", height: "400px" }} />
         
         </div>

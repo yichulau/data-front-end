@@ -1,14 +1,15 @@
 import moment from 'moment';
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactTable, { useTable, useExpanded, useGroupBy, useRowSelect, usePagination, useGlobalFilter, useBlockLayout,useAsyncDebounce, useFilters , useSortBy, useResizeColumns}  from 'react-table';
 import {FaBitcoin, FaEthereum, FaFileDownload, FaArrowUp, FaArrowDown} from 'react-icons/fa'
 import {BsGraphDown, BsGraphUp} from 'react-icons/bs';
 import { useDownloadExcel } from 'react-export-table-to-excel';
 import { AnimatePresence, motion } from 'framer-motion'
 
-const GammaTableComponents = ({ columns, data, expiry, currency, spotPrice, index } : any) => {
+const GammaTableComponents = ({ columns, data, expiry, currency, spotPrice, index, width } : any) => {
     data.sort((a:any,b:any) => a.strike - b.strike)
     const tableRef = useRef(null);
+    const scrollableElementRef = useRef<any>(null);
     const [open, setOpen] = useState(index === 0 ? true : false)
     const { onDownload } = useDownloadExcel({
         currentTableRef: tableRef.current,
@@ -22,6 +23,13 @@ const GammaTableComponents = ({ columns, data, expiry, currency, spotPrice, inde
         rows,
         prepareRow,
       } = useTable({ columns, data });
+
+    useEffect(() => {
+        if (scrollableElementRef.current) {
+            const initialPosition = width * 0.5;
+            scrollableElementRef.current.scrollLeft = initialPosition;
+        }
+    }, []);
 
 
       return (
@@ -50,7 +58,7 @@ const GammaTableComponents = ({ columns, data, expiry, currency, spotPrice, inde
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.3 }}
                             className="shadow overflow-hidden border-b border-gray-200 dark:border-black ">
-                                <div className='flex flex-1 w-full relative overflow-auto md:overflow-hidden'>
+                                <div ref={scrollableElementRef} className='flex flex-1 w-full relative overflow-auto md:overflow-hidden' >
                                     <table ref={tableRef} {...getTableProps()} className="w-full divide-y table-auto divide-gray-200 dark:divide-black">
                                         <thead className="bg-white dark:bg-zinc-900">
                                             {headerGroups.map((headerGroup, index) => (

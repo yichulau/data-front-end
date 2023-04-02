@@ -215,7 +215,7 @@ const GammaTable = ({ data : dataSet, loading, spotPrice, currency, width } : an
 
     return (
       <div key={expiry+uuidv4()} className='w-full'>
-        <GammaTableComponents columns={columns} data={data} expiry={expiry} currency={currency} spotPrice={spotPrice} index={index} />
+        <GammaTableComponents columns={columns} data={data} expiry={expiry} currency={currency} spotPrice={spotPrice} index={index} width={width} />
       </div>
     );
   };

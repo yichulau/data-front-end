@@ -91,7 +91,7 @@ const GammaExposure = () => {
   return (
     <>
     <div className="container py-1 mx-auto">
-        <div className='w-full px-3 '>
+        <div className={strikes && dfAgg ? `w-full px-2.5` : `w-full`}>
             <div className='flex flex-col bg-white dark:bg-black rounded-lg shadow-sm w-full px-4 py-4 '>
                 <div className='flex gap-2'>
                     <GammaFilterDropdown 
@@ -122,78 +122,80 @@ const GammaExposure = () => {
             </div>
 
         </div> 
-        <div className='w-full px-3 '>
+        <div className='w-full'>
             {strikes && dfAgg ? (
                 <>  
                 {width > 764 ? (
-                    <ResponsiveGridLayout
-                        className="layout"
-                        layouts={{ lg: layouts }}
-                        breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                        cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
-                        rowHeight={30}
-                        margin={[10, 10]}
-                        isResizable={true}
-                        isDraggable={true}
-                        draggableHandle=".drag-handle"
-                        onLayoutChange={(newLayout: any ) => {
-                            setLayout(newLayout)
-                        }}
-                        useCSSTransforms={false}
-                    >
-                        <div key="table3" className="grid-item">
-                            <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
-                            <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
-                                <div className="overflow-x-auto scrollbar-none md:w-full ">
-                                    <GammaExposureProfileChart 
-                                        zeroGammaLevelData={zeroGammaLevelData}
-                                        spotPrice={spotPrice}
-                                        currency={currency}
-                                        exchange={exchange}
-                                        width={width}
-                                    />
+                    <div className='w-full'>
+                        <ResponsiveGridLayout
+                            className="layout"
+                            layouts={{ lg: layouts }}
+                            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                            cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
+                            rowHeight={30}
+                            margin={[10, 10]}
+                            isResizable={true}
+                            isDraggable={true}
+                            draggableHandle=".drag-handle"
+                            onLayoutChange={(newLayout: any ) => {
+                                setLayout(newLayout)
+                            }}
+                            useCSSTransforms={false}
+                        >
+                            <div key="table3" className="grid-item">
+                                <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
+                                <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
+                                    <div className="overflow-x-auto scrollbar-none md:w-full ">
+                                        <GammaExposureProfileChart 
+                                            zeroGammaLevelData={zeroGammaLevelData}
+                                            spotPrice={spotPrice}
+                                            currency={currency}
+                                            exchange={exchange}
+                                            width={width}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div key="table1" className="grid-item">
-                            <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
-                            <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
-                                <div className="overflow-x-auto scrollbar-none md:w-full ">
-                                    <AbsoluteGammaExposureChart 
-                                        strikes={strikes}
-                                        dfAgg={dfAgg}
-                                        spotPrice={spotPrice}
-                                        currency={currency}
-                                        exchange={exchange}
-                                        width={width}
-                                    />
+                            <div key="table1" className="grid-item">
+                                <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
+                                <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
+                                    <div className="overflow-x-auto scrollbar-none md:w-full ">
+                                        <AbsoluteGammaExposureChart 
+                                            strikes={strikes}
+                                            dfAgg={dfAgg}
+                                            spotPrice={spotPrice}
+                                            currency={currency}
+                                            exchange={exchange}
+                                            width={width}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div key="table2" className="grid-item">
-                            <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
-                            <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
-                                <div className="overflow-x-auto scrollbar-none md:w-full ">
-                                    <AbsoluteGammaCallsPutsChart 
-                                        strikes={strikes}
-                                        dfAgg={dfAgg}
-                                        spotPrice={spotPrice}
-                                        currency={currency}
-                                        exchange={exchange}
-                                        width={width}
-                                    />
+                            <div key="table2" className="grid-item">
+                                <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
+                                <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
+                                    <div className="overflow-x-auto scrollbar-none md:w-full ">
+                                        <AbsoluteGammaCallsPutsChart 
+                                            strikes={strikes}
+                                            dfAgg={dfAgg}
+                                            spotPrice={spotPrice}
+                                            currency={currency}
+                                            exchange={exchange}
+                                            width={width}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div key="table4" className="grid-item">
-                            <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
-                            <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
-                                <div className="overflow-x-auto scrollbar-none md:w-full ">
-                                    <GammaTable data={filterData} loading={loading} spotPrice={spotPrice} currency={currency} width={width}/>
+                            <div key="table4" className="grid-item">
+                                <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
+                                <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
+                                    <div className="overflow-x-auto scrollbar-none md:w-full ">
+                                        <GammaTable data={filterData} loading={loading} spotPrice={spotPrice} currency={currency} width={width}/>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </ResponsiveGridLayout>
+                        </ResponsiveGridLayout>
+                    </div>
                 ) : null }
                 {width <= 764 ? (
                     <>
@@ -241,9 +243,6 @@ const GammaExposure = () => {
                 </div>
             )}
         </div>
-  
-
-
     </div>
         
     </>

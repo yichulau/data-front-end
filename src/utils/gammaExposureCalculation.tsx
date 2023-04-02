@@ -110,7 +110,7 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
     
   
 
-    let nextExpiry = filteredDataSet[0].expiry;
+    let nextExpiry : string = filteredDataSet[0].expiry;
     for (let entry of dataset) {
         if (entry.expiry < nextExpiry) {
             nextExpiry = entry.expiry;
@@ -124,8 +124,8 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
     }
       
     const thirdFridays : any = dataset.filter(data => data.IsThirdFriday);
-    const nextMonthlyExp = moment(new Date(Math.min(...thirdFridays.map((data : any) => new Date(data.expiry))))).format('YYYY-MM-DD HH:mm:ss');
-    nextExpiry = moment(nextExpiry).format('YYYY-MM-DD HH:mm:ss')
+    const nextMonthlyExp : string = moment(new Date(Math.min(...thirdFridays.map((data : any) => new Date(data.expiry))))).format('YYYY-MM-DD');
+    nextExpiry = moment(nextExpiry).format('YYYY-MM-DD')
 
     const totalGamma  :any[]= [];
     const totalGammaExNext :any[] = [];
@@ -141,7 +141,7 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
             return a.strike - b.strike;
         }
     });
-    // console.log(sortedData)
+    console.log(sortedData)
 
     for (let level of levels) {
         const levelData =  sortedData.map(({
@@ -160,14 +160,14 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
             return {
                 callGammaEx,
                 putGammaEx,
-                expirationDate: daysTillExp,
+                expiry:expiry
             };
         })
 
             totalGamma.push(_.sumBy(levelData, 'callGammaEx') - _.sumBy(levelData, 'putGammaEx'));
-            const exNxt = levelData.filter(({ expirationDate }) => expirationDate !== nextExpiry);
+            const exNxt = levelData.filter(({ expiry }) => expiry !== nextExpiry);
             totalGammaExNext.push(_.sumBy (exNxt, 'callGammaEx') - _.sumBy(exNxt, 'putGammaEx'));
-            const exFri = levelData.filter(({ expirationDate }) => expirationDate !== nextMonthlyExp);
+            const exFri = levelData.filter(({ expiry }) => expiry !== nextMonthlyExp);
             totalGammaExFri.push(_.sumBy(exFri, 'callGammaEx') - _.sumBy(exFri, 'putGammaEx'));
       
     }

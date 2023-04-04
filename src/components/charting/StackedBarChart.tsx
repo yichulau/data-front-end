@@ -30,17 +30,19 @@ interface Props {
 
 const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
     const { isDarkTheme }= useContext(MyThemeContext); 
-    const data = useMemo(()=> dataSet, [dataSet])
+    const data = useMemo(()=> dataSet, [dataSet]).sort((a:any, b:any) => b.ts - a.ts)
     const chartRef = useRef<HTMLDivElement>(null);
     const [filter, setFilter] = useState(0);
     const [granularity, setGranularity] = useState(0);
     let seriesData : any= {};
     let xData: string[] = [];
     let chart: any;
-
+    // const testData= dataSet.filter((obj)=> obj.exchangeID === 'Bit.com');
+    // const sortedDataset = testData.sort((a:any, b:any) => b.ts - a.ts);
+    // console.log(data)
     const getDataByExchange = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
-        const groupedData : any = {};
+        let groupedData : any = {};
         const seriesData : any= {};
         const arr = [];
         const result : any = [];
@@ -58,6 +60,15 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                 groupedData[item.ts][item.exchangeID] += parseFloat(item.value);
             }
         });
+
+        const requiredKeys = ["Bit.com", "Binance", "ByBit", "OKEX", "Deribit"];
+
+        groupedData = Object.fromEntries(
+            Object.entries(groupedData).filter(([_, value]) => {
+                return requiredKeys.every((key) => Object.prototype.hasOwnProperty.call(value, key));
+            })
+        );
+
 
         Object.keys(groupedData).forEach(ts => {
             xData.push(moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss'));

@@ -23,7 +23,7 @@ const StackedLineChart = ( {data: dataSet } : any) => {
 
     const getDataByExchange = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
-        const groupedData : any = {};
+        let groupedData : any = {};
         const seriesData : any= {};
         const arr = [];
         const result : any = [];
@@ -41,7 +41,13 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                 groupedData[item.ts][item.exchangeID] += parseFloat(item.value);
             }
         });
+        const requiredKeys = ["Bit.com", "Binance", "ByBit", "OKEX", "Deribit"];
 
+        groupedData = Object.fromEntries(
+            Object.entries(groupedData).filter(([_, value]) => {
+                return requiredKeys.every((key) => Object.prototype.hasOwnProperty.call(value, key));
+            })
+        );
         Object.keys(groupedData).forEach(ts => {
             xData.push(moment.unix(Number(ts)).format('DD-MM-yy HH:mm:ss'));
             Object.keys(groupedData[ts]).forEach(exchangeId => {

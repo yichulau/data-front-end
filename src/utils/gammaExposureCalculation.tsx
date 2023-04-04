@@ -141,7 +141,6 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
             return a.strike - b.strike;
         }
     });
-    console.log(sortedData)
 
     for (let level of levels) {
         const levelData =  sortedData.map(({
@@ -164,11 +163,11 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
             };
         })
 
-            totalGamma.push(_.sumBy(levelData, 'callGammaEx') - _.sumBy(levelData, 'putGammaEx'));
-            const exNxt = levelData.filter(({ expiry }) => expiry !== nextExpiry);
-            totalGammaExNext.push(_.sumBy (exNxt, 'callGammaEx') - _.sumBy(exNxt, 'putGammaEx'));
-            const exFri = levelData.filter(({ expiry }) => expiry !== nextMonthlyExp);
-            totalGammaExFri.push(_.sumBy(exFri, 'callGammaEx') - _.sumBy(exFri, 'putGammaEx'));
+        totalGamma.push(_.sumBy(levelData, 'callGammaEx') - _.sumBy(levelData, 'putGammaEx'));
+        const exNxt = levelData.filter(({ expiry }) => expiry !== nextExpiry);
+        totalGammaExNext.push(_.sumBy (exNxt, 'callGammaEx') - _.sumBy(exNxt, 'putGammaEx'));
+        const exFri = levelData.filter(({ expiry }) => expiry !== nextMonthlyExp);
+        totalGammaExFri.push(_.sumBy(exFri, 'callGammaEx') - _.sumBy(exFri, 'putGammaEx'));
       
     }
 

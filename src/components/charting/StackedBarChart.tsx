@@ -61,7 +61,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
             }
         });
 
-        const requiredKeys = ["Bit.com", "Binance", "ByBit", "OKEX", "Deribit"];
+        const requiredKeys = [ "Binance", "ByBit", "OKEX", "Deribit"];
 
         groupedData = Object.fromEntries(
             Object.entries(groupedData).filter(([_, value]) => {

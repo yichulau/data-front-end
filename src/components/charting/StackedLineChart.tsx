@@ -41,7 +41,7 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                 groupedData[item.ts][item.exchangeID] += parseFloat(item.value);
             }
         });
-        const requiredKeys = ["Bit.com", "Binance", "ByBit", "OKEX", "Deribit"];
+        const requiredKeys = ["Binance", "ByBit", "OKEX", "Deribit"];
 
         groupedData = Object.fromEntries(
             Object.entries(groupedData).filter(([_, value]) => {

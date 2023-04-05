@@ -200,6 +200,8 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                           let value = params[i].value
                           if (value >= 1000000) {
                             value = Number(value / 1000000).toFixed(2) + 'M';
+                          } else if (value >= 100000 && value < 1000000){
+                            value = Number(value / 1000).toFixed(2) + 'K';
                           }
                           timing = granularity === 0 ? params[0].name.slice(0,10) : params[0].name
                           strike = timing + "<br/>";

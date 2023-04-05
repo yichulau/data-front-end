@@ -221,9 +221,10 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
                           let value = params[i].value
                           if (value >= 1000000000){
                             value = Number(value / 1000000000).toFixed(2) + 'B';
-                          }
-                          if (value >= 1000000) {
+                          } else if (value >= 1000000 && value < 1000000000) {
                             value = Number(value / 1000000).toFixed(2) + 'M';
+                          } else if (value >= 100000 && value < 1000000){
+                            value = Number(value / 1000).toFixed(2) + 'K';
                           }
                           timing = granularity === 0 ? params[0].name.slice(0,10) : params[0].name
                           strike = timing + "<br/>";

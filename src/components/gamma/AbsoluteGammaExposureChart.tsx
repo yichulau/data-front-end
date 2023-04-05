@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import * as echarts from 'echarts';
 import MyThemeContext from '../../store/myThemeContext';
 import moment from 'moment';
+import _ from 'lodash';
 
 const AbsoluteGammaExposureChart = ({ strikes, dfAgg, spotPrice, currency , exchange, width  } : any) => {
   const { isDarkTheme }= useContext(MyThemeContext); 
@@ -42,6 +43,12 @@ const AbsoluteGammaExposureChart = ({ strikes, dfAgg, spotPrice, currency , exch
           top: 15,
           textStyle: {
             color: isDarkTheme  ? '#ffffff' : '#000000'   ,
+          }
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            saveAsImage: { show: true, name:"Gamma Calls " }
           }
         },
         xAxis: {
@@ -94,8 +101,8 @@ const AbsoluteGammaExposureChart = ({ strikes, dfAgg, spotPrice, currency , exch
         dataZoom: [
           {
               type: 'inside',
-              start: 30,
-              end: 80,
+              start: 15,
+              end: 85,
               xAxisIndex: [0]
             }
         ],
@@ -211,7 +218,6 @@ const AbsoluteGammaExposureChart = ({ strikes, dfAgg, spotPrice, currency , exch
       if (chartInstance) {
         chartInstance.setOption(option);
         chartInstance.on('finished', () => {
-          console.log('Chart is fully loaded!');
           setChartLoader(false)
           // Perform any operations that require the chart to be fully loaded here
         });
@@ -231,27 +237,13 @@ const AbsoluteGammaExposureChart = ({ strikes, dfAgg, spotPrice, currency , exch
 
   return (
     <>
-     {chartLoader === false ? (
         <div className='flex w-full bg-white dark:bg-black px-4 py-2 my-2'>
           <div className='w-full py-4'>
-              <div className='font-bold text-md md:text-2xl mb-1 text-center'><h2>Total Gamma: ${sumOfTotalGamma} Bn per 1% ${currency} Move On {moment().format('DD MMM YYYY')}</h2></div>
+              <div className='font-bold text-md md:text-2xl mb-1 text-center'><h2>{_.startCase(exchange)} Total Gamma: ${sumOfTotalGamma} Bn per 1% ${currency} Move On {moment().format('DD MMM YYYY')}</h2></div>
               <div ref={chartRef}  style={{ width: "100%", height: "400px" }} />
           
           </div>
         </div>
-     ) : (
-      <>
-        <div className="flex items-center justify-center h-full p-5 bg-gray-100 w-full rounded-log dark:bg-black">
-
-          <div className="flex space-x-2 animate-pulse">
-              <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-              <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-              <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-          </div>
-
-        </div>
-      </>
-     )}
     </>
   )
 }

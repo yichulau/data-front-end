@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import * as echarts from 'echarts';
 import MyThemeContext from '../../store/myThemeContext';
 import moment from 'moment';
+import _ from 'lodash';
 
 
 const AbsoluteGammaCallsPutsChart = ({ strikes, dfAgg, spotPrice, currency, exchange, width } : any) => {
@@ -90,6 +91,12 @@ const AbsoluteGammaCallsPutsChart = ({ strikes, dfAgg, spotPrice, currency, exch
               },
           },
       },
+      toolbox: {
+        show: true,
+        feature: {
+          saveAsImage: { show: true, name:"Gamma Call & Puts " }
+        }
+      },
       legend: {
         data: ['Call GEX', 'Put GEX', 'Spot Price'],
         orient: "horizontal",
@@ -154,8 +161,8 @@ const AbsoluteGammaCallsPutsChart = ({ strikes, dfAgg, spotPrice, currency, exch
       dataZoom: [
         {
             type: 'inside',
-            start: 30,
-            end: 80,
+            start: 15,
+            end: 85,
             xAxisIndex: [0]
           }
       ],
@@ -248,7 +255,7 @@ const AbsoluteGammaCallsPutsChart = ({ strikes, dfAgg, spotPrice, currency, exch
     <>
         <div className='flex w-full bg-white dark:bg-black px-4 py-2 my-2'>
           <div className='w-full py-4'>
-              <div className='font-bold text-md md:text-2xl mb-1  text-center'><h2>Total Gamma: ${sumOfTotalGamma} Bn per 1% ${currency} Move On {moment().format('DD MMM YYYY')}</h2></div>
+              <div className='font-bold text-md md:text-2xl mb-1  text-center'><h2>{_.startCase(exchange)} Total Gamma: ${sumOfTotalGamma} Bn per 1% ${currency} Move On {moment().format('DD MMM YYYY')}</h2></div>
               <div ref={chartRef}  style={{ width: "100%", height: "400px" }} />
           
           </div>

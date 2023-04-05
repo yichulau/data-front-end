@@ -94,13 +94,13 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
     const toStrike = 1.5 * spotPrice;
     const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
     const businessDaysPerYear = 262;
-
+   
     const levels = linspace(Number(fromStrike.toFixed(2)), Number(toStrike.toFixed(2)), 60);
     const todayDate = new Date();
     const dataset : any[] = filterDataSetHelper(filteredDataSet)
 
     
-    
+  
     for (let data of dataset) {
         let daysTillExp = (new Date(data.expiry).getTime() - new Date(todayDate).getTime()) / oneDayInMilliseconds;
         let businessDaysTillExp = countBusinessDays(new Date(todayDate), new Date(data.expiry));

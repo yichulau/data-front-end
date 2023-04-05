@@ -121,7 +121,7 @@ const GammaExposure = () => {
   return (
     <>
     <div className="container py-1 mx-auto">
-        <div className={strikes && dfAgg ? `w-full px-2.5` : `w-full`}>
+        <div className={strikes && dfAgg ? `w-full px-2.5` : `w-full px-2`}>
             <div className='flex flex-col bg-white dark:bg-black rounded-lg shadow-sm w-full px-4 py-4 '>
                 <div className='flex gap-2'>
                     <GammaFilterDropdown 
@@ -271,7 +271,7 @@ const GammaExposure = () => {
                     ): null }
                     </>
                 ) : (
-                    <div className='w-full my-2'>
+                    <div className='w-full my-2 px-2'>
                         <div className='flex flex-wrap bg-white dark:bg-black w-full h-screen items-center justify-center rounded-lg shadow-sm px-4 py-4'>
                             <div className="py-8 px-4 mx-auto max-w-screen-md text-center items-center justify-center lg:py-16 lg:px-12">
                                 <Image className='w-24 h-24 mx-auto ' src={ribbonImg} alt="ribbon_logo"></Image>

@@ -97,7 +97,7 @@ const StackedLineChart = ( {data: dataSet } : any) => {
     }
     const getDataByCoin = () => {
         // group data by ts and coinCurrencyID, and return the series data and x-axis data 
-        const groupedData : any = {};
+        let groupedData : any = {};
         const seriesData : any= {};
         let xData: string[] = [];
         let dailyAverageAggregrationData;
@@ -112,6 +112,13 @@ const StackedLineChart = ( {data: dataSet } : any) => {
                 groupedData[item.ts][item.coinCurrencyID] += parseFloat(item.value);
             }
         });
+
+        const requiredKeys = [ "ETH", "BTC"];
+        groupedData = Object.fromEntries(
+            Object.entries(groupedData).filter(([_, value]) => {
+                return requiredKeys.every((key) => Object.prototype.hasOwnProperty.call(value, key));
+            })
+        );
 
         if(granularity === 0){
             Object.keys(groupedData).forEach(ts => {

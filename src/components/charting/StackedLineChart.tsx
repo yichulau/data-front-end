@@ -20,7 +20,6 @@ const StackedLineChart = ( {data: dataSet } : any) => {
     let xData: string[] = [];
     let chart: any;
 
-
     const getDataByExchange = () => {
         // group data by ts and exchangeId, and return the series data and x-axis data 
         let groupedData : any = {};

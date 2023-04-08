@@ -185,14 +185,14 @@ const ActivityTable : React.FC<ActivityTableProps> = ({data, title} : ActivityTa
                         const direction  = row.original.direction
 
                         return (
-                          <tr   key={`row-${i}`} {...row.getRowProps()} className='dark:even:bg-zinc-900 dark:odd:bg-black even:bg-white odd:bg-gray-100 md:hover:bg-zinc-100 md:dark:hover:bg-stone-800'>
+                          <tr   key={`row-${i}`} {...row.getRowProps()} className='dark:even:bg-zinc-900 dark:odd:bg-black even:bg-white odd:bg-gray-100 md:hover:bg-zinc-100 md:dark:hover:bg-stone-800 font-bold'>
                             {row.cells.map((cell:any) => {
                               return (
                                 <td
                                   {...cell.getCellProps()}
                                   className={classNames(
-                                    "px-3 py-1 whitespace-nowrap ",
-                                    direction === "BUY" ? " text-green-700" : null,
+                                    "px-3 py-1 whitespace-nowrap font-bold ",
+                                    direction === "BUY" ? " text-green-700 " : null,
                                     direction === "SELL" ? " text-red-700" : null,
                                   )}
                                   role="cell"

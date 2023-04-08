@@ -174,7 +174,7 @@ const StackedBarChart: React.FC<Props> = ( {data : dataSet,  onChange}) => {
             });
         }
 
-
+  
         return [granularity === 0 ? dailyAverageAggregrationData : seriesData , xData]; 
     }
     const handleFilterChange = (value: number) => {

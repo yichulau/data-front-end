@@ -149,7 +149,7 @@ const DropdownLargeFilter = ({title, resetFlag, options, onChange, exchange, sta
                                         </div>
                                     </div>
                                     <div className="flex px-2 py-2">
-                                        <div className="flex items-center justify-center overflow-x-auto pl-6 pb-4 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-gray-800 scrollbar-track-white dark:scrollbar-track-zinc-600">
+                                        <div className="flex overflow-x-auto  pb-1 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-gray-800 scrollbar-track-white dark:scrollbar-track-zinc-600">
                                             <button
                                                 className="text-center items-center font-medium text-gray-900 dark:text-white dark:bg-gray-800 hover:bg-blue-600 hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800  p-1 border border-white dark:border-gray-700  rounded-lg shadow-sm text-md py-3 px-2 cursor-pointer active:bg-blue-600 active:text-white dark:active:bg-gray-600 dark:active:text-white  focus:bg-blue-600 focus:border-blue-400 focus:text-white dark:focus:bg-gray-700 dark:focus:border-gray-300"
                                                 onClick={() => {

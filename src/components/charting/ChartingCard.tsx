@@ -55,7 +55,6 @@ const ChartingCard = ({option}: any) => {
       }
     })
 
-    
     for (const item of newFetchNotionalData) {
       const key = item.ts + item.coinCurrencyID;
       if (!map.has(key)) {

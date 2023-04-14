@@ -11,10 +11,10 @@ const GammaTable = ({ data : dataSet, loading, spotPrice, currency, width } : an
   const [datas, setDatas] = useState(data)
   const columns = useMemo(
     () => [
-      { Header: 'Price', 
-        accessor: 'callLastPrice',
-        Cell: filterZeroPill
-      },
+      // { Header: 'Price', 
+      //   accessor: 'callLastPrice',
+      //   Cell: filterZeroPill
+      // },
       { 
         Header: 'Net', 
         accessor: 'callNet',
@@ -48,8 +48,18 @@ const GammaTable = ({ data : dataSet, loading, spotPrice, currency, width } : an
         Cell: (obj : any) => obj.value.toFixed(2)
       },
       { 
+        Header: 'trade Gamma', 
+        accessor: 'callTradeGamma',
+        Cell: filterZeroPill
+      },
+      { 
         Header: 'OI', 
         accessor: 'callOpenInterest',
+        Cell: filterZeroPill
+      },
+      { 
+        Header: 'DDOI', 
+        accessor: 'callDDOI',
         Cell: filterZeroPill
       },
       { 
@@ -58,9 +68,20 @@ const GammaTable = ({ data : dataSet, loading, spotPrice, currency, width } : an
         Cell: StrikePill
       },
       { 
+        Header: 'DDOI', 
+        accessor: 'putDDOI',
+        Cell: filterZeroPill
+      },
+      { 
         Header: 'OI', 
         accessor: 'putOpenInterest',
         Cell: (obj : any) => obj.value.toFixed(2)
+      },
+
+      { 
+        Header: 'trade Gamma', 
+        accessor: 'putTradeGamma',
+        Cell: filterZeroPill
       },
       { 
         Header: 'Gamma', 
@@ -97,11 +118,11 @@ const GammaTable = ({ data : dataSet, loading, spotPrice, currency, width } : an
         accessor: 'putNet',
         Cell: filterZeroPill
       },
-      { 
-        Header: 'Price', 
-        accessor: 'putLastPrice',
-        Cell: filterZeroPill
-      }     
+      // { 
+      //   Header: 'Price', 
+      //   accessor: 'putLastPrice',
+      //   Cell: filterZeroPill
+      // }     
     ],
     []
   );

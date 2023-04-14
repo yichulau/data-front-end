@@ -67,8 +67,8 @@ const LineChartOI = ({data: dataSet , earliestTimestamp, latestTimeStamp} :any) 
         xData = uniqueDates;
       }
 
-    
-      return [granularity === 0 ? dailyAverages : filteredDataset, xData]
+
+      return [granularity === 0 ? dailyAverages.filter(item=> item.value >= 5000000) : filteredDataset, xData]
     } 
 
     useEffect(()=>{

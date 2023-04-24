@@ -10,6 +10,7 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
     totalGammaNormalized, 
     totalGammaExNextNormalized, 
     totalGammaExFriNormalized, 
+    totalGammaNextFriNormalized,
     zeroGamma, 
     fromStrike, 
     toStrike
@@ -26,6 +27,7 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
     totalGamma: totalGammaNormalized[index],
     totalGammaExNext: totalGammaExNextNormalized[index],
     totalGammaExFri: totalGammaExFriNormalized[index],
+    totalGammaNextFriNormalized: totalGammaNextFriNormalized[index],
   }));
 
   useEffect(() => {
@@ -49,14 +51,17 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
         backgroundColor: 'rgba(18, 57, 60, .8)', 
         borderColor: "rgba(18, 57, 60, .8)",
         formatter: function (params : any) {
+          const nextFriday = moment().day(moment().day() <= 5 ? 12 : 19).format('YYYY-MM-DD');
           let str = "";
           let strike = "";
+          let name = "";
           for (let i = 0; i < params.length; i++) {
               if (params[i].seriesName !== "") {
+                  name = params[i].seriesName === "Next Friday Expiry" ? `${params[i].seriesName} (${nextFriday})` : params[i].seriesName;
                   strike = 'Strike '+ Number(params[0].axisValue).toFixed(2) + "<br/>";
                   str +=  
                       params[i].marker +
-                      params[i].seriesName +
+                      name +
                       ' : '+
                       params[i].value[1].toFixed(6) + `` +
                       "<br/>";
@@ -153,7 +158,7 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
         }
       },
       legend: {
-          data: ['All Expiries', 'Ex-Next Expiry', 'Ex-Next Monthly Expiry', 'Spot Price', 'Gamma Flip'],
+          data: ['All Expiries', 'Ex-Next Expiry', 'Ex-Next Monthly Expiry', 'Next Friday Expiry' , 'Spot Price', 'Gamma Flip'],
           orient: "horizontal",
           top: 15,
           x: width < 600 ? 'left' :'center',
@@ -187,6 +192,12 @@ const GammaExposureProfileChart = ({zeroGammaLevelData, spotPrice, currency, exc
           data: transformedData.map((data:any) => [data.levels,data.totalGammaExFri]),
           type: 'line',
            name: 'Ex-Next Monthly Expiry',
+          showSymbol: false,
+        },
+        {
+          data: transformedData.map((data:any) => [data.levels,data.totalGammaNextFriNormalized]),
+          type: 'line',
+           name: 'Next Friday Expiry',
           showSymbol: false,
         },
         { 

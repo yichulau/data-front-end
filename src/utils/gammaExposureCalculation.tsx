@@ -96,10 +96,12 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
     const businessDaysPerYear = 262;
     const levels = linspace(Number(fromStrike.toFixed(2)), Number(toStrike.toFixed(2)), 60);
     const todayDate = new Date();
+    const nextFriday = moment().day(moment().day() <= 5 ? 12 : 19).format('YYYY-MM-DD');
     const dataset : any[] = filterDataSetHelper(filteredDataSet)
     const totalGamma  :any[]= [];
     const totalGammaExNext :any[] = [];
     const totalGammaExFri :any[] = [];
+    const totalGammaNextFri :any[] = [];
     const sortedData = dataset.sort((a:any, b:any) => {
         if (a.expiry < b.expiry) {
             return -1;
@@ -130,7 +132,7 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
     const nextMonthlyExp : string = moment(new Date(Math.min(...thirdFridays.map((data : any) => new Date(data.expiry))))).format('YYYY-MM-DD');
     nextExpiry = moment(nextExpiry).format('YYYY-MM-DD')
 
-    // console.log(sortedData)
+    // console.log(sortedData)  
     for (let level of levels) {
         const levelData =  sortedData.map(({
             strike,
@@ -155,18 +157,22 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
                 expiry:expiry
             };
         })
-        // console.log(levelData, "levelData")
+
         totalGamma.push(_.sumBy(levelData, 'callGammaEx') - _.sumBy(levelData, 'putGammaEx'));
         const exNxt = levelData.filter(({ expiry }) => expiry !== nextExpiry);
         totalGammaExNext.push(_.sumBy (exNxt, 'callGammaEx') - _.sumBy(exNxt, 'putGammaEx'));
         const exFri = levelData.filter(({ expiry }) => expiry !== nextMonthlyExp);
         totalGammaExFri.push(_.sumBy(exFri, 'callGammaEx') - _.sumBy(exFri, 'putGammaEx'));
-      
+
+        const exNextFriday = levelData.filter(({ expiry }) => expiry === nextFriday);
+        totalGammaNextFri.push(_.sumBy(exNextFriday, 'callGammaEx') - _.sumBy(exNextFriday, 'putGammaEx'));
+
     }
 
     const totalGammaNormalized : any = totalGamma.map(value => value / 10 ** 9);
     const totalGammaExNextNormalized = totalGammaExNext.map(value => value / 10 ** 9);
     const totalGammaExFriNormalized = totalGammaExFri.map(value => value / 10 ** 9);
+    const totalGammaNextFriNormalized = totalGammaNextFri.map(value => value / 10 ** 9);
     const zeroCrossIdx = totalGammaNormalized.reduce((acc:any, value:any, idx:any) => {
         if (idx > 0 && Math.sign(value) !== Math.sign(totalGammaNormalized[idx - 1])) {
             acc.push(idx);
@@ -187,6 +193,7 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
         totalGammaNormalized, 
         totalGammaExNextNormalized, 
         totalGammaExFriNormalized, 
+        totalGammaNextFriNormalized,
         todayDate, 
         spotPrice, 
         zeroGamma, 

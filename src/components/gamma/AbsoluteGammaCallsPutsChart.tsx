@@ -255,7 +255,7 @@ const AbsoluteGammaCallsPutsChart = ({ strikes, dfAgg, spotPrice, currency, exch
     <>
         <div className='flex w-full bg-white dark:bg-black px-4 py-2 my-2'>
           <div className='w-full py-4'>
-              <div className='font-bold text-md md:text-lg  mb-1  text-center'><h2>{_.startCase(exchange)} Total Gamma: ${sumOfTotalGamma} Bn per 1% ${currency} Move On {moment().format('DD MMM YYYY')} {subTitle !== '' ? 'By Trade Data' : ''}</h2></div>
+              <div className='font-bold text-md md:text-lg  mb-1  text-center'><h2>{_.startCase(exchange)} Total Gamma: ${sumOfTotalGamma} Bn per 1% ${currency} Move On {moment().format('DD MMM YYYY')} {subTitle !== undefined ? 'By Trade Data' : ''}</h2></div>
               <div ref={chartRef}  style={{ width: "100%", height: "400px" }} />
           
           </div>

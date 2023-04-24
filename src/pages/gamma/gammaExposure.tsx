@@ -18,13 +18,17 @@ import '/node_modules/react-resizable/css/styles.css';
 import { contractTraded } from '../../utils/contract-traded-urls';
 import useFetchContractData from '../../hooks/useFetchContractData';
 import BlackScholes from '../../utils/blackScholes';
+import ADGammaExposureProfileChart from '../../components/gamma/ADGammaExposureProfileChart';
 
 
 interface Metrics {
     ddoi: number;
     longGamma: number;
     shortGamma: number;
+    longTotal: number;
+    shortTotal: number;
     optionType: string;
+    openInterest: any
 }
 
 interface FetchContractDataResult {
@@ -79,6 +83,8 @@ const GammaExposure = () => {
         { i: 'table7', x: 0, y: 2, w: 12, h: 13, minW: 4 },
     ]);
 
+    const [adgraph,setadGraph] = useState<any[]>([])
+
 
     const getSpotPrice = (value: string) =>{
         let spotVal = `https://${serverHost.hostname}/api/v1.0/${value.toLowerCase()}/spotval`;
@@ -101,20 +107,24 @@ const GammaExposure = () => {
     }
 
     const calculateMetrics = (trades:any) =>{
-
+   
         const metricsByInstrument :  { [key: string]: Metrics } = {};
       
         trades.forEach((trade :any) => {
-          const { instrumentID, direction, positionQuantity, gamma, side, amount , quantity } = trade;
+          const { instrumentID, direction, positionQuantity, gamma, side, amount , quantity, openInterest } = trade;
           const directionValue = direction === "Buy" || direction === "buy" || side === "buy" ? 1 : -1;
           const ddoi = exchange === "OKEX" || exchange === "Binance" ? parseFloat(quantity) * directionValue : exchange === "Deribit" ?  parseFloat(amount) * directionValue :  parseFloat(positionQuantity) * directionValue;
-      
+          const netAmount : any = exchange === "OKEX" || exchange === "Binance" ? Number(quantity): exchange === "Deribit" ?  Number(amount) :  Number(positionQuantity);
+
           if (!metricsByInstrument[instrumentID]) {
             metricsByInstrument[instrumentID] = {
               ddoi: 0,
               longGamma: 0,
               shortGamma: 0,
-              optionType: instrumentID.split('-')[3]
+              longTotal: 0,
+              shortTotal: 0,
+              optionType: instrumentID.split('-')[3],
+              openInterest: openInterest ? openInterest : 0
             };
           }
       
@@ -122,22 +132,27 @@ const GammaExposure = () => {
       
           if (direction === "Buy" || direction === "buy" || side === "buy") {
             metricsByInstrument[instrumentID].longGamma += parseFloat(gamma);
+            metricsByInstrument[instrumentID].longTotal += parseFloat(netAmount);
           } else if (direction === "Sell" || direction === "sell" || side === "sell") {
             metricsByInstrument[instrumentID].shortGamma += parseFloat(gamma);
+            metricsByInstrument[instrumentID].shortTotal += parseFloat(netAmount);
           }
         });
-      
         const metricsArray = Object.entries(metricsByInstrument).map(([instrumentID, metrics] : [string, Metrics]) => {
-          const { ddoi, optionType } = metrics;
-          const longGamma = metrics.longGamma ? metrics.longGamma : 0;
-          const shortGamma = metrics.shortGamma ? metrics.shortGamma : 0;
+          const { ddoi, optionType, longTotal, shortTotal, openInterest } = metrics;
+        //   row.CallGEX =  (row.callTradeGamma ? row.callTradeGamma : row.callGamma) * row.callOpenInterest * 100 * spotPrice * spotPrice * 0.01;
+        //   row.PutGEX = (row.putTradeGamma ? row.putTradeGamma : row.callGamma) * row.putOpenInterest* 100 * spotPrice * spotPrice * 0.01 * -1;
+          const longGamma = metrics.longGamma ? metrics.longGamma * openInterest * 100 * spotPrice * spotPrice * 0.01 : 0;
+          const shortGamma = metrics.shortGamma ? metrics.shortGamma * openInterest * 100 * spotPrice * spotPrice * 0.01 * -1: 0;
           return {
             instrumentID,
-            ddoi,
+            ddoi,   
             shortGamma,
             longGamma,
-            totalTradeGamma: shortGamma + longGamma,
-            optionType
+            totalTradeGamma: (shortGamma + longGamma) / Math.pow(10, 9),
+            optionType, 
+            dealerTotalInventory: longTotal + shortTotal,
+            dealerNetInventory: longTotal - shortTotal,
           };
         });
       
@@ -223,6 +238,7 @@ const GammaExposure = () => {
             return {
                 ...item,
                 gamma: gamma.gamma(),
+                // delta : gamma.delta()
             }
         }) 
     }
@@ -243,10 +259,27 @@ const GammaExposure = () => {
         const currencies = currency.toLowerCase() === 'btc' ? 1 : 2
 
         const { result24H : contractsData } = contractData.filter((obj : any) => obj.currency === currency.toLowerCase() && obj.exchange === exchange.toLowerCase()).pop()
+
         const mergedDataset = mergeDatasets(contractsData,gammaData);
         const gammaArr = constructGammaArray(mergedDataset);
         const gammaMetrics : any = calculateMetrics(gammaArr.filter((obj : any) => obj.coinCurrencyID === currencies))
+        // console.log(gammaArr)
+        // console.log(gammaMetrics)
+        const gammaLevelExpiration = computeTrialData(gammaMetrics) 
+        const gammaLevelExpirationTrades = reformatTradesData(gammaArr);
+        
+        console.log("formatted data")
+        console.log(gammaLevelExpiration)
+        console.log(gammaLevelExpirationTrades)
 
+        const gammaFinal = getOTMOptions(gammaLevelExpiration, gammaLevelExpirationTrades)
+
+        console.log("gammaFinal data")
+        console.log(gammaFinal)
+        const gammaProfile = constructZeroGammaChart(gammaFinal, currency)
+        console.log("gammaProfile data")
+        console.log(gammaProfile)
+        setadGraph(gammaProfile)
         // calculateZeroGammaTrade(mergedDataset, spotPrice)
 
         gammaMetrics.map((instrument: any) => {
@@ -262,7 +295,7 @@ const GammaExposure = () => {
             };
         });
 
-
+   
         const gammaDataSet = gammaData.map((obj: any) => {
             return {
                 ...obj,
@@ -286,9 +319,210 @@ const GammaExposure = () => {
         const {dfAgg, strikes} = calculateAbsoluteGammaExposure(gammaDataSet, spotPrice)
         const zeroGammaLevel = calculateZeroGammaLevel(gammaDataSet,  spotPrice)
 
+
+
         setDfAggTrade(dfAgg)
         setStrikesTrade(strikes)
         setZeroGammaLevelTradeData(zeroGammaLevel)
+    }
+
+    const computeTrialData = (gammaMetrics:any) =>{
+        const currencies = currency.toLowerCase() === 'btc' ? 1 : 2
+
+        let g = gammaMetrics.map((item:any) => {
+            const data : any = extractInstrumentData(item.instrumentID)
+            return {
+                currency: data.coin,
+                date: "1682035200000",
+                expiration: moment.utc(data.expiry, 'DDMMMYY').add(8, 'hours').unix() +'000',
+                strike: Number(data.strike),
+                gammaLevel:Number(item.totalTradeGamma),
+                callGammaExposure : Number(item.longGamma),
+                putGammaExposure : Number(item.shortGamma),
+                dealerNetInventory:item.dealerNetInventory,
+                __typename:"gammaLevelsExpiration"
+            }
+        })
+
+        const resultMap = g.reduce((accumulator : any, item : any) => {
+            const key = `${item.expiration}-${item.strike}`;
+        
+            if (accumulator.has(key)) {
+              accumulator.get(key).gammaLevel += item.gammaLevel;
+            } else {
+              accumulator.set(key, { ...item });
+            }
+        
+            return accumulator;
+          }, new Map());
+        
+        let y = Array.from(resultMap.values());
+
+        // console.log(y,"hello")
+        const df_gex = y.map((item : any) => {
+            const date = moment(parseInt(item.date)).unix();
+            const expiration = moment(parseInt(item.expiration)).unix();
+            const dte = (expiration - date) / (60 * 60 * 24);
+          
+            return {
+              ...item,
+              date: date,
+              expiration: expiration,
+              dte: dte,
+            };
+        });
+
+        return df_gex
+        // let dfAgg : any = {};
+
+        // y.map((entry : any) => {
+        //     const strike = entry.strike.toString();
+        //     dfAgg[strike] = {
+        //         CallGEX: entry.callGammaExposure,
+        //         PutGEX: entry.putGammaExposure,
+        //         TotalGamma: entry.gammaLevel
+        //     };
+        // });
+
+        // const strikes : any= Object.keys(dfAgg).map(key => parseInt(key));
+        // console.log(dfAgg, "trial datsdsdsdsda")
+        // console.log(y, "trial data")
+
+       
+        // return {dfAgg, strikes}
+        // let y = []
+        // let x = g.map((item : any)=>{
+        //     if(item.strike )
+        //     return {
+        //         ...item,
+        //         gammaLevel: item.gammaLevel * item.dealerNetInventory
+        //     }
+        // })
+
+    }
+
+    const reformatTradesData = (gammaArr : any[]) => {
+        // const date_hour = moment.utc().startOf('hour').format('YYYY-MM-DD HH:00');
+        const date_hour = '2023-04-24 06:00'
+        console.log(date_hour)
+        const res = gammaArr.map((item : any) => {
+            const data : any = extractInstrumentData(item.instrumentID)
+            return {
+                date: item.tradeTime,
+                expiration: moment.utc(data.expiry, 'DDMMMYY').unix(),
+                putCall: data.optionType,
+                underlyingPrice: item.indexPrice,
+                strike: Number(data.strike),
+                markIv: item.iv,
+                spot: spotPrice,
+                direction: item.direction,
+                instrumentID: item.instrumentID,
+                openInterest: item.openInterest
+            }
+        })
+        const df_hifi = res.map(item => {
+            let expiration = moment.unix(item.expiration).utc().hour(8).format('YYYY-MM-DD HH:00:00');
+            let date = moment.unix(item.date).utc().format('YYYY-MM-DD HH:00');
+            let underlyingPrice = parseFloat(item.underlyingPrice);
+            
+            return {
+              ...item,
+              expiration: expiration,
+              date: date,
+              underlyingPrice: underlyingPrice,
+            };
+        }).filter(item => item.date === date_hour);
+
+
+        return df_hifi;
+    }
+
+    const constructZeroGammaChart = (df_final : any, currency : any) => {
+        let min_price: number;
+        let max_price;
+        let prices : any[];
+
+        if (currency.toUpperCase() === 'BTC') {
+            min_price = Math.max(5000, Math.round((df_final[0].spot - 10000) / 10000) * 10000);
+            max_price = Math.round((df_final[0].spot + 10000) / 10000) * 10000;
+            prices = Array.from({ length: (max_price - min_price) / 250 + 1 }, (_, i) => min_price + i * 250);
+        } else if (currency.toUpperCase() === 'ETH') {
+            min_price = Math.max(500, Math.round((df_final[0].spot - 1000) / 1000) * 1000);
+            max_price = Math.round((df_final[0].spot + 1000) / 1000) * 1000;
+            prices = Array.from({ length: (max_price - min_price) / 25 + 1 }, (_, i) => min_price + i * 25);
+        }
+        let gammaProfile: any[] = [];
+
+        const uniqueExpirations = [...new Set(df_final.map((item: any) => item.expiration))];
+
+        uniqueExpirations.forEach(exp => {
+            const df_final_exp = df_final.filter((item: any) => item.expiration === exp);
+
+            prices.forEach(p => {
+              df_final_exp.forEach((item: any) => {
+                const inputData = {
+                    type: item.putCall === "C" ? "call" : "put",
+                    stockPrice: p,
+                    strike: item.strike,
+                    daysToExpiry: item.dte,
+                    interestRate: 0,
+                    volatility: item.markIv
+                };
+                item.gamma = new BlackScholes(inputData).gamma()
+              });
+          
+              const gamma_sum = df_final_exp.reduce((acc : any, item : any) => {
+                return acc + item.gamma * item.dealerNetInventory * p * p * 0.01;
+              }, 0);
+          
+              gammaProfile.push({ expiration: exp, spot: p, usd_gamma: gamma_sum });
+            });
+        });
+        return gammaProfile;
+    }
+
+    const getOTMOptions = (df_gex : any, df_hifi: any) => {
+        const df_hifi_otm = df_hifi.map((item: any) => {
+            let is_otm = '';
+          
+            if (
+              (item.putCall === 'C' && item.underlyingPrice <= item.strike) ||
+              (item.putCall === 'P' && item.underlyingPrice >= item.strike)
+            ) {
+              is_otm = 'otm';
+            }
+          
+            return {
+              ...item,
+              is_otm: is_otm,
+            };
+          }).filter((item: any) => item.is_otm === 'otm');
+          
+          console.log(df_hifi_otm, 'df_hifi_otm')
+
+        const df_gex_with_expiration_as_string = df_gex.map((item: any) => ({
+            ...item,
+            expiration: moment.unix(item.expiration).utc().hour(8).format('YYYY-MM-DD HH:00:00'),
+        }));
+
+        const df_final = df_gex_with_expiration_as_string.flatMap((item: any) => {
+            return df_hifi_otm
+                .filter(
+                (hifi_item:any) =>
+                    hifi_item.expiration === item.expiration && hifi_item.strike === item.strike
+                )
+                .map((hifi_item:any) => ({
+                    ...item,
+                    direction: hifi_item.direction,
+                    openInterest: hifi_item.openInterest,
+                    putCall: hifi_item.putCall,
+                    markIv: hifi_item.markIv,
+                    spot: hifi_item.spot,
+                }));
+        });
+
+        return df_final
+
     }
 
 
@@ -298,8 +532,11 @@ const GammaExposure = () => {
         if(currency && exchange){
             setErrorFlag(false)
             const gammaData : any = data.filter((obj : any) => obj.currency === currency.toLowerCase() && obj.exchange === exchange.toLowerCase())
+           
             computeGammaData(gammaData)
             computeGammaTradeData(gammaData)
+
+
             setFilterData(gammaData)
         } else{
             setErrorFlag(true)
@@ -453,13 +690,17 @@ const GammaExposure = () => {
                                     <div className='drag-handle cursor-grab absolute bg-transparent w-full text-transparent'>.</div>
                                     <div className='flex bg-white dark:bg-black rounded-lg shadow-sm w-full h-full'>
                                         <div className="overflow-x-auto scrollbar-none md:w-full ">
-                                            <GammaExposureProfileChart 
+                                            {/* <GammaExposureProfileChart 
                                                 zeroGammaLevelData={zeroGammaLevelTradeData}
                                                 spotPrice={spotPrice}
                                                 currency={currency}
                                                 exchange={exchange}
                                                 width={width}
                                                 subTitle={`Trades`}
+                                            /> */}
+                                            <ADGammaExposureProfileChart
+                                                data={adgraph}
+                                                symbol={currency}
                                             />
                                         </div>
                                     </div>

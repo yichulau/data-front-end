@@ -5,7 +5,7 @@ const isThirdFriday = (d: any) => {
     return d.getDay() === 5 && d.getDate() >= 15 && d.getDate() <= 21;
 }
 
-const calculateGammaExposure = (S:any, K:any, vol:any, T:any, r:any, q:any, optType:any, OI:any) =>{
+export const calculateGammaExposure = (S:any, K:any, vol:any, T:any, r:any, q:any, optType:any, OI:any) =>{
     if (T === 0 || vol === 0) {
         return 0;
       }
@@ -82,7 +82,7 @@ export const calculateAbsoluteGammaExposure = (filteredDataSet: any[], spotPrice
       }, {});
     
     const strikes : any= Object.keys(dfAgg).map(key => parseInt(key));
-
+    //   console.log(dfAgg)
     return {dfAgg, strikes}
 
 }
@@ -130,7 +130,7 @@ export const calculateZeroGammaLevel = (filteredDataSet: any[], spotPrice: numbe
     const nextMonthlyExp : string = moment(new Date(Math.min(...thirdFridays.map((data : any) => new Date(data.expiry))))).format('YYYY-MM-DD');
     nextExpiry = moment(nextExpiry).format('YYYY-MM-DD')
 
-    // console.log(sortedData)
+    console.log(sortedData)
     for (let level of levels) {
         const levelData =  sortedData.map(({
             strike,
@@ -211,7 +211,7 @@ export const calculateZeroGammaTrade = (trades :any[] , spotPrice : number) => {
     const sellTrades = trades.filter((trade : any) => trade.direction === "Sell");
 
 
-    console.log(buyTrades)
+    // console.log(buyTrades)
     // const dataset : any[] = filterDataSetHelper(trades)
     // const totalGamma  :any[]= [];
     // const totalGammaExNext :any[] = [];
@@ -299,7 +299,7 @@ export const calculateZeroGammaTrade = (trades :any[] , spotPrice : number) => {
 
     }
     const totalGammaNormalized : any = totalGamma.map(value => value / 10 ** 9);
-    console.log(totalGamma,totalGammaNormalized)
+    // console.log(totalGamma,totalGammaNormalized)
 
   
 }
